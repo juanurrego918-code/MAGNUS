@@ -20,7 +20,7 @@ describe('roles', () => {
     expect(canSee('dueno', '/historial')).toBe(true);
     expect(navFor('empleado').map((i) => i.href)).toEqual(['/marcar', '/solicitudes', '/desprendibles']);
     expect(homeFor('empleado')).toBe('/marcar');
-    expect(homeFor('mostrador')).toBe('/catalogo');
+    expect(homeFor('mostrador')).toBe('/mostrador');
     expect(homeFor('dueno')).toBe('/panel');
   });
 });
@@ -69,6 +69,10 @@ describe('menú Fase 04', () => {
     expect(canSee('dueno', '/nomina')).toBe(true);
     expect(canSee('dueno', '/equipo')).toBe(true);
     expect(canSee('mostrador', '/marcar')).toBe(false);
+    expect(canSee('mostrador', '/caja')).toBe(false);
+    expect(canSee('vendedor', '/reportes')).toBe(false);
+    expect(canSee('caja', '/cotizaciones')).toBe(true);
+    expect(canSee('dueno', '/reportes')).toBe(true);
   });
 });
 describe('quincenas', () => {
@@ -88,3 +92,56 @@ describe('quincenas', () => {
     expect(horaBogota(null)).toBe('—');
   });
 });
+
+import { parseCsv, rowsToProducts, toCsv } from './csv';
+import { detectIntent } from './chatbot';
+describe('csv', () => {
+  it('lee comillas, saltos y separador ;', () => {
+    expect(parseCsv('a,b\n"x,1","y ""z"""\n')).toEqual([['a', 'b'], ['x,1', 'y "z"']]);
+    expect(parseCsv('a;b\n1;2\n')).toEqual([['a', 'b'], ['1', '2']]);
+  });
+  it('neutraliza fórmulas al exportar', () => {
+    expect(toCsv([['=CMD()', 5, '-3']])).toContain("'=CMD()");
+    expect(toCsv([['=CMD()', 5, '-3']])).toContain(",5,");
+    expect(toCsv([['a,b']])).toContain('"a,b"');
+  });
+  it('agrupa presentaciones por producto', () => {
+    const r = rowsToProducts(parseCsv('Código,Nombre,Categoría,Presentación,Unidades,Precio,Costo\nGR-0101,Arroz,Granos,Unidad,1,"2.350",1780\nGR-0101,Arroz,Granos,Paca,25,56500,1780\n'));
+    expect(r.products).toHaveLength(1);
+    expect(r.products[0].presentations).toEqual([{ name: 'Unidad', units: 1, price: 2350 }, { name: 'Paca', units: 25, price: 56500 }]);
+    expect(r.products[0].cost).toBe(1780);
+    expect(rowsToProducts(parseCsv('a,b\n1,2')).error).toMatch(/Faltan columnas/);
+  });
+});
+describe('asistente', () => {
+  it('detecta intenciones', () => {
+    expect(detectIntent('Hola').intent).toBe('saludo');
+    expect(detectIntent('¿Tienen arroz?').intent).toBe('producto');
+    expect(detectIntent('¿Tienen arroz?').term).toBe('arroz');
+    expect(detectIntent('receta de arroz con pollo')).toEqual({ intent: 'receta', term: 'arroz con pollo' });
+    expect(detectIntent('hacen domicilio?').intent).toBe('domicilio');
+    expect(detectIntent('quiero ser cliente').intent).toBe('pedido');
+    expect(detectIntent('xyz').intent).toBe('ayuda');
+  });
+});
+
+import { createHmac } from 'node:crypto';
+import { extractTexts, verifySignature } from './whatsapp';
+import { slugify } from './slug';
+describe('whatsapp', () => {
+  const secret = 's3cret', body = '{"a":1}';
+  const sig = 'sha256=' + createHmac('sha256', secret).update(body).digest('hex');
+  it('verifica la firma de Meta', () => {
+    expect(verifySignature(body, sig, secret)).toBe(true);
+    expect(verifySignature(body + ' ', sig, secret)).toBe(false);
+    expect(verifySignature(body, 'sha256=00', secret)).toBe(false);
+    expect(verifySignature(body, null, secret)).toBe(false);
+    expect(verifySignature(body, sig, '')).toBe(false);
+  });
+  it('extrae solo mensajes de texto válidos', () => {
+    const p = { entry: [{ changes: [{ value: { messages: [{ from: '573001112233', type: 'text', text: { body: 'hola' } }, { from: 'x', type: 'text', text: { body: 'malo' } }, { from: '573001112233', type: 'image' }] } }] }] };
+    expect(extractTexts(p)).toEqual([{ from: '573001112233', text: 'hola' }]);
+    expect(extractTexts(null)).toEqual([]);
+  });
+});
+describe('slug', () => { it('limpia acentos y símbolos', () => { expect(slugify('Arroz con Pollo ¡Fácil!')).toBe('arroz-con-pollo-facil'); }); });

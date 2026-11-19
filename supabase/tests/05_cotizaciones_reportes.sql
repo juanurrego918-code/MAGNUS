@@ -90,3 +90,17 @@ select pg_temp.expect_fail($$select * from public.report_reorder()$$, 'anon NO v
 reset role;
 select pg_temp.as_user(1); select pg_temp.expect((select count(*) from leads) = 3, 'el dueño ve los contactos recibidos'); select pg_temp.as_admin();
 \echo 'COTIZACIONES, REPORTES Y SITIO: TODAS LAS PRUEBAS PASARON'
+
+-- Edición de producto: solo dueño, con historial de cambios de precio
+select pg_temp.as_user(2);
+select pg_temp.expect_fail($$select public.update_product((select id from products where code='AS-0640'), 5, 3600, true, null, '[]')$$, 'vendedor NO edita productos');
+select pg_temp.as_user(1);
+select pg_temp.expect_fail($$select public.update_product((select id from products where code='AS-0640'), -1, 3600, true, null, '[]')$$, 'mínimo negativo rechazado');
+select pg_temp.expect_fail($$select public.update_product((select id from products where code='AS-0640'), 5, 3600, true, null, jsonb_build_array(jsonb_build_object('id', (select id from presentations where product_id=(select id from products where code='GR-0101') limit 1), 'price', 100)))$$, 'no cambia precios de otro producto');
+select public.update_product((select id from products where code='AS-0640'), 90, 3700, false, 'AS-0640/foto.jpg',
+  jsonb_build_array(jsonb_build_object('id', (select pr.id from presentations pr join products p on p.id=pr.product_id where p.code='AS-0640' and pr.name='Unidad'), 'price', 5100)));
+select pg_temp.as_admin();
+select pg_temp.expect((select price from presentations pr join products p on p.id=pr.product_id where p.code='AS-0640' and pr.name='Unidad') = 5100, 'el precio se actualiza');
+select pg_temp.expect((select active from products where code='AS-0640') = false and (select photo_path from products where code='AS-0640') = 'AS-0640/foto.jpg', 'se inactiva y guarda la foto');
+select pg_temp.expect((select count(*) from audit_log where action='Catálogo' and detail like '%$ 4.900 → $ 5.100%' and detail like '%inactivado%') = 1, 'el cambio de precio y la inactivación quedan en el historial');
+\echo 'EDICION DE PRODUCTO: TODAS LAS PRUEBAS PASARON'

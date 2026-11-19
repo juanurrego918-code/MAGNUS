@@ -32,7 +32,7 @@ export default async function Catalogo({ searchParams }: { searchParams: Promise
 
   return (<>
     <h1>Catálogo</h1>
-    <p className="sub">{rows.length} productos{q || cat ? ' con el filtro actual' : ''}.</p>
+    <p className="sub">{rows.length} productos{q || cat ? ' con el filtro actual' : ''}.{costs && <> · <a href="/catalogo/importar">Carga masiva desde CSV</a></>}</p>
     <form className="filters" role="search">
       <input name="q" defaultValue={q} placeholder="Buscar por nombre, código, marca o código de barras" aria-label="Buscar" />
       <select name="cat" defaultValue={cat ?? ''} aria-label="Categoría">
@@ -54,7 +54,7 @@ export default async function Catalogo({ searchParams }: { searchParams: Promise
             return (
               <tr key={p.id}>
                 <td>{p.code}</td>
-                <td><b>{p.name}</b><div className="muted">{[p.brand, p.categories?.name].filter(Boolean).join(' · ')}</div></td>
+                <td>{costs ? <a href={`/catalogo/${p.id}`}><b>{p.name}</b></a> : <b>{p.name}</b>}<div className="muted">{[p.brand, p.categories?.name].filter(Boolean).join(' · ')}</div></td>
                 <td>{p.presentations.map((x) => `${x.name}: ${cop(x.price)}`).join(' · ')}</td>
                 <td className="num">{num(st?.stock)} und</td>
                 {costs && <td className="num">{p.product_costs ? cop(p.product_costs.cost) : '—'}{margin !== null && <div className="muted">{margin} %</div>}</td>}

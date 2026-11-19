@@ -34,7 +34,7 @@ export default async function Nomina({ searchParams }: { searchParams: Promise<{
     </div>
 
     {sel ? (<>
-      <h2 className="sec">Quincena {fecha(sel.period_start)} – {fecha(sel.period_end)} · {sel.status === 'pagada' ? <span className="chip ok">🔒 Pagada {fecha(sel.paid_at)}</span> : <span className="chip warn">⏰ Prenómina</span>}</h2>
+      <h2 className="sec">Quincena {fecha(sel.period_start)} – {fecha(sel.period_end)} · {sel.status === 'pagada' ? <span className="chip ok">🔒 Pagada {fecha(sel.paid_at)}</span> : <span className="chip warn">⏰ Prenómina</span>} <a className="btn" style={{ minHeight: 36, marginLeft: 8 }} href={`/api/export/nomina?run=${sel.id}`}>Exportar para el contador</a></h2>
       <div className="card" style={{ padding: 0, overflowX: 'auto' }}><table>
         <thead><tr><th>Empleado</th><th className="num">Básico</th><th className="num">Extra</th><th className="num">Nocturno</th><th className="num">Dom./fest.</th><th className="num">Auxilio</th><th className="num">Salud + pensión</th><th className="num">Neto</th><th className="num">Sin marcar</th></tr></thead>
         <tbody>
