@@ -17,6 +17,7 @@ const NAV: Record<Role, NavItem[]> = {
     { href: '/catalogo', label: 'Catálogo', icon: 'book-open' },
     { href: '/inventario', label: 'Inventario por lotes', icon: 'boxes' },
     { href: '/clientes', label: 'Clientes', icon: 'users' },
+    { href: '/domicilios', label: 'Domicilios', icon: 'truck' },
     { href: '/historial', label: 'Historial', icon: 'history' },
   ],
   vendedor: [
@@ -35,7 +36,10 @@ const NAV: Record<Role, NavItem[]> = {
     { href: '/inventario', label: 'Inventario por lotes', icon: 'boxes' },
     { href: '/catalogo', label: 'Catálogo', icon: 'book-open' },
   ],
-  conductor: [],
+  conductor: [
+    { href: '/turno', label: 'Mi turno', icon: 'clock' },
+    { href: '/entregas', label: 'Entregas del día', icon: 'truck' },
+  ],
   empleado: [],
 };
 

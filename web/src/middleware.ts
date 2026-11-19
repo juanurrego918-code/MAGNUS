@@ -15,7 +15,8 @@ export async function middleware(req: NextRequest) {
     },
   });
   const { data: { user } } = await sb.auth.getUser();
-  if (!user && !req.nextUrl.pathname.startsWith('/login')) {
+  const open = req.nextUrl.pathname.startsWith('/login') || req.nextUrl.pathname.startsWith('/seguimiento');
+  if (!user && !open) {
     return NextResponse.redirect(new URL('/login', req.url));
   }
   return res;

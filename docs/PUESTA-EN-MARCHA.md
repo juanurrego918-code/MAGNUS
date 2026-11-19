@@ -1,6 +1,6 @@
 # Puesta en marcha con Supabase
 
-Proyecto Supabase: **MAGNUS** (`vwnagiqatzqdbjjpbqio`, región us-west-2). Migraciones 0001 a 0004 aplicadas y datos de ejemplo cargados (24 productos, 8 clientes). Son datos de muestra, no reales.
+Proyecto Supabase: **MAGNUS** (`vwnagiqatzqdbjjpbqio`, región us-west-2). Migraciones 0001 a 0006 aplicadas y datos de ejemplo cargados (24 productos, 8 clientes). Son datos de muestra, no reales.
 
 ## Primer usuario (dueño)
 1. En Supabase → Authentication → Users → *Add user*: correo y contraseña del dueño (la define y guarda el dueño; nunca va en el repo).
@@ -20,6 +20,6 @@ Proyecto Supabase: **MAGNUS** (`vwnagiqatzqdbjjpbqio`, región us-west-2). Migra
 - Quitar los datos de ejemplo antes de cargar el catálogo real.
 
 ## Verificación hecha
-- `supabase/tests/run.sh`: 73 pruebas sobre Postgres temporal.
+- `supabase/tests/run.sh`: 118 pruebas sobre Postgres temporal.
 - Prueba extremo a extremo sobre el proyecto real con usuarios temporales (dueño, vendedor, bodega, caja, conductor): 19 comprobaciones de permisos, costos ocultos, pedido, FEFO, factura, abono, anulación e historial. Usuarios y movimientos de prueba ya fueron eliminados.
 - No se probó la interfaz web contra Supabase: este entorno no tiene salida de red hacia `*.supabase.co`.

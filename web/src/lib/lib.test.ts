@@ -18,8 +18,8 @@ describe('roles', () => {
     expect(canSee('vendedor', '/historial')).toBe(false);
     expect(canSee('bodega', '/clientes')).toBe(false);
     expect(canSee('dueno', '/historial')).toBe(true);
-    expect(navFor('conductor')).toEqual([]);
-    expect(homeFor('conductor')).toBe('/sin-acceso');
+    expect(navFor('empleado')).toEqual([]);
+    expect(homeFor('empleado')).toBe('/sin-acceso');
     expect(homeFor('dueno')).toBe('/panel');
   });
 });
@@ -39,5 +39,19 @@ describe('menú Fase 02', () => {
     expect(homeFor('vendedor')).toBe('/pedidos');
     expect(homeFor('bodega')).toBe('/alistar');
     expect(homeFor('caja')).toBe('/caja');
+  });
+});
+
+describe('menú Fase 03', () => {
+  it('el conductor solo ve turno y entregas', () => {
+    expect(navFor('conductor').map((i) => i.href)).toEqual(['/turno', '/entregas']);
+    expect(canSee('conductor', '/entregas/12')).toBe(true);
+    expect(canSee('conductor', '/clientes')).toBe(false);
+    expect(canSee('conductor', '/domicilios')).toBe(false);
+    expect(homeFor('conductor')).toBe('/turno');
+  });
+  it('solo el dueño asigna domicilios', () => {
+    expect(canSee('dueno', '/domicilios')).toBe(true);
+    for (const r of ['vendedor', 'caja', 'bodega', 'mostrador'] as const) expect(canSee(r, '/domicilios')).toBe(false);
   });
 });
