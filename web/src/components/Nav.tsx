@@ -1,12 +1,12 @@
 'use client';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, BookOpen, Boxes, Users, History, ShoppingCart, Receipt, PackageCheck, Truck, Clock, type LucideIcon } from 'lucide-react';
+import { LayoutDashboard, BookOpen, Boxes, Users, History, ShoppingCart, Receipt, PackageCheck, Truck, Clock, UserCheck, Wallet, AlarmClock, FileText, type LucideIcon } from 'lucide-react';
 import type { NavItem } from '@/lib/roles';
 
 const ICONS: Record<string, LucideIcon> = {
   'layout-dashboard': LayoutDashboard, 'book-open': BookOpen, boxes: Boxes, users: Users, history: History,
-  'shopping-cart': ShoppingCart, receipt: Receipt, 'package-check': PackageCheck, truck: Truck, clock: Clock,
+  'shopping-cart': ShoppingCart, receipt: Receipt, 'package-check': PackageCheck, truck: Truck, clock: Clock, 'user-check': UserCheck, wallet: Wallet, 'alarm-clock': AlarmClock, 'file-text': FileText,
 };
 
 export function Nav({ items }: { items: NavItem[] }) {

@@ -18,8 +18,9 @@ describe('roles', () => {
     expect(canSee('vendedor', '/historial')).toBe(false);
     expect(canSee('bodega', '/clientes')).toBe(false);
     expect(canSee('dueno', '/historial')).toBe(true);
-    expect(navFor('empleado')).toEqual([]);
-    expect(homeFor('empleado')).toBe('/sin-acceso');
+    expect(navFor('empleado').map((i) => i.href)).toEqual(['/marcar', '/solicitudes', '/desprendibles']);
+    expect(homeFor('empleado')).toBe('/marcar');
+    expect(homeFor('mostrador')).toBe('/catalogo');
     expect(homeFor('dueno')).toBe('/panel');
   });
 });
@@ -44,7 +45,7 @@ describe('menú Fase 02', () => {
 
 describe('menú Fase 03', () => {
   it('el conductor solo ve turno y entregas', () => {
-    expect(navFor('conductor').map((i) => i.href)).toEqual(['/turno', '/entregas']);
+    expect(navFor('conductor').map((i) => i.href).slice(0, 2)).toEqual(['/turno', '/entregas']);
     expect(canSee('conductor', '/entregas/12')).toBe(true);
     expect(canSee('conductor', '/clientes')).toBe(false);
     expect(canSee('conductor', '/domicilios')).toBe(false);
@@ -53,5 +54,37 @@ describe('menú Fase 03', () => {
   it('solo el dueño asigna domicilios', () => {
     expect(canSee('dueno', '/domicilios')).toBe(true);
     for (const r of ['vendedor', 'caja', 'bodega', 'mostrador'] as const) expect(canSee(r, '/domicilios')).toBe(false);
+  });
+});
+
+import { hoyBogota, horaBogota, quincenaAnterior, quincenaDe } from './quincena';
+describe('menú Fase 04', () => {
+  it('el personal marca asistencia; solo el dueño ve equipo y nómina', () => {
+    for (const r of ['vendedor', 'caja', 'bodega', 'conductor', 'empleado'] as const) {
+      expect(canSee(r, '/marcar')).toBe(true);
+      expect(canSee(r, '/desprendibles')).toBe(true);
+      expect(canSee(r, '/nomina')).toBe(false);
+      expect(canSee(r, '/equipo')).toBe(false);
+    }
+    expect(canSee('dueno', '/nomina')).toBe(true);
+    expect(canSee('dueno', '/equipo')).toBe(true);
+    expect(canSee('mostrador', '/marcar')).toBe(false);
+  });
+});
+describe('quincenas', () => {
+  it('primera y segunda quincena', () => {
+    expect(quincenaDe('2026-11-15')).toEqual({ start: '2026-11-01', end: '2026-11-15' });
+    expect(quincenaDe('2026-11-16')).toEqual({ start: '2026-11-16', end: '2026-11-30' });
+    expect(quincenaDe('2026-02-20')).toEqual({ start: '2026-02-16', end: '2026-02-28' });
+    expect(quincenaDe('2028-02-20')).toEqual({ start: '2028-02-16', end: '2028-02-29' });
+  });
+  it('quincena anterior', () => {
+    expect(quincenaAnterior({ start: '2026-11-16', end: '2026-11-30' })).toEqual({ start: '2026-11-01', end: '2026-11-15' });
+    expect(quincenaAnterior({ start: '2026-01-01', end: '2026-01-15' })).toEqual({ start: '2025-12-16', end: '2025-12-31' });
+  });
+  it('fecha y hora de Bogotá', () => {
+    expect(hoyBogota(new Date('2026-11-20T03:00:00Z'))).toBe('2026-11-19');
+    expect(horaBogota('2026-11-19T20:30:00Z')).toBe('15:30');
+    expect(horaBogota(null)).toBe('—');
   });
 });

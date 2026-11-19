@@ -36,7 +36,7 @@ select pg_temp.expect_fail($$select public.assign_delivery((select id from d1), 
 select pg_temp.as_user(1);
 select pg_temp.expect_fail($$select public.assign_delivery((select id from d1), '00000000-0000-0000-0000-000000000003', 1)$$, 'no se asigna a quien no es conductor');
 select pg_temp.expect_fail($$select public.assign_delivery((select id from d1), '00000000-0000-0000-0000-000000000004', 0)$$, 'orden de ruta debe ser positivo');
-select public.assign_delivery((select id from d1), :'u4', 1);
+select pg_temp.expect_fail($$select public.assign_delivery((select id from d1), '00000000-0000-0000-0000-000000000004', 1)$$, 'no se asigna a un conductor sin turno abierto');
 
 -- Conductor sin turno no opera; con foto ajena no inicia turno
 select pg_temp.as_user(4);
@@ -45,6 +45,7 @@ select pg_temp.expect_fail($$select public.report_location(4.65, -74.1)$$, 'GPS 
 select pg_temp.expect_fail($$select public.start_shift('')$$, 'foto de entrada obligatoria');
 select pg_temp.expect_fail($$select public.start_shift('00000000-0000-0000-0000-000000000007/foto.jpg')$$, 'no acepta foto de otra persona');
 select public.start_shift(:'u4' || '/entrada.jpg');
+select pg_temp.as_user(1); select public.assign_delivery((select id from d1), :'u4', 1); select pg_temp.as_user(4);
 select pg_temp.expect_fail(format('select public.start_shift(%L)', :'u4' || '/otra.jpg'), 'no abre dos turnos');
 
 -- GPS: rangos, límite de frecuencia, y solo el dueño lo lee
@@ -101,9 +102,10 @@ select pg_temp.as_admin();
 create temp table d2 as select id from deliveries where order_id=(select order_id from o2);
 grant select on d2 to authenticated;
 select pg_temp.expect((select cod_amount from deliveries where id=(select id from d2)) = 0, 'contado: sin cobro en la entrega');
+select pg_temp.as_user(4); select public.start_shift(:'u4' || '/entrada2.jpg');
 select pg_temp.as_user(1); select public.assign_delivery((select id from d2), :'u4', 2);
 select pg_temp.as_user(3); select public.pick_order((select order_id from o2));
-select pg_temp.as_user(4); select public.start_shift(:'u4' || '/entrada2.jpg');
+select pg_temp.as_user(4);
 select public.mark_loaded((select id from d2)); select public.start_route((select id from d2));
 select pg_temp.expect_fail($$select public.report_novelty((select id from d2), 'porque sí', null)$$, 'motivo de novedad válido');
 select public.report_novelty((select id from d2), 'No estaba', 'Local cerrado');
@@ -129,9 +131,22 @@ select pg_temp.as_user(4);
 insert into storage.objects (bucket_id, name, owner) values ('evidencias', '00000000-0000-0000-0000-000000000004/prueba.jpg', '00000000-0000-0000-0000-000000000004');
 select pg_temp.expect_fail($$insert into storage.objects (bucket_id, name) values ('evidencias', '00000000-0000-0000-0000-000000000007/ajena.jpg')$$, 'conductor NO sube a la carpeta de otro');
 select pg_temp.as_user(2);
-select pg_temp.expect_fail($$insert into storage.objects (bucket_id, name) values ('evidencias', '00000000-0000-0000-0000-000000000002/x.jpg')$$, 'vendedor NO sube evidencias');
+select pg_temp.expect_fail($$insert into storage.objects (bucket_id, name) values ('evidencias', '00000000-0000-0000-0000-000000000004/x.jpg')$$, 'otro rol NO sube a la carpeta del conductor');
 select pg_temp.expect((select count(*) from storage.objects) = 0, 'vendedor NO ve las fotos');
 select pg_temp.as_user(1);
 select pg_temp.expect((select count(*) from storage.objects) = 1, 'dueño ve las fotos de entrega');
 select pg_temp.as_admin();
 \echo 'FASE 03 (fotos): TODAS LAS PRUEBAS PASARON'
+
+-- Retención de GPS: 7 días
+select pg_temp.as_admin();
+insert into driver_locations (shift_id, driver_id, lat, lng, recorded_at)
+  select id, driver_id, 4.6, -74.1, now() - interval '8 days' from driver_shifts limit 1;
+insert into driver_locations (shift_id, driver_id, lat, lng, recorded_at)
+  select id, driver_id, 4.6, -74.1, now() - interval '6 days' from driver_shifts limit 1;
+select pg_temp.expect(public.purge_old_locations() = 1, 'la purga borra solo puntos de más de 7 días');
+select pg_temp.expect((select count(*) from driver_locations where recorded_at < now() - interval '7 days') = 0, 'no quedan puntos de más de 7 días');
+select pg_temp.as_user(1);
+select pg_temp.expect_fail($$select public.purge_old_locations()$$, 'el dueño tampoco puede llamar la purga desde la API');
+select pg_temp.as_admin();
+\echo 'RETENCION GPS: TODAS LAS PRUEBAS PASARON'

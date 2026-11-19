@@ -18,6 +18,8 @@ const NAV: Record<Role, NavItem[]> = {
     { href: '/inventario', label: 'Inventario por lotes', icon: 'boxes' },
     { href: '/clientes', label: 'Clientes', icon: 'users' },
     { href: '/domicilios', label: 'Domicilios', icon: 'truck' },
+    { href: '/equipo', label: 'Equipo', icon: 'user-check' },
+    { href: '/nomina', label: 'Nómina', icon: 'wallet' },
     { href: '/historial', label: 'Historial', icon: 'history' },
   ],
   vendedor: [
@@ -43,9 +45,18 @@ const NAV: Record<Role, NavItem[]> = {
   empleado: [],
 };
 
-export function navFor(role: Role): NavItem[] { return NAV[role]; }
-export function homeFor(role: Role): string { return NAV[role][0]?.href ?? '/sin-acceso'; }
+/** Todo el personal con ficha de empleado marca asistencia, pide permisos y ve sus desprendibles. */
+const SELF: NavItem[] = [
+  { href: '/marcar', label: 'Marcar asistencia', icon: 'alarm-clock' },
+  { href: '/solicitudes', label: 'Mis solicitudes', icon: 'file-text' },
+  { href: '/desprendibles', label: 'Mis pagos', icon: 'wallet' },
+];
+const STAFF: Role[] = ['vendedor', 'caja', 'bodega', 'conductor', 'empleado'];
+const items = (role: Role): NavItem[] => (STAFF.includes(role) ? [...NAV[role], ...SELF] : NAV[role]);
+
+export function navFor(role: Role): NavItem[] { return items(role); }
+export function homeFor(role: Role): string { return items(role)[0]?.href ?? '/sin-acceso'; }
 export function canSee(role: Role, path: string): boolean {
-  return NAV[role].some((i) => path === i.href || path.startsWith(i.href + '/'));
+  return items(role).some((i) => path === i.href || path.startsWith(i.href + '/'));
 }
 export function canSeeCosts(role: Role): boolean { return role === 'dueno'; }
