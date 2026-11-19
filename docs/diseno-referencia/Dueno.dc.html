@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/lucide-static@0.469.0/font/lucide.css">
+<script src="magnus-store.js"></script>
+<style>
+body{margin:0;background:#E6E5E9;font-family:'Public Sans',system-ui,sans-serif;font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased;color:#17151A}
+*{box-sizing:border-box}
+button,input,select,textarea{font:inherit;color:inherit}
+a{color:inherit;text-underline-offset:3px}a:hover{color:#D91E26}
+:focus-visible{outline:3px solid #D91E26;outline-offset:2px}
+[data-theme=light]{--canvas:#E6E5E9;--bg:#F4F4F6;--surface:#FFFFFF;--sunk:#ECECEF;--line:#DCDBE1;--line-2:#ADABB4;--ink:#17151A;--ink-2:#46434C;--ink-3:#5F5C66;--red:#D91E26;--red-press:#A3141A;--red-text:#B3161D;--red-tint:#FDECEC;--on-red:#FFFFFF;--ok:#16653A;--ok-tint:#E4F3E9;--ok-line:#9CCFAF;--warn:#7A4E00;--warn-tint:#FFF2CC;--warn-line:#E6BD5C;--err:#A3141A;--err-tint:#FDEBEC;--err-line:#EFA2A5;--info:#17151A;--info-tint:#ECECEF;--info-line:#ADABB4;--mute:#56535C;--mute-tint:#EDEDF0;--mute-line:#C9C8CE;--ph:#E9E8EC;--shadow:0 1px 2px rgba(23,21,26,.06),0 6px 20px rgba(23,21,26,.07)}
+[data-theme=dark]{--canvas:#0B0A0D;--bg:#121115;--surface:#1B1A1F;--sunk:#25232A;--line:#35333B;--line-2:#5A5761;--ink:#F5F4F7;--ink-2:#CFCCD5;--ink-3:#ADA9B4;--red:#D91E26;--red-press:#B8181F;--red-text:#FF7378;--red-tint:#3A1517;--on-red:#FFFFFF;--ok:#6FD99A;--ok-tint:#12301F;--ok-line:#2D6B47;--warn:#F4C55B;--warn-tint:#352808;--warn-line:#7A5C14;--err:#FF7A7F;--err-tint:#3A1517;--err-line:#7D2A2E;--info:#F5F4F7;--info-tint:#25232A;--info-line:#5A5761;--mute:#B4B1BA;--mute-tint:#26252B;--mute-line:#45434B;--ph:#2A282F;--shadow:0 1px 2px rgba(0,0,0,.4),0 6px 20px rgba(0,0,0,.35)}
+@keyframes mg-pulse{0%,100%{opacity:.5}50%{opacity:1}}
+@keyframes mg-in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+</style>
+</helmet>
+<div data-theme="{{ theme }}" style="min-height:100vh;background:var(--canvas);color:var(--ink);display:flex;flex-direction:column">
+  <header style="position:sticky;top:0;z-index:20;background:#17151A;color:#F5F4F7;display:flex;align-items:center;gap:20px;padding:10px 20px;flex-wrap:wrap;border-bottom:1px solid #2C2A31">
+    <a href="Magnus Sistema.dc.html" style="display:flex;align-items:center;gap:10px;text-decoration:none;color:#F5F4F7"><img src="assets/simbolo-magnus-blanco.png" alt="Magnus" style="height:26px"><span style="font-weight:700;font-size:14px;letter-spacing:.02em;white-space:nowrap">Magnus · Prototipo</span></a>
+    <nav aria-label="Cambiar de rol" style="display:flex;gap:4px;flex-wrap:wrap"><sc-for list="{{ roles }}" as="r" hint-placeholder-count="8"><a href="{{ r.href }}" style="padding:7px 11px;border-radius:6px;font-size:13px;font-weight:600;text-decoration:none;color:{{ r.fg }};background:{{ r.bg }}">{{ r.label }}</a></sc-for></nav>
+    <div style="margin-left:auto;display:flex;gap:8px;align-items:center">
+      <button onClick="{{ toggleTheme }}" style="height:34px;padding:0 12px;border-radius:6px;border:1px solid #45434B;background:transparent;color:#F5F4F7;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap"><i class="{{ themeIcon }}"></i><span style="flex:1;min-width:0">{{ themeLabel }}</span></button>
+      <button onClick="{{ resetData }}" style="height:34px;padding:0 12px;border-radius:6px;border:1px solid #45434B;background:transparent;color:#F5F4F7;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap"><i class="icon-rotate-ccw"></i>Reiniciar datos</button>
+    </div>
+  </header>
+  <div style="display:flex;gap:28px;padding:28px 32px 48px;align-items:flex-start">
+    <aside style="width:240px;flex:none;display:flex;flex-direction:column;gap:18px">
+      <div style="display:flex;flex-direction:column;gap:4px">
+        <span style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)">Rol · Computador y celular</span>
+        <h1 style="margin:0;font-size:24px;font-weight:800">Dueño / administración</h1>
+        <p style="margin:0;font-size:14px;line-height:1.45;color:var(--ink-2)">Ve todo: el día de un vistazo, costos y márgenes, reparto en vivo, usuarios y el historial de quién hizo qué.</p>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <span style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)">Dispositivo</span>
+        <div role="radiogroup" aria-label="Dispositivo" style="display:flex;gap:6px"><sc-for list="{{ devs }}" as="m" hint-placeholder-count="2"><button role="radio" aria-checked="{{ m.on }}" onClick="{{ m.go }}" style="height:36px;padding:0 12px;border-radius:999px;border:1px solid {{ m.bd }};background:{{ m.bg }};color:{{ m.fg }};font-size:13px;font-weight:600;cursor:pointer;display:flex;gap:6px;align-items:center"><i class="{{ m.icon }}"></i><span style="flex:1;min-width:0">{{ m.label }}</span></button></sc-for></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <span style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)">Estado de la pantalla</span>
+        <div role="radiogroup" aria-label="Estado de la pantalla" style="display:flex;flex-wrap:wrap;gap:6px"><sc-for list="{{ modes }}" as="m" hint-placeholder-count="6"><button role="radio" aria-checked="{{ m.on }}" onClick="{{ m.go }}" style="height:34px;padding:0 11px;border-radius:999px;border:1px solid {{ m.bd }};background:{{ m.bg }};color:{{ m.fg }};font-size:13px;font-weight:600;cursor:pointer">{{ m.label }}</button></sc-for></div>
+      </div>
+      <div style="border-top:1px solid var(--line-2);padding-top:14px;display:flex;flex-direction:column;gap:8px">
+        <span style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)">Nota de diseño</span>
+        <p style="margin:0;font-size:14px;line-height:1.55;color:var(--ink-2);text-wrap:pretty">{{ note2 }}</p>
+      </div>
+      <div style="border-top:1px solid var(--line-2);padding-top:14px;display:flex;flex-direction:column;gap:6px;font-size:14px;line-height:1.5;color:var(--ink-2)">
+        <span style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)">Flujos que llegan aquí</span>
+        <span>1 · Pedido facturado → <strong style="color:var(--ink)">cartera</strong> en el panel</span>
+        <span>2 · Entrega con foto → <strong style="color:var(--ink)">mapa y panel</strong></span>
+        <span>3 · Asistencia → <a href="Dueno Equipo.dc.html">nómina</a></span>
+        <span>4 · Lote por vencer → <strong style="color:var(--ink)">detalle del lote</strong></span>
+      </div>
+    </aside>
+
+    <sc-if value="{{ isDesk }}" hint-placeholder-val="{{ true }}">
+    <div style="width:1440px;height:900px;flex:none;border-radius:12px;overflow:hidden;border:1px solid var(--line-2);background:var(--bg);display:flex;box-shadow:0 20px 50px rgba(0,0,0,.18);position:relative">
+      <nav aria-label="Menú de administración" style="width:244px;flex:none;background:var(--surface);border-right:1px solid var(--line);display:flex;flex-direction:column;padding:16px 10px;gap:2px;overflow:auto">
+        <div style="display:flex;align-items:center;gap:10px;padding:4px 10px 14px"><sc-if value="{{ isLight }}" hint-placeholder-val="{{ true }}"><img src="assets/simbolo-magnus.png" alt="Magnus" style="height:30px"></sc-if><sc-if value="{{ isDark }}" hint-placeholder-val="{{ false }}"><img src="assets/simbolo-magnus-blanco.png" alt="Magnus" style="height:30px"></sc-if><div style="display:flex;flex-direction:column"><span style="font-size:16px;font-weight:800">Magnus</span><span style="font-size:12px;color:var(--ink-3)">Company Colombia</span></div></div>
+        <sc-for list="{{ menu }}" as="g" hint-placeholder-count="6">
+          <span style="font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);padding:12px 12px 4px">{{ g.label }}</span>
+          <sc-for list="{{ g.items }}" as="m" hint-placeholder-count="2">
+            <a href="{{ m.href }}" onClick="{{ m.go }}" aria-current="{{ m.cur }}" aria-disabled="{{ m.dis }}" style="min-height:38px;border-radius:8px;background:{{ m.bg }};display:flex;align-items:center;gap:11px;padding:0 12px;font-size:14px;font-weight:{{ m.fw }};text-decoration:none;color:{{ m.fg }};cursor:{{ m.cursor }}" style-hover="background:var(--sunk)"><i class="{{ m.icon }}" style="font-size:17px"></i><span style="flex:1">{{ m.label }}</span><sc-if value="{{ m.tag }}" hint-placeholder-val="{{ false }}"><span style="font-size:11px;font-weight:700;padding:2px 7px;border-radius:999px;border:1px solid var(--mute-line);color:var(--mute);white-space:nowrap">{{ m.tag }}</span></sc-if><sc-if value="{{ m.badge }}" hint-placeholder-val="{{ false }}"><span style="min-width:22px;height:22px;border-radius:11px;background:var(--red);color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;padding:0 6px">{{ m.badge }}</span></sc-if></a>
+          </sc-for>
+        </sc-for>
+      </nav>
+      <div style="flex:1;display:flex;flex-direction:column;min-width:0">
+        <div style="height:64px;flex:none;border-bottom:1px solid var(--line);background:var(--surface);display:flex;align-items:center;gap:16px;padding:0 24px">
+          <span style="font-size:20px;font-weight:800;white-space:nowrap">{{ scrTitle }}</span>
+          <span style="font-size:14px;color:var(--ink-3);white-space:nowrap">{{ scrSub }}</span>
+          <span style="margin-left:auto;font-size:14px;color:var(--ink-2);white-space:nowrap">Martes 17/11/2026 · 10:40</span>
+          <div style="width:36px;height:36px;border-radius:50%;background:var(--ink);color:var(--bg);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px">AD</div>
+        </div>
+        <div style="flex:1;overflow:auto;position:relative">
+          <sc-if value="{{ alt.on }}" hint-placeholder-val="{{ false }}">
+            <sc-if value="{{ alt.loading }}" hint-placeholder-val="{{ false }}"><div aria-busy="true" style="padding:24px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px"><sc-for list="{{ skel }}" as="k" hint-placeholder-count="8"><div style="height:110px;border-radius:10px;background:var(--sunk);animation:mg-pulse 1.2s infinite"></div></sc-for><span style="font-size:14px;color:var(--ink-3)">Cargando {{ alt.noun }}…</span></div></sc-if>
+            <sc-if value="{{ alt.msg }}" hint-placeholder-val="{{ false }}"><div style="min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:14px;padding:60px"><div style="width:76px;height:76px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:34px;background:{{ alt.bg }};color:{{ alt.fg }};border:1px solid {{ alt.bd }}"><i class="{{ alt.icon }}"></i></div><h2 style="margin:0;font-size:22px;font-weight:800">{{ alt.title }}</h2><p style="margin:0;font-size:15px;line-height:1.5;color:var(--ink-2);max-width:480px">{{ alt.body }}</p><button onClick="{{ alt.act }}" style="height:44px;padding:0 20px;border-radius:8px;border:1px solid var(--ink);background:var(--ink);color:var(--bg);font-size:15px;font-weight:700;cursor:pointer">{{ alt.cta }}</button></div></sc-if>
+          </sc-if>
+
+          <sc-if value="{{ show.panel }}" hint-placeholder-val="{{ true }}">
+            <div style="padding:20px 24px;display:flex;flex-direction:column;gap:16px">
+              <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px">
+                <sc-for list="{{ kpis }}" as="k" hint-placeholder-count="4"><button onClick="{{ k.go }}" style="text-align:left;background:var(--surface);border:1px solid {{ k.bd }};border-radius:10px;padding:14px 16px;display:flex;flex-direction:column;gap:4px;cursor:pointer" style-hover="border-color:var(--ink)"><span style="font-size:13px;color:var(--ink-3);font-weight:700;display:flex;gap:6px;align-items:center"><i class="{{ k.icon }}"></i>{{ k.l }}</span><span style="font-size:26px;font-weight:800">{{ k.v }}</span><span style="font-size:13px;color:var(--ink-2)">{{ k.sub }}</span></button></sc-for>
+              </div>
+              <div style="display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:16px">
+                <section style="background:var(--surface);border:1px solid var(--line);border-radius:10px;display:flex;flex-direction:column">
+                  <div style="display:flex;align-items:center;gap:8px;padding:12px 16px;border-bottom:1px solid var(--line)"><i class="icon-bell"></i><span style="font-size:15px;font-weight:800;flex:1">Stock crítico y lotes por vencer</span><button onClick="{{ goInv }}" style="height:32px;padding:0 10px;border-radius:6px;border:1px solid var(--line-2);background:transparent;font-size:13px;font-weight:700;cursor:pointer">Ver inventario</button></div>
+                  <sc-for list="{{ alertRows }}" as="a" hint-placeholder-count="5"><button onClick="{{ a.go }}" style="display:grid;grid-template-columns:150px minmax(0,1fr) auto;gap:12px;align-items:center;padding:10px 16px;border:none;border-bottom:1px solid var(--line);background:transparent;text-align:left;cursor:pointer;font-size:14px" style-hover="background:var(--sunk)"><span style="display:inline-flex;align-items:center;gap:5px;height:26px;padding:0 9px;border-radius:999px;border:1px solid {{ a.chip.bd }};background:{{ a.chip.bg }};color:{{ a.chip.fg }};font-size:12.5px;font-weight:700;white-space:nowrap;justify-self:start"><i class="{{ a.chip.icon }}"></i>{{ a.chip.label }}</span><span style="display:flex;flex-direction:column;gap:2px;min-width:0"><strong style="font-weight:700">{{ a.name }}</strong><span style="color:var(--ink-2);font-size:13px">{{ a.text }}</span></span><span style="font-weight:800;white-space:nowrap">{{ a.risk }}</span></button></sc-for>
+                </section>
+                <section style="background:var(--surface);border:1px solid var(--line);border-radius:10px;display:flex;flex-direction:column">
+                  <div style="display:flex;align-items:center;gap:8px;padding:12px 16px;border-bottom:1px solid var(--line)"><i class="icon-truck"></i><span style="font-size:15px;font-weight:800;flex:1">Entregas de hoy</span><button onClick="{{ goMapa }}" style="height:32px;padding:0 10px;border-radius:6px;border:1px solid var(--line-2);background:transparent;font-size:13px;font-weight:700;cursor:pointer">Ver mapa</button></div>
+                  <sc-for list="{{ delivRows }}" as="d" hint-placeholder-count="5"><div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;padding:10px 16px;border-bottom:1px solid var(--line);font-size:14px"><span style="display:flex;flex-direction:column;gap:2px;min-width:0"><strong style="font-weight:700">{{ d.client }}</strong><span style="color:var(--ink-2);font-size:13px">{{ d.id }} · {{ d.driver }} · {{ d.extra }}</span></span><span style="display:inline-flex;align-items:center;gap:5px;height:26px;padding:0 9px;border-radius:999px;border:1px solid {{ d.chip.bd }};background:{{ d.chip.bg }};color:{{ d.chip.fg }};font-size:12.5px;font-weight:700;white-space:nowrap"><i class="{{ d.chip.icon }}"></i>{{ d.chip.label }}</span></div></sc-for>
+                </section>
+              </div>
+              <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px">
+                <section style="background:var(--surface);border:1px solid var(--line);border-radius:10px">
+                  <div style="display:flex;align-items:center;gap:8px;padding:12px 16px;border-bottom:1px solid var(--line)"><i class="icon-wallet"></i><span style="font-size:15px;font-weight:800;flex:1">Cartera y facturas por vencer</span><a href="Caja.dc.html" style="font-size:13px;font-weight:700">Abrir cartera</a></div>
+                  <sc-for list="{{ carteraRows }}" as="r" hint-placeholder-count="4"><div style="display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:12px;align-items:center;padding:9px 16px;border-bottom:1px solid var(--line);font-size:14px"><span><strong style="font-weight:700">{{ r.client }}</strong> <span style="color:var(--ink-2)">· {{ r.num }}</span></span><span style="display:inline-flex;align-items:center;gap:5px;height:26px;padding:0 9px;border-radius:999px;border:1px solid {{ r.chip.bd }};background:{{ r.chip.bg }};color:{{ r.chip.fg }};font-size:12.5px;font-weight:700;white-space:nowrap"><i class="{{ r.chip.icon }}"></i>{{ r.chip.label }}</span><span style="font-weight:800;min-width:110px;text-align:right">{{ r.bal }}</span></div></sc-for>
+                </section>
+                <section style="background:var(--surface);border:1px solid var(--line);border-radius:10px">
+                  <div style="display:flex;align-items:center;gap:8px;padding:12px 16px;border-bottom:1px solid var(--line)"><i class="icon-history"></i><span style="font-size:15px;font-weight:800;flex:1">Quién hizo qué · últimos movimientos</span><button onClick="{{ goLog }}" style="height:32px;padding:0 10px;border-radius:6px;border:1px solid var(--line-2);background:transparent;font-size:13px;font-weight:700;cursor:pointer">Historial</button></div>
+                  <sc-for list="{{ logRows }}" as="l" hint-placeholder-count="5"><div style="display:grid;grid-template-columns:48px minmax(0,1fr);gap:10px;padding:9px 16px;border-bottom:1px solid var(--line);font-size:13.5px"><span style="color:var(--ink-3)">{{ l.time }}</span><span><strong style="font-weight:700">{{ l.who }}</strong> · {{ l.what }}</span></div></sc-for>
+                </section>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ show.lote }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:20px 24px;display:flex;flex-direction:column;gap:16px">
+              <button onClick="{{ goPanel }}" style="align-self:flex-start;height:36px;padding:0 12px;border-radius:8px;border:1px solid var(--line-2);background:transparent;font-size:13.5px;font-weight:700;cursor:pointer;display:flex;gap:6px;align-items:center"><i class="icon-arrow-left"></i>Volver al panel</button>
+              <div style="display:flex;gap:16px;align-items:flex-start">
+                <div style="width:120px;height:120px;flex:none;border-radius:10px;background:repeating-linear-gradient(135deg,var(--ph) 0 10px,var(--sunk) 10px 20px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:var(--ink-3)"><i class="icon-image" style="font-size:22px"></i><span style="font-size:11px;font-weight:600">Foto por definir</span></div>
+                <div style="display:flex;flex-direction:column;gap:6px;flex:1"><span style="font-size:26px;font-weight:800">{{ lt.name }}</span><span style="font-size:15px;color:var(--ink-2)">{{ lt.code }} · {{ lt.brand }} · {{ lt.cat }}</span><span style="display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 11px;border-radius:999px;border:1px solid {{ lt.chip.bd }};background:{{ lt.chip.bg }};color:{{ lt.chip.fg }};font-size:14px;font-weight:700;align-self:flex-start"><i class="{{ lt.chip.icon }}"></i>{{ lt.chip.label }}</span></div>
+              </div>
+              <div style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px"><sc-for list="{{ lt.facts }}" as="f" hint-placeholder-count="5"><div style="background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:4px"><span style="font-size:13px;color:var(--ink-3);font-weight:700">{{ f.l }}</span><span style="font-size:22px;font-weight:800">{{ f.v }}</span><span style="font-size:12.5px;color:var(--ink-2)">{{ f.s }}</span></div></sc-for></div>
+              <div style="display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:16px">
+                <section style="background:var(--surface);border:1px solid var(--line);border-radius:10px">
+                  <div style="padding:12px 16px;border-bottom:1px solid var(--line);font-size:15px;font-weight:800">Lotes del producto · orden de salida (primero vence, primero sale)</div>
+                  <table style="width:100%;border-collapse:collapse;font-size:14px"><thead><tr style="background:var(--sunk);text-align:left"><th style="padding:9px 16px">Sale</th><th style="padding:9px 12px">Lote</th><th style="padding:9px 12px">Vence</th><th style="padding:9px 12px">Bodega</th><th style="padding:9px 12px;text-align:right">Unidades</th></tr></thead><tbody><sc-for list="{{ lt.lots }}" as="r" hint-placeholder-count="3"><tr style="border-top:1px solid var(--line);background:{{ r.bg }}"><td style="padding:9px 16px;font-weight:800">{{ r.n }}</td><td style="padding:9px 12px;font-weight:700">{{ r.lot }}</td><td style="padding:9px 12px">{{ r.exp }}</td><td style="padding:9px 12px">{{ r.bod }}</td><td style="padding:9px 12px;text-align:right">{{ r.qty }}</td></tr></sc-for></tbody></table>
+                </section>
+                <section style="background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px;display:flex;flex-direction:column;gap:10px">
+                  <span style="font-size:15px;font-weight:800">¿Qué hacer?</span>
+                  <span style="font-size:14px;line-height:1.5;color:var(--ink-2)">{{ lt.advice }}</span>
+                  <button onClick="{{ lt.notify }}" style="height:44px;border-radius:8px;border:none;background:var(--red);color:var(--on-red);font-size:14.5px;font-weight:800;cursor:pointer;display:flex;gap:8px;align-items:center;justify-content:center"><i class="icon-megaphone"></i>Avisar a vendedores para priorizarlo</button>
+                  <button onClick="{{ goConfig }}" style="height:44px;border-radius:8px;border:1px solid var(--ink);background:transparent;font-size:14.5px;font-weight:700;cursor:pointer;display:flex;gap:8px;align-items:center;justify-content:center"><i class="icon-percent"></i>Definir precio especial del lote</button>
+                  <span style="font-size:12.5px;color:var(--ink-3)">Bodega ya lo despacha primero: el FEFO está activo en el alistamiento.</span>
+                </section>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ show.domicilios }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:20px 24px;display:flex;flex-direction:column;gap:14px">
+              <div style="display:flex;gap:6px;flex-wrap:wrap"><sc-for list="{{ dStates }}" as="f" hint-placeholder-count="6"><span style="display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;border-radius:999px;border:1px solid {{ f.chip.bd }};background:{{ f.chip.bg }};color:{{ f.chip.fg }};font-size:13px;font-weight:700"><i class="{{ f.chip.icon }}"></i>{{ f.chip.label }} · {{ f.n }}</span></sc-for></div>
+              <table style="width:100%;border-collapse:collapse;background:var(--surface);border:1px solid var(--line);font-size:13.5px">
+                <thead><tr style="background:var(--sunk);text-align:left"><th style="padding:10px 12px">Pedido</th><th style="padding:10px 12px">Cliente y dirección</th><th style="padding:10px 12px">Ventana</th><th style="padding:10px 12px">Conductor</th><th style="padding:10px 12px">Orden</th><th style="padding:10px 12px">Estado</th><th style="padding:10px 12px">Llegada</th><th style="padding:10px 12px">Seguimiento</th></tr></thead>
+                <tbody><sc-for list="{{ dRows }}" as="d" hint-placeholder-count="6"><tr style="border-top:1px solid var(--line);background:{{ d.bg }}">
+                  <td style="padding:8px 12px;font-weight:700">{{ d.id }}</td>
+                  <td style="padding:8px 12px"><div style="font-weight:600">{{ d.client }}</div><div style="color:var(--ink-2);font-size:12.5px">{{ d.addr }}</div></td>
+                  <td style="padding:8px 12px;white-space:nowrap">{{ d.window }}</td>
+                  <td style="padding:8px 12px"><select value="{{ d.driver }}" onChange="{{ d.assign }}" aria-label="Asignar conductor" style="height:36px;border-radius:6px;border:1px solid {{ d.selBd }};background:var(--surface);padding:0 8px;font-size:13.5px"><option value="">Sin asignar</option><sc-for list="{{ drivers }}" as="o" hint-placeholder-count="3"><option value="{{ o.v }}" disabled="{{ o.dis }}">{{ o.l }}</option></sc-for></select></td>
+                  <td style="padding:8px 12px"><div style="display:flex;gap:4px;align-items:center"><span style="min-width:22px;font-weight:800">{{ d.seq }}</span><button onClick="{{ d.up }}" aria-label="Subir en la ruta" style="width:30px;height:30px;border-radius:6px;border:1px solid var(--line-2);background:transparent;cursor:pointer"><i class="icon-chevron-up"></i></button><button onClick="{{ d.down }}" aria-label="Bajar en la ruta" style="width:30px;height:30px;border-radius:6px;border:1px solid var(--line-2);background:transparent;cursor:pointer"><i class="icon-chevron-down"></i></button></div></td>
+                  <td style="padding:8px 12px"><span style="display:inline-flex;align-items:center;gap:5px;height:26px;padding:0 9px;border-radius:999px;border:1px solid {{ d.chip.bd }};background:{{ d.chip.bg }};color:{{ d.chip.fg }};font-size:12.5px;font-weight:700;white-space:nowrap"><i class="{{ d.chip.icon }}"></i>{{ d.chip.label }}</span><sc-if value="{{ d.note }}" hint-placeholder-val="{{ false }}"><div style="font-size:12px;color:var(--ink-2);margin-top:3px">{{ d.note }}</div></sc-if></td>
+                  <td style="padding:8px 12px">{{ d.eta }}</td>
+                  <td style="padding:8px 12px"><button onClick="{{ d.copy }}" style="height:32px;padding:0 10px;border-radius:6px;border:1px solid var(--line-2);background:transparent;font-size:12.5px;font-weight:700;cursor:pointer;display:flex;gap:5px;align-items:center;white-space:nowrap"><i class="icon-link"></i>Copiar enlace</button></td>
+                </tr></sc-for></tbody>
+              </table>
+              <p style="margin:0;font-size:13px;color:var(--ink-3)">El enlace de seguimiento muestra al cliente solo el estado y la hora estimada; nunca la ubicación exacta del conductor. El envío por WhatsApp requiere número verificado (por definir).</p>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ show.mapa }}" hint-placeholder-val="{{ false }}">
+            <div style="display:grid;grid-template-columns:minmax(0,1fr) 400px;height:100%">
+              <div style="position:relative;background:var(--sunk);background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:56px 56px;overflow:hidden">
+                <div style="position:absolute;left:16px;top:16px;display:flex;gap:8px;align-items:center;background:var(--surface);border:1px solid var(--line-2);border-radius:8px;padding:8px 12px;font-size:13px;font-weight:600;z-index:2"><i class="icon-radio"></i>Ubicación en vivo solo de conductores en turno · el conductor ve un aviso fijo</div>
+                <div style="position:absolute;right:16px;bottom:16px;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:6px 10px;font-size:12px;color:var(--ink-3);z-index:2">Mapa base: proveedor por definir · posiciones de ejemplo</div>
+                <sc-for list="{{ pins }}" as="p" hint-placeholder-count="6"><div style="position:absolute;left:{{ p.x }};top:{{ p.y }};transform:translate(-50%,-100%);display:flex;flex-direction:column;align-items:center;gap:2px"><span style="background:var(--surface);border:1px solid var(--line-2);border-radius:6px;padding:2px 7px;font-size:11.5px;font-weight:700;white-space:nowrap">{{ p.label }}</span><span style="width:30px;height:30px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:{{ p.bg }};border:2px solid {{ p.bd }};display:flex;align-items:center;justify-content:center"><span style="transform:rotate(45deg);font-size:12px;font-weight:800;color:{{ p.fg }}">{{ p.n }}</span></span></div></sc-for>
+                <sc-for list="{{ trucks }}" as="t" hint-placeholder-count="2"><div style="position:absolute;left:{{ t.x }};top:{{ t.y }};transform:translate(-50%,-50%);display:flex;align-items:center;gap:6px;background:var(--ink);color:var(--bg);border-radius:999px;padding:6px 12px 6px 8px;font-size:12.5px;font-weight:800;box-shadow:var(--shadow);white-space:nowrap;z-index:1"><i class="icon-truck" style="font-size:16px"></i>{{ t.label }}</div></sc-for>
+              </div>
+              <div style="border-left:1px solid var(--line);background:var(--surface);overflow:auto;display:flex;flex-direction:column">
+                <sc-for list="{{ drvCards }}" as="c" hint-placeholder-count="3">
+                  <div style="padding:16px;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:8px">
+                    <div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><span style="font-size:16px;font-weight:800">{{ c.name }}</span><span style="display:inline-flex;align-items:center;gap:5px;height:26px;padding:0 9px;border-radius:999px;border:1px solid {{ c.chip.bd }};background:{{ c.chip.bg }};color:{{ c.chip.fg }};font-size:12.5px;font-weight:700;white-space:nowrap"><i class="{{ c.chip.icon }}"></i>{{ c.chip.label }}</span></div>
+                    <span style="font-size:13.5px;color:var(--ink-2)">{{ c.status }}</span>
+                    <sc-for list="{{ c.trail }}" as="t" hint-placeholder-count="2"><div style="display:grid;grid-template-columns:48px 16px minmax(0,1fr);gap:8px;align-items:start;font-size:13px"><span style="color:var(--ink-3)">{{ t.time }}</span><i class="{{ t.icon }}" style="margin-top:2px"></i><span>{{ t.text }}</span></div></sc-for>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+          <sc-if value="{{ show.inventario }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:20px 24px;display:flex;flex-direction:column;gap:14px">
+              <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap"><sc-for list="{{ invF }}" as="f" hint-placeholder-count="5"><button onClick="{{ f.go }}" aria-pressed="{{ f.on }}" style="height:36px;padding:0 14px;border-radius:999px;border:1px solid {{ f.bd }};background:{{ f.bg }};color:{{ f.fg }};font-size:13.5px;font-weight:600;cursor:pointer;display:flex;gap:6px;align-items:center"><i class="{{ f.icon }}"></i>{{ f.label }} · {{ f.n }}</button></sc-for><span style="margin-left:auto;font-size:13px;color:var(--ink-3)">Bodegas: Principal y Norte · orden FEFO</span></div>
+              <table style="width:100%;border-collapse:collapse;background:var(--surface);border:1px solid var(--line);font-size:13.5px">
+                <thead><tr style="background:var(--sunk);text-align:left"><th style="padding:9px 12px">Código</th><th style="padding:9px 12px">Producto</th><th style="padding:9px 12px">Lote que sale primero</th><th style="padding:9px 12px">Vence</th><th style="padding:9px 12px;text-align:right">Stock (und)</th><th style="padding:9px 12px;text-align:right">Mínimo</th><th style="padding:9px 12px">Por presentación</th><th style="padding:9px 12px">Estado</th></tr></thead>
+                <tbody><sc-for list="{{ invRows }}" as="r" hint-placeholder-count="10"><tr onClick="{{ r.go }}" style="border-top:1px solid var(--line);cursor:pointer" style-hover="background:var(--sunk)"><td style="padding:8px 12px;color:var(--ink-2)">{{ r.code }}</td><td style="padding:8px 12px;font-weight:700">{{ r.name }}</td><td style="padding:8px 12px">{{ r.lot }}</td><td style="padding:8px 12px">{{ r.exp }}</td><td style="padding:8px 12px;text-align:right;font-weight:700">{{ r.stock }}</td><td style="padding:8px 12px;text-align:right;color:var(--ink-2)">{{ r.min }}</td><td style="padding:8px 12px;color:var(--ink-2);font-size:12.5px">{{ r.pres }}</td><td style="padding:8px 12px"><span style="display:inline-flex;align-items:center;gap:5px;height:24px;padding:0 8px;border-radius:999px;border:1px solid {{ r.chip.bd }};background:{{ r.chip.bg }};color:{{ r.chip.fg }};font-size:12px;font-weight:700;white-space:nowrap"><i class="{{ r.chip.icon }}"></i>{{ r.chip.label }}</span></td></tr></sc-for></tbody>
+              </table>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ show.catalogo }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:20px 24px;display:flex;flex-direction:column;gap:12px">
+              <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+                <label style="display:flex;align-items:center;gap:8px;height:40px;border:1px solid var(--line-2);border-radius:8px;padding:0 12px;background:var(--surface);width:340px"><i class="icon-search" style="color:var(--ink-3)"></i><span style="position:absolute;left:-9999px">Buscar en catálogo</span><input value="{{ cq }}" onInput="{{ setCq }}" placeholder="Nombre, código, marca o código de barras" style="border:none;outline:none;background:transparent;flex:1;font-size:14px;height:100%"></label>
+                <select value="{{ catSel }}" onChange="{{ setCat }}" aria-label="Categoría" style="height:40px;border-radius:8px;border:1px solid var(--line-2);background:var(--surface);padding:0 10px;font-size:14px"><sc-for list="{{ catOpts }}" as="o" hint-placeholder-count="8"><option value="{{ o }}">{{ o }}</option></sc-for></select>
+                <span style="font-size:13px;color:var(--ink-3)">{{ catCount }}</span>
+                <button onClick="{{ openImport }}" style="margin-left:auto;height:40px;padding:0 14px;border-radius:8px;border:1px solid var(--ink);background:transparent;font-size:14px;font-weight:700;cursor:pointer;display:flex;gap:8px;align-items:center"><i class="icon-file-up"></i>Carga masiva desde Excel</button>
+                <button onClick="{{ newProd }}" style="height:40px;padding:0 14px;border-radius:8px;border:none;background:var(--red);color:var(--on-red);font-size:14px;font-weight:800;cursor:pointer;display:flex;gap:8px;align-items:center"><i class="icon-plus"></i>Nuevo producto</button>
+              </div>
+              <table style="width:100%;border-collapse:collapse;background:var(--surface);border:1px solid var(--line);font-size:13px">
+                <thead><tr style="background:var(--sunk);text-align:left"><th style="padding:8px 10px">Foto</th><th style="padding:8px 10px">Código · barras</th><th style="padding:8px 10px">Producto</th><th style="padding:8px 10px">Categoría · marca</th><th style="padding:8px 10px">Presentaciones</th><th style="padding:8px 10px;text-align:right">Mayorista (und)</th><th style="padding:8px 10px;text-align:right">Distribuidor (und)</th><th style="padding:8px 10px;text-align:right">Costo</th><th style="padding:8px 10px;text-align:right">Margen</th><th style="padding:8px 10px">Activo</th></tr></thead>
+                <tbody><sc-for list="{{ catRows }}" as="r" hint-placeholder-count="12"><tr style="border-top:1px solid var(--line);opacity:{{ r.op }}"><td style="padding:5px 10px"><div title="Foto por definir" style="width:34px;height:34px;border-radius:6px;background:repeating-linear-gradient(135deg,var(--ph) 0 5px,var(--sunk) 5px 10px);display:flex;align-items:center;justify-content:center;color:var(--ink-3)"><i class="icon-image" style="font-size:13px"></i></div></td><td style="padding:5px 10px"><div style="font-weight:700">{{ r.code }}</div><div style="color:var(--ink-3);font-size:12px">{{ r.ean }}</div></td><td style="padding:5px 10px;font-weight:600">{{ r.name }}</td><td style="padding:5px 10px;color:var(--ink-2)">{{ r.cat }} · {{ r.brand }}</td><td style="padding:5px 10px;color:var(--ink-2);font-size:12px">{{ r.pres }}</td><td style="padding:5px 10px;text-align:right">{{ r.p1 }}</td><td style="padding:5px 10px;text-align:right">{{ r.p2 }}</td><td style="padding:5px 10px;text-align:right;color:var(--ink-2)">{{ r.cost }}</td><td style="padding:5px 10px;text-align:right;font-weight:700">{{ r.margin }}</td><td style="padding:5px 10px"><button role="switch" aria-checked="{{ r.on }}" aria-label="{{ r.toggleLabel }}" onClick="{{ r.toggle }}" style="display:flex;align-items:center;gap:6px;height:30px;padding:0 10px;border-radius:999px;border:1px solid {{ r.chip.bd }};background:{{ r.chip.bg }};color:{{ r.chip.fg }};font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap"><i class="{{ r.chip.icon }}"></i><span style="flex:1;min-width:0">{{ r.chip.label }}</span></button></td></tr></sc-for></tbody>
+              </table>
+              <span style="font-size:12.5px;color:var(--ink-3)">Inactivar oculta el producto de la venta sin borrar su historial. Costos y márgenes solo son visibles para administración.</span>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ show.clientes }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:20px 24px;display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:16px;align-items:start">
+              <table style="width:100%;border-collapse:collapse;background:var(--surface);border:1px solid var(--line);font-size:13.5px">
+                <thead><tr style="background:var(--sunk);text-align:left"><th style="padding:9px 12px">Cliente</th><th style="padding:9px 12px">NIT</th><th style="padding:9px 12px">Lista</th><th style="padding:9px 12px">Vendedor</th><th style="padding:9px 12px">Último pedido</th><th style="padding:9px 12px;text-align:right">Compras 90 días</th><th style="padding:9px 12px;text-align:right">Margen</th><th style="padding:9px 12px;text-align:right">Saldo</th></tr></thead>
+                <tbody><sc-for list="{{ cliRows }}" as="r" hint-placeholder-count="8"><tr style="border-top:1px solid var(--line)"><td style="padding:9px 12px;font-weight:700">{{ r.name }}</td><td style="padding:9px 12px;color:var(--ink-2)">{{ r.nit }}</td><td style="padding:9px 12px">{{ r.list }}</td><td style="padding:9px 12px">{{ r.seller }}</td><td style="padding:9px 12px"><span style="display:inline-flex;align-items:center;gap:5px;height:24px;padding:0 8px;border-radius:999px;border:1px solid {{ r.chip.bd }};background:{{ r.chip.bg }};color:{{ r.chip.fg }};font-size:12px;font-weight:700;white-space:nowrap"><i class="{{ r.chip.icon }}"></i>{{ r.chip.label }}</span></td><td style="padding:9px 12px;text-align:right">{{ r.buy }}</td><td style="padding:9px 12px;text-align:right">{{ r.margin }}</td><td style="padding:9px 12px;text-align:right;font-weight:700">{{ r.bal }}</td></tr></sc-for></tbody>
+              </table>
+              <section style="background:var(--surface);border:1px solid var(--warn-line);border-radius:10px">
+                <div style="padding:12px 16px;border-bottom:1px solid var(--line);font-size:15px;font-weight:800;display:flex;gap:8px;align-items:center"><i class="icon-user-round-x" style="color:var(--warn)"></i>Dejaron de comprar</div>
+                <sc-for list="{{ lost }}" as="c" hint-placeholder-count="3"><div style="padding:12px 16px;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:4px;font-size:13.5px"><div style="display:flex;justify-content:space-between"><strong>{{ c.name }}</strong><span style="color:var(--warn);font-weight:700">{{ c.days }} días</span></div><span style="color:var(--ink-2)">Solía llevar: {{ c.usual }}</span><span style="color:var(--ink-2)">Vendedor: {{ c.seller }}</span></div></sc-for>
+              </section>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ show.reportes }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:20px 24px;display:flex;flex-direction:column;gap:14px">
+              <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center"><sc-for list="{{ repTabs }}" as="t" hint-placeholder-count="7"><button onClick="{{ t.go }}" aria-pressed="{{ t.on }}" style="height:36px;padding:0 14px;border-radius:999px;border:1px solid {{ t.bd }};background:{{ t.bg }};color:{{ t.fg }};font-size:13.5px;font-weight:600;cursor:pointer">{{ t.label }}</button></sc-for>
+                <div style="margin-left:auto;display:flex;gap:6px"><sc-for list="{{ cmpOpts }}" as="t" hint-placeholder-count="2"><button onClick="{{ t.go }}" aria-pressed="{{ t.on }}" style="height:36px;padding:0 12px;border-radius:8px;border:{{ t.bw }} solid {{ t.bd }};background:var(--surface);font-size:13px;font-weight:700;cursor:pointer">{{ t.label }}</button></sc-for><button onClick="{{ exportRep }}" style="height:36px;padding:0 12px;border-radius:8px;border:1px solid var(--ink);background:transparent;font-size:13px;font-weight:700;cursor:pointer;display:flex;gap:6px;align-items:center"><i class="icon-download"></i>Exportar</button></div>
+              </div>
+              <p style="margin:0;font-size:14px;color:var(--ink-2)">{{ rep.desc }}</p>
+              <table style="width:100%;border-collapse:collapse;background:var(--surface);border:1px solid var(--line);font-size:13.5px">
+                <thead><tr style="background:var(--sunk);text-align:left"><th style="padding:9px 12px;width:30%">{{ rep.c1 }}</th><th style="padding:9px 12px;width:34%">{{ rep.c2 }}</th><th style="padding:9px 12px;text-align:right">{{ rep.c3 }}</th><th style="padding:9px 12px;text-align:right">{{ rep.c4 }}</th><th style="padding:9px 12px">{{ rep.c5 }}</th></tr></thead>
+                <tbody><sc-for list="{{ rep.rows }}" as="r" hint-placeholder-count="8"><tr style="border-top:1px solid var(--line)"><td style="padding:9px 12px;font-weight:700">{{ r.a }}</td><td style="padding:9px 12px"><div style="display:flex;align-items:center;gap:8px"><div style="flex:1;height:10px;background:var(--sunk);border-radius:5px;overflow:hidden"><div style="height:100%;width:{{ r.w }};background:{{ r.barBg }};border-radius:5px"></div></div><sc-if value="{{ r.w2 }}" hint-placeholder-val="{{ false }}"><div style="width:60px;height:6px;background:var(--sunk);border-radius:3px;overflow:hidden"><div style="height:100%;width:{{ r.w2 }};background:var(--line-2)"></div></div></sc-if></div></td><td style="padding:9px 12px;text-align:right;font-weight:700">{{ r.b }}</td><td style="padding:9px 12px;text-align:right;color:var(--ink-2)">{{ r.c }}</td><td style="padding:9px 12px"><sc-if value="{{ r.chip }}" hint-placeholder-val="{{ false }}"><span style="display:inline-flex;align-items:center;gap:5px;height:24px;padding:0 8px;border-radius:999px;border:1px solid {{ r.chip.bd }};background:{{ r.chip.bg }};color:{{ r.chip.fg }};font-size:12px;font-weight:700;white-space:nowrap"><i class="{{ r.chip.icon }}"></i>{{ r.chip.label }}</span></sc-if></td></tr></sc-for></tbody>
+              </table>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ show.historial }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:20px 24px;display:flex;flex-direction:column;gap:12px">
+              <div style="display:flex;gap:10px;align-items:center"><select value="{{ logRole }}" onChange="{{ setLogRole }}" aria-label="Filtrar por rol" style="height:40px;border-radius:8px;border:1px solid var(--line-2);background:var(--surface);padding:0 10px;font-size:14px"><sc-for list="{{ logRoles }}" as="o" hint-placeholder-count="6"><option value="{{ o }}">{{ o }}</option></sc-for></select><span style="font-size:13px;color:var(--ink-3)">Registro inalterable: nadie puede editar ni borrar entradas.</span></div>
+              <table style="width:100%;border-collapse:collapse;background:var(--surface);border:1px solid var(--line);font-size:13.5px"><thead><tr style="background:var(--sunk);text-align:left"><th style="padding:9px 12px;width:150px">Fecha y hora</th><th style="padding:9px 12px;width:180px">Quién</th><th style="padding:9px 12px;width:110px">Rol</th><th style="padding:9px 12px">Qué hizo</th></tr></thead><tbody><sc-for list="{{ logAll }}" as="l" hint-placeholder-count="10"><tr style="border-top:1px solid var(--line)"><td style="padding:8px 12px;color:var(--ink-2)">{{ l.when }}</td><td style="padding:8px 12px;font-weight:700">{{ l.who }}</td><td style="padding:8px 12px">{{ l.role }}</td><td style="padding:8px 12px">{{ l.what }}</td></tr></sc-for></tbody></table>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ show.usuarios }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:20px 24px;display:flex;flex-direction:column;gap:12px">
+              <span style="font-size:14px;color:var(--ink-2)">Cada rol entra solo a lo que le corresponde. Los cambios de permisos quedan en el historial.</span>
+              <table style="width:100%;border-collapse:collapse;background:var(--surface);border:1px solid var(--line);font-size:13.5px"><thead><tr style="background:var(--sunk);text-align:left"><th style="padding:9px 12px">Permiso</th><sc-for list="{{ permCols }}" as="c" hint-placeholder-count="7"><th style="padding:9px 8px;text-align:center">{{ c }}</th></sc-for></tr></thead><tbody><sc-for list="{{ perms }}" as="p" hint-placeholder-count="10"><tr style="border-top:1px solid var(--line)"><td style="padding:8px 12px;font-weight:600">{{ p.label }}</td><sc-for list="{{ p.cells }}" as="c" hint-placeholder-count="7"><td style="padding:6px 8px;text-align:center"><button onClick="{{ c.toggle }}" role="switch" aria-checked="{{ c.on }}" aria-label="{{ c.aria }}" disabled="{{ c.locked }}" style="width:34px;height:34px;border-radius:8px;border:1px solid {{ c.bd }};background:{{ c.bg }};color:{{ c.fg }};cursor:pointer;font-size:16px"><i class="{{ c.icon }}"></i></button></td></sc-for></tr></sc-for></tbody></table>
+              <span style="font-size:12.5px;color:var(--ink-3);display:flex;gap:6px;align-items:center"><i class="icon-lock"></i>Bloqueado por regla: vendedores, bodega y conductores nunca ven costos ni márgenes.</span>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ show.config }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:20px 24px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;align-items:start">
+              <section style="background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px;display:flex;flex-direction:column;gap:10px"><span style="font-size:16px;font-weight:800">Listas de precios</span><sc-for list="{{ lists }}" as="l" hint-placeholder-count="2"><div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);font-size:14px"><span><strong>{{ l.name }}</strong> · {{ l.rule }}</span><span style="color:var(--ink-2)">{{ l.n }} clientes</span></div></sc-for></section>
+              <section style="background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px;display:flex;flex-direction:column;gap:10px"><span style="font-size:16px;font-weight:800">Descuento por volumen</span><span style="font-size:13.5px;color:var(--ink-2)">Solo administración lo modifica. Vendedores y caja lo ven bloqueado.</span><div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--line);font-size:14px"><span>Desde $ 1.000.000</span><strong>3 %</strong></div><div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--line);font-size:14px"><span>Desde $ 3.000.000</span><strong>5 %</strong></div><button onClick="{{ editDisc }}" style="align-self:flex-start;height:38px;padding:0 14px;border-radius:8px;border:1px solid var(--ink);background:transparent;font-size:13.5px;font-weight:700;cursor:pointer">Editar escalas</button></section>
+              <section style="background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px;display:flex;flex-direction:column;gap:10px"><span style="font-size:16px;font-weight:800">Integraciones por definir</span><div style="display:flex;gap:10px;align-items:center;font-size:14px;padding:8px 0;border-bottom:1px solid var(--line)"><i class="icon-receipt"></i><span style="flex:1">Factura electrónica DIAN</span><span style="font-size:12.5px;font-weight:700;color:var(--mute)">Proveedor autorizado por definir</span></div><div style="display:flex;gap:10px;align-items:center;font-size:14px;padding:8px 0"><i class="icon-message-circle"></i><span style="flex:1">WhatsApp para seguimiento</span><span style="font-size:12.5px;font-weight:700;color:var(--mute)">Número verificado por definir</span></div></section>
+              <section style="background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px;display:flex;flex-direction:column;gap:12px;align-items:flex-start"><span style="font-size:16px;font-weight:800">Acerca de</span><sc-if value="{{ isLight }}" hint-placeholder-val="{{ true }}"><img src="assets/logo-magnus.png" alt="Magnus Company Colombia" style="height:110px"></sc-if><sc-if value="{{ isDark }}" hint-placeholder-val="{{ false }}"><img src="assets/logo-magnus-blanco.png" alt="Magnus Company Colombia" style="height:110px"></sc-if><span style="font-size:13.5px;color:var(--ink-2)">Sistema de gestión Magnus · versión de prototipo 0.9 · datos de ejemplo</span><span style="font-size:12px;color:var(--ink-3);border-top:1px solid var(--line);padding-top:10px;align-self:stretch">Desarrollado por SYSMOOO</span></section>
+            </div>
+          </sc-if>
+        </div>
+      </div>
+      <sc-if value="{{ dlg }}" hint-placeholder-val="{{ false }}">
+        <div style="position:absolute;inset:0;z-index:10;display:flex;align-items:center;justify-content:center"><div onClick="{{ closeDlg }}" style="position:absolute;inset:0;background:rgba(11,10,13,.5)"></div>
+          <div role="dialog" aria-label="{{ dlg.title }}" style="position:relative;width:560px;background:var(--surface);border-radius:12px;padding:24px;display:flex;flex-direction:column;gap:14px;box-shadow:var(--shadow);animation:mg-in .2s ease-out">
+            <span style="font-size:19px;font-weight:800">{{ dlg.title }}</span>
+            <span style="font-size:14.5px;line-height:1.5;color:var(--ink-2)">{{ dlg.body }}</span>
+            <sc-for list="{{ dlg.rows }}" as="r" hint-placeholder-count="0"><div style="display:flex;gap:10px;align-items:center;font-size:14px;padding:8px 12px;border-radius:8px;border:1px solid {{ r.bd }};color:{{ r.fg }};background:{{ r.bg }}"><i class="{{ r.icon }}"></i>{{ r.text }}</div></sc-for>
+            <sc-if value="{{ dlg.audit }}" hint-placeholder-val="{{ false }}"><span style="font-size:12.5px;color:var(--ink-3);display:flex;gap:6px;align-items:center"><i class="icon-history"></i>Quedará en el historial: Administración · {{ dlg.audit }}</span></sc-if>
+            <div style="display:flex;gap:10px;justify-content:flex-end"><button onClick="{{ closeDlg }}" style="height:44px;padding:0 16px;border-radius:8px;border:1px solid var(--ink);background:transparent;font-weight:700;cursor:pointer">Cancelar</button><button onClick="{{ dlg.ok }}" style="height:44px;padding:0 16px;border-radius:8px;border:none;background:var(--red);color:var(--on-red);font-weight:800;cursor:pointer">{{ dlg.cta }}</button></div>
+          </div>
+        </div>
+      </sc-if>
+      <sc-if value="{{ toast }}" hint-placeholder-val="{{ false }}"><div role="status" style="position:absolute;right:24px;bottom:24px;z-index:12;background:var(--ink);color:var(--bg);border-radius:10px;padding:14px 18px;font-size:14.5px;font-weight:600;display:flex;gap:10px;align-items:center;animation:mg-in .25s ease-out;box-shadow:var(--shadow)"><i class="icon-circle-check"></i>{{ toast }}</div></sc-if>
+    </div>
+    </sc-if>
+    <sc-if value="{{ isMobile }}" hint-placeholder-val="{{ false }}">
+    <div style="width:410px;height:864px;border-radius:54px;background:#0B0A0C;padding:10px;box-shadow:0 30px 60px rgba(0,0,0,.25);flex:none">
+      <div style="width:390px;height:844px;border-radius:44px;overflow:hidden;background:var(--bg);display:flex;flex-direction:column;position:relative">
+        <div style="height:46px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 28px 0 34px;font-size:15px;font-weight:700;background:var(--surface)"><span>10:40</span><span style="display:flex;gap:6px;font-size:16px"><i class="icon-signal"></i><i class="icon-wifi"></i><i class="icon-battery-full"></i></span></div>
+        <div style="flex:none;background:var(--surface);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px;padding:6px 16px 10px;min-height:60px"><sc-if value="{{ isLight }}" hint-placeholder-val="{{ true }}"><img src="assets/simbolo-magnus.png" alt="Magnus" style="height:28px"></sc-if><sc-if value="{{ isDark }}" hint-placeholder-val="{{ false }}"><img src="assets/simbolo-magnus-blanco.png" alt="Magnus" style="height:28px"></sc-if><div style="display:flex;flex-direction:column;flex:1"><span style="font-size:19px;font-weight:800">{{ scrTitle }}</span><span style="font-size:13px;color:var(--ink-3)">Martes 17/11/2026</span></div></div>
+        <div style="flex:1;overflow-y:auto">
+          <sc-if value="{{ alt.on }}" hint-placeholder-val="{{ false }}"><div style="padding:40px 24px;display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center"><div style="width:72px;height:72px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:32px;background:{{ alt.bg }};color:{{ alt.fg }};border:1px solid {{ alt.bd }}"><i class="{{ alt.icon }}"></i></div><h2 style="margin:0;font-size:21px;font-weight:800">{{ alt.title }}</h2><p style="margin:0;font-size:15px;line-height:1.5;color:var(--ink-2)">{{ alt.body }}</p><button onClick="{{ alt.act }}" style="height:52px;padding:0 22px;border-radius:10px;border:none;background:var(--ink);color:var(--bg);font-size:16px;font-weight:700;cursor:pointer">{{ alt.cta }}</button></div></sc-if>
+          <sc-if value="{{ show.panel }}" hint-placeholder-val="{{ true }}">
+            <div style="padding:14px;display:flex;flex-direction:column;gap:12px">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px"><sc-for list="{{ kpis }}" as="k" hint-placeholder-count="4"><button onClick="{{ k.go }}" style="text-align:left;background:var(--surface);border:1px solid {{ k.bd }};border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:3px;cursor:pointer;min-height:96px"><span style="font-size:12.5px;color:var(--ink-3);font-weight:700;display:flex;gap:5px;align-items:center"><i class="{{ k.icon }}"></i>{{ k.l }}</span><span style="font-size:19px;font-weight:800">{{ k.v }}</span><span style="font-size:12px;color:var(--ink-2);line-height:1.3">{{ k.sub }}</span></button></sc-for></div>
+              <span style="font-size:16px;font-weight:800;display:flex;gap:8px;align-items:center;margin-top:4px"><i class="icon-bell"></i>Requiere atención</span>
+              <sc-for list="{{ alertRows }}" as="a" hint-placeholder-count="4"><button onClick="{{ a.go }}" style="text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:6px;cursor:pointer;min-height:56px"><div style="display:flex;justify-content:space-between;gap:8px;align-items:center"><strong style="font-size:15px">{{ a.name }}</strong><span style="display:inline-flex;align-items:center;gap:5px;height:26px;padding:0 9px;border-radius:999px;border:1px solid {{ a.chip.bd }};background:{{ a.chip.bg }};color:{{ a.chip.fg }};font-size:12.5px;font-weight:700;white-space:nowrap"><i class="{{ a.chip.icon }}"></i>{{ a.chip.label }}</span></div><span style="font-size:13.5px;color:var(--ink-2)">{{ a.text }} · {{ a.risk }}</span></button></sc-for>
+              <span style="font-size:16px;font-weight:800;display:flex;gap:8px;align-items:center;margin-top:4px"><i class="icon-truck"></i>Entregas</span>
+              <sc-for list="{{ delivRows }}" as="d" hint-placeholder-count="4"><div style="background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:5px"><div style="display:flex;justify-content:space-between;gap:8px;align-items:center"><strong style="font-size:15px">{{ d.client }}</strong><span style="display:inline-flex;align-items:center;gap:5px;height:26px;padding:0 9px;border-radius:999px;border:1px solid {{ d.chip.bd }};background:{{ d.chip.bg }};color:{{ d.chip.fg }};font-size:12.5px;font-weight:700;white-space:nowrap"><i class="{{ d.chip.icon }}"></i>{{ d.chip.label }}</span></div><span style="font-size:13px;color:var(--ink-2)">{{ d.driver }} · {{ d.extra }}</span></div></sc-for>
+            </div>
+          </sc-if>
+          <sc-if value="{{ show.lote }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:14px;display:flex;flex-direction:column;gap:12px">
+              <button onClick="{{ goPanel }}" style="align-self:flex-start;height:44px;padding:0 14px;border-radius:10px;border:1px solid var(--line-2);background:transparent;font-size:14px;font-weight:700;cursor:pointer;display:flex;gap:6px;align-items:center"><i class="icon-arrow-left"></i>Panel</button>
+              <span style="font-size:21px;font-weight:800">{{ lt.name }}</span>
+              <span style="display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 11px;border-radius:999px;border:1px solid {{ lt.chip.bd }};background:{{ lt.chip.bg }};color:{{ lt.chip.fg }};font-size:13.5px;font-weight:700;align-self:flex-start"><i class="{{ lt.chip.icon }}"></i>{{ lt.chip.label }}</span>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><sc-for list="{{ lt.facts }}" as="f" hint-placeholder-count="4"><div style="background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:3px"><span style="font-size:12.5px;color:var(--ink-3);font-weight:700">{{ f.l }}</span><span style="font-size:18px;font-weight:800">{{ f.v }}</span><span style="font-size:12px;color:var(--ink-2)">{{ f.s }}</span></div></sc-for></div>
+              <p style="margin:0;font-size:14.5px;line-height:1.5;color:var(--ink-2)">{{ lt.advice }}</p>
+              <button onClick="{{ lt.notify }}" style="height:56px;border-radius:12px;border:none;background:var(--red);color:var(--on-red);font-size:16px;font-weight:800;cursor:pointer">Avisar a vendedores</button>
+            </div>
+          </sc-if>
+          <sc-if value="{{ show.mobileOther }}" hint-placeholder-val="{{ false }}"><div style="padding:40px 24px;text-align:center;font-size:15px;color:var(--ink-2);line-height:1.5">Esta sección está pensada para el computador. En el celular el dueño ve el panel y las alertas.</div></sc-if>
+        </div>
+        <sc-if value="{{ toast }}" hint-placeholder-val="{{ false }}"><div role="status" style="position:absolute;left:16px;right:16px;top:116px;z-index:12;background:var(--ink);color:var(--bg);border-radius:12px;padding:14px;font-size:15px;font-weight:600;display:flex;gap:10px;align-items:center"><i class="icon-circle-check"></i>{{ toast }}</div></sc-if>
+        <nav aria-label="Menú del dueño" style="flex:none;height:84px;background:var(--surface);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(4,1fr);padding:0 4px 18px"><sc-for list="{{ mTabs }}" as="t" hint-placeholder-count="4"><a href="{{ t.href }}" onClick="{{ t.go }}" aria-current="{{ t.cur }}" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:12px;font-weight:{{ t.fw }};color:{{ t.fg }};text-decoration:none;border-top:3px solid {{ t.bd }};min-height:56px"><i class="{{ t.icon }}" style="font-size:22px"></i><span style="flex:1;min-width:0">{{ t.label }}</span></a></sc-for></nav>
+      </div>
+    </div>
+    </sc-if>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const ROLES = [['Sistema', 'Magnus Sistema.dc.html'], ['Vendedor', 'Vendedor.dc.html'], ['Mostrador', 'Mostrador.dc.html'], ['Caja', 'Caja.dc.html'], ['Bodega', 'Bodega.dc.html'], ['Conductor', 'Conductor.dc.html'], ['Empleado', 'Empleado.dc.html'], ['Dueño', 'Dueno.dc.html']];
+const SCREENS = {
+  panel: { label: 'Panel general', sub: 'El día de un vistazo', noun: 'el panel', empty: ['Aún no hay movimientos hoy', 'Cuando entren pedidos, entregas y cobros, el panel se llena solo.', 'Actualizar'], ok: ['Todo al día', 'No hay alertas críticas pendientes.'], note: 'Cuatro cifras clave que llevan a su detalle. Debajo, lo que exige acción: stock crítico y lotes por vencer (flujo 4), entregas en vivo (flujo 2), cartera (flujo 1) y quién hizo qué.' },
+  lote: { label: 'Lote en riesgo', sub: 'Producto, lote y cantidad en riesgo', noun: 'el lote', empty: ['Sin lotes en riesgo', 'Ningún lote vence en los próximos 30 días.', 'Volver al panel'], ok: ['Vendedores avisados', 'El producto aparece como prioridad en su inicio.'], note: 'Flujo 4: desde la alerta el dueño ve el lote exacto, cuánto vale lo que está en riesgo (a costo y a precio) y si al ritmo de venta alcanza a salir.' },
+  domicilios: { label: 'Domicilios', sub: 'Asignar conductor y ordenar la ruta del día', noun: 'los domicilios', empty: ['Sin domicilios hoy', 'Los pedidos con entrega a domicilio aparecen aquí al facturarse.', 'Actualizar'], ok: ['Ruta publicada', 'Los conductores ya ven su orden de entregas.'], note: 'Asignación por lista desplegable y orden con flechas (accesible por teclado). Conductor ausente aparece deshabilitado. Estados con ícono y texto.' },
+  inventario: { label: 'Inventario por lotes', sub: 'Stock por lote, bodega y presentación', noun: 'el inventario', empty: ['Sin productos', 'Cargue el catálogo para empezar.', 'Ir a catálogo'], ok: ['Inventario al día', 'Sin diferencias pendientes.'], note: 'Filtros por estado con conteo. Cada fila muestra el lote que sale primero y el stock convertido a cada presentación.' },
+  catalogo: { label: 'Catálogo', sub: 'Más de 800 productos', noun: 'el catálogo', empty: ['Catálogo vacío', 'Cargue sus productos desde Excel.', 'Carga masiva'], ok: ['Catálogo actualizado', '821 productos importados.'], note: 'Tabla densa para 800+ productos con búsqueda por código de barras. La carga masiva muestra una revisión con válidos, advertencias y rechazados antes de importar.' },
+  clientes: { label: 'Clientes', sub: 'Base completa con margen', noun: 'los clientes', empty: ['Sin clientes', 'Cree el primero o impórtelos.', 'Nuevo cliente'], ok: ['Clientes actualizados', ''], note: 'A diferencia del vendedor, aquí sí aparece el margen por cliente. A la derecha, quienes dejaron de comprar.' },
+  reportes: { label: 'Reportes', sub: 'Comparativos semana y mes', noun: 'los reportes', empty: ['Sin datos en el período', 'Elija otro rango.', 'Volver'], ok: ['Reporte exportado', ''], note: 'Un solo patrón para todos los reportes: barra del período, barra gris del anterior, cifra y alerta con texto.' },
+  historial: { label: 'Historial', sub: 'Quién hizo qué y cuándo', noun: 'el historial', empty: ['Sin movimientos', '', 'Volver'], ok: ['Historial exportado', ''], note: 'Todas las acciones sensibles de todos los roles. Lo que haga en los otros prototipos aparece aquí.' },
+  usuarios: { label: 'Usuarios y permisos', sub: 'Qué puede hacer cada rol', noun: 'los permisos', empty: ['Sin usuarios', '', 'Volver'], ok: ['Permisos guardados', ''], note: 'Matriz de permisos con interruptores accesibles. Las reglas fijas (nadie fuera de administración ve costos) aparecen con candado.' },
+  config: { label: 'Configuración', sub: 'Precios, descuentos e integraciones', noun: 'la configuración', empty: ['—', '', 'Volver'], ok: ['Configuración guardada', ''], note: 'Integraciones con proveedores aún no elegidos se marcan «por definir». El crédito «Desarrollado por SYSMOOO» vive solo aquí, en Acerca de.' },
+  mapa: { label: 'Mapa de conductores', sub: 'Ubicación en vivo durante el turno', noun: 'el mapa', empty: ['Ningún conductor en turno', 'La ubicación aparece solo cuando un conductor inicia su turno.', 'Actualizar'], ok: ['Ruta completa', 'Todas las entregas del día se cerraron.'], note: 'La ubicación solo existe durante el turno; fuera de turno la tarjeta lo dice. Historial del recorrido con tiempos entre entregas y hora estimada.' }
+};
+const sel = on => ({ bw: on ? '2px' : '1px', bd: on ? 'var(--ink)' : 'var(--line-2)' });
+const POS = { C01: [22, 44], C02: [62, 26], C03: [18, 84], C04: [34, 70], C05: [8, 40], C06: [58, 50], C07: [36, 20], C08: [24, 76] };
+
+class Component extends DCLogic {
+  state = { s: null, theme: 'light', screen: 'panel', mode: 'normal', dev: 'desk', lot: null, dlg: null, toast: null, cq: '', cat: 'Todas', invF: 'todos', rep: 'producto', cmp: 'semana', mscreen: 'panel' };
+  componentDidMount() {
+    const go = () => { if (!window.MG) return setTimeout(go, 40); this.setState({ s: MG.get(), theme: MG.theme() }); this.un = MG.subscribe(s => this.setState({ s })); this.th = () => this.setState({ theme: MG.theme() }); window.addEventListener('magnus-theme', this.th); window.addEventListener('storage', this.th); const h = location.hash.slice(1); if (h) this.setState({ screen: h }); };
+    go();
+  }
+  componentWillUnmount() { this.un && this.un(); window.removeEventListener('magnus-theme', this.th); window.removeEventListener('storage', this.th); }
+  nav(screen) { this.setState({ screen, mode: 'normal', dlg: null }); }
+  flash(t) { this.setState({ toast: t }); clearTimeout(this.tt); this.tt = setTimeout(() => this.setState({ toast: null }), 2600); }
+  carteraOf(s) {
+    const M = MG;
+    const rows = s.legacy.map(r => ({ ...r })).concat(s.orders.filter(o => o.invoice && /Crédito/.test(o.invoice.pay)).map(o => ({ num: o.invoice.num, client: o.client, total: M.total(s, o).total, due: o.invoice.due, abonos: o.invoice.abonos || [] })));
+    return rows.map(r => { const bal = r.total - r.abonos.reduce((a, x) => a + x.v, 0); const dd = M.daysTo(r.due); return { ...r, bal, dd, k: dd < 0 ? 'vencido' : dd <= 5 ? 'vence' : 'ok' }; }).filter(r => r.bal > 0);
+  }
+  renderVals() {
+    const st = this.state, s = st.s, M = window.MG;
+    const scr = SCREENS[st.screen] || SCREENS.panel;
+    const base = {
+      theme: st.theme, isLight: st.theme !== 'dark', isDark: st.theme === 'dark', roles: ROLES.map(([label, href]) => ({ label, href, bg: label === 'Dueño' ? '#F5F4F7' : 'transparent', fg: label === 'Dueño' ? '#17151A' : '#CFCCD5' })),
+      themeIcon: st.theme === 'dark' ? 'icon-sun' : 'icon-moon', themeLabel: st.theme === 'dark' ? 'Claro' : 'Oscuro',
+      toggleTheme: () => M && M.setTheme(st.theme === 'dark' ? 'light' : 'dark'),
+      resetData: () => { if (M && confirm('¿Reiniciar todos los datos de ejemplo del prototipo?')) { M.reset(); this.setState({ screen: 'panel' }); } },
+      symbolSrc: st.theme === 'dark' ? 'assets/simbolo-magnus-blanco.png' : 'assets/simbolo-magnus.png',
+      devs: [['desk', 'Computador', 'monitor'], ['mobile', 'Celular', 'smartphone']].map(([k, label, icon]) => ({ label, icon: 'icon-' + icon, on: st.dev === k ? 'true' : 'false', go: () => this.setState({ dev: k }), bg: st.dev === k ? 'var(--ink)' : 'transparent', fg: st.dev === k ? 'var(--bg)' : 'var(--ink)', bd: st.dev === k ? 'var(--ink)' : 'var(--line-2)' })),
+      isDesk: st.dev === 'desk', isMobile: st.dev === 'mobile',
+      modes: [['normal', 'Normal'], ['vacio', 'Vacío'], ['cargando', 'Cargando'], ['error', 'Error'], ['permiso', 'Sin permiso'], ['exito', 'Éxito']].map(([k, label]) => ({ label, on: st.mode === k ? 'true' : 'false', go: () => this.setState({ mode: k }), bg: st.mode === k ? 'var(--ink)' : 'transparent', fg: st.mode === k ? 'var(--bg)' : 'var(--ink)', bd: st.mode === k ? 'var(--ink)' : 'var(--line-2)' })),
+      note2: scr.note, scrTitle: scr.label, scrSub: scr.sub, toast: st.toast, dlg: null, closeDlg: () => this.setState({ dlg: null }), show: {}, alt: { on: false }, skel: [1, 2, 3, 4, 5, 6, 7, 8],
+      goInv: () => this.nav('inventario'), goMapa: () => this.nav('mapa'), goLog: () => this.nav('historial'), goPanel: () => this.nav('panel'), goConfig: () => this.nav('config')
+    };
+    if (!s) return { ...base, menu: [] };
+    const alt = { on: st.mode !== 'normal', noun: scr.noun, loading: st.mode === 'cargando', msg: !['normal', 'cargando'].includes(st.mode) };
+    const back = () => this.setState({ mode: 'normal' });
+    if (st.mode === 'vacio') Object.assign(alt, { icon: 'icon-inbox', title: scr.empty[0], body: scr.empty[1], cta: scr.empty[2], act: back, bg: 'var(--mute-tint)', fg: 'var(--mute)', bd: 'var(--mute-line)' });
+    if (st.mode === 'error') Object.assign(alt, { icon: 'icon-server-crash', title: 'No se pudo cargar ' + scr.noun, body: 'Error de conexión con el servidor. Los datos mostrados pueden estar desactualizados; se reintenta automáticamente cada 30 segundos.', cta: 'Reintentar ahora', act: back, bg: 'var(--err-tint)', fg: 'var(--err)', bd: 'var(--err-line)' });
+    if (st.mode === 'permiso') Object.assign(alt, { icon: 'icon-lock', title: 'Sin permiso', body: 'Así ve esta sección un usuario sin el permiso correspondiente (por ejemplo, un vendedor que entra a Reportes o Márgenes). Los permisos se administran en Usuarios y permisos.', cta: 'Volver', act: back, bg: 'var(--mute-tint)', fg: 'var(--mute)', bd: 'var(--mute-line)' });
+    if (st.mode === 'exito') Object.assign(alt, { icon: 'icon-circle-check', title: scr.ok[0], body: scr.ok[1], cta: 'Continuar', act: back, bg: 'var(--ok-tint)', fg: 'var(--ok)', bd: 'var(--ok-line)' });
+    const show = {}; if (!alt.on) show[st.screen] = true;
+
+    const alerts = M.alerts(s);
+    const doms = s.orders.filter(o => o.delivery.type === 'domicilio');
+    const G = (label, items) => ({ label, items: items.map(([id, l, icon, extra]) => { const ext = extra && extra.href; const on = st.screen === id || (id === 'panel' && st.screen === 'lote'); return { label: l, icon: 'icon-' + icon, href: ext ? extra.href : '#' + id, go: ext ? undefined : e => { e.preventDefault(); if (extra && extra.soon) return; this.nav(id); }, cur: on ? 'page' : 'false', dis: extra && extra.soon ? 'true' : 'false', bg: on ? 'var(--sunk)' : 'transparent', fw: on ? 800 : 500, fg: extra && extra.soon ? 'var(--ink-3)' : 'var(--ink)', cursor: extra && extra.soon ? 'not-allowed' : 'pointer', tag: extra && extra.soon ? 'Próximamente' : null, badge: extra && extra.badge || null }; }) });
+    const menu = [
+      G('Dirección', [['panel', 'Panel general', 'layout-dashboard'], ['reportes', 'Reportes', 'chart-column'], ['historial', 'Historial', 'history'], ['usuarios', 'Usuarios y permisos', 'shield-check'], ['config', 'Configuración', 'settings']]),
+      G('Ventas', [['clientes', 'Clientes', 'users'], ['fact', 'Facturación y cartera', 'receipt', { href: 'Caja.dc.html' }]]),
+      G('Bodega y catálogo', [['inventario', 'Inventario por lotes', 'boxes', { badge: alerts.length }], ['catalogo', 'Catálogo', 'book-open']]),
+      G('Reparto', [['domicilios', 'Domicilios', 'truck', { badge: doms.filter(o => !o.delivery.driver).length }], ['mapa', 'Mapa de conductores', 'map-pinned']]),
+      G('Equipo', [['asis', 'Asistencia', 'scan-face', { href: 'Dueno Equipo.dc.html#asistencia' }], ['turnos', 'Turnos', 'calendar-days', { href: 'Dueno Equipo.dc.html#turnos' }], ['nomina', 'Nómina', 'wallet-cards', { href: 'Dueno Equipo.dc.html#nomina' }]]),
+      G('Web y atención', [['web', 'Web y chatbot', 'globe', { soon: true }]])
+    ];
+
+    const sales = s.orders.reduce((a, o) => a + M.total(s, o).total, 0);
+    const delivered = doms.filter(o => o.delivery.status === 'entregado').length;
+    const novs = doms.filter(o => o.delivery.status === 'novedad').length;
+    const cart = this.carteraOf(s);
+    const cartTot = cart.reduce((a, r) => a + r.bal, 0);
+    const kpis = [
+      { l: 'Ventas de hoy', icon: 'icon-trending-up', v: M.cop(sales), sub: s.orders.length + ' pedidos · semana pasada mismo día ' + M.cop(4120000), bd: 'var(--line)', go: () => this.nav('reportes') },
+      { l: 'Entregas', icon: 'icon-truck', v: delivered + ' de ' + doms.length, sub: novs ? novs + ' con novedad' : 'Sin novedades', bd: novs ? 'var(--err-line)' : 'var(--line)', go: () => this.nav('domicilios') },
+      { l: 'Stock crítico', icon: 'icon-triangle-alert', v: String(alerts.length), sub: alerts.filter(a => a.kind === 'vence').length + ' lotes por vencer · ' + alerts.filter(a => a.kind === 'agotado').length + ' agotados', bd: 'var(--warn-line)', go: () => this.nav('inventario') },
+      { l: 'Cartera por cobrar', icon: 'icon-wallet', v: M.cop(cartTot), sub: cart.filter(r => r.k === 'vencido').length + ' vencidas · ' + cart.filter(r => r.k === 'vence').length + ' vencen en 5 días', bd: 'var(--line)', go: () => { location.href = 'Caja.dc.html'; } }
+    ];
+    const openLot = (pid, lot) => this.setState({ screen: 'lote', lot: { pid, lot }, mode: 'normal', mscreen: 'lote' });
+    const alertRows = alerts.slice(0, 6).map(a => ({ name: a.p.name, chip: M.chip(a.kind, a.kind === 'vence' ? 'Vence en ' + a.days + ' d' : null), text: a.kind === 'vence' ? 'Lote ' + a.lot.lot + ' · ' + M.num(a.lot.qty) + ' und · Bodega ' + a.lot.bod : a.text, risk: a.kind === 'vence' ? M.cop(a.lot.qty * a.p.cost) + ' a costo' : a.kind === 'agotado' ? 'Reponer ' + M.num(a.p.min) : 'Faltan ' + M.num(a.p.min - a.p.stock), go: () => a.kind === 'vence' ? openLot(a.p.id, a.lot.lot) : this.nav('inventario') }));
+    const delivRows = doms.slice().sort((a, b) => (a.delivery.status === 'novedad' ? -1 : 0) - (b.delivery.status === 'novedad' ? -1 : 0)).map(o => { const d = o.delivery; const drv = d.driver ? M.emp(s, d.driver).name : 'Sin conductor'; return { id: o.id, client: M.client(s, o.client).name, driver: drv, extra: d.status === 'entregado' && d.evidence ? 'recibió ' + d.evidence.name + ' ' + d.evidence.time : d.status === 'novedad' ? d.novedad : 'llega ' + (d.eta || '—'), chip: d.driver ? M.chip(d.status) : M.chip('pendiente', 'Por asignar') }; });
+    const carteraRows = cart.sort((a, b) => a.dd - b.dd).slice(0, 5).map(r => ({ client: M.client(s, r.client).name, num: r.num, bal: M.cop(r.bal), chip: M.chip(r.k, r.k === 'vencido' ? 'Vencida ' + (-r.dd) + ' d' : r.k === 'vence' ? 'Vence en ' + r.dd + ' d' : 'Al día') }));
+    const logRows = s.log.slice(0, 6).map(l => ({ time: l.when.slice(11), who: l.who, what: l.what }));
+
+    let lt = { facts: [], lots: [], chip: M.chip('vence') };
+    const firstV = alerts.find(a => a.kind === 'vence');
+    const L = st.lot || (firstV && { pid: firstV.p.id, lot: firstV.lot.lot });
+    if (L) {
+      const p = M.prod(s, L.pid); const lot = p.lots.find(x => x.lot === L.lot) || M.fefo(p)[0];
+      if (lot) {
+        const days = M.daysTo(lot.exp); const daily = Math.max(4, Math.round(p.min / 14)); const sellable = daily * Math.max(0, days); const atRisk = Math.max(0, lot.qty - sellable);
+        lt = {
+          name: p.name, code: p.code, brand: p.brand, cat: p.cat, chip: M.chip(days < 0 ? 'vencido' : 'vence', days < 0 ? 'Vencido' : 'Lote ' + lot.lot + ' vence en ' + days + ' días'),
+          facts: [{ l: 'Vence', v: M.date(lot.exp), s: days + ' días' }, { l: 'Unidades del lote', v: M.num(lot.qty), s: 'Bodega ' + lot.bod }, { l: 'Valor a costo', v: M.cop(lot.qty * p.cost), s: M.cop(p.cost) + ' por und' }, { l: 'Valor a precio', v: M.cop(lot.qty * p.pres[0].price), s: 'Precio unidad mayorista' }, { l: 'Riesgo estimado', v: M.num(atRisk) + ' und', s: 'Venta media ' + daily + ' und/día' }],
+          lots: M.fefo(p).map((x, i) => ({ n: i + 1, lot: x.lot, exp: M.date(x.exp), bod: x.bod, qty: M.num(x.qty), bg: x.lot === lot.lot ? 'var(--warn-tint)' : 'transparent' })),
+          advice: atRisk > 0 ? 'Al ritmo actual se venden unas ' + M.num(sellable) + ' und antes del vencimiento; quedarían ' + M.num(atRisk) + ' und (' + M.cop(atRisk * p.cost) + ' a costo). Conviene priorizarlo con los clientes que lo compran seguido.' : 'Al ritmo actual el lote sale completo antes de vencer. Basta con mantener el despacho por FEFO.',
+          notify: () => { MG.set(x => MG.log(x, 'Administración', 'Dueño', 'Avisó a vendedores priorizar ' + p.name + ' lote ' + lot.lot)); this.flash('Aviso enviado a vendedores: priorizar ' + p.name); }
+        };
+      }
+    }
+
+    const drivers = s.employees.filter(e => e.area === 'Reparto').map(e => { const a = s.attendance.find(x => x.emp === e.id && x.date === M.HOY); return { v: e.id, l: e.name + (a ? '' : ' (ausente)'), dis: !a, e, a }; });
+    const assign = (o, val) => MG.set(x => { const oo = x.orders.find(y => y.id === o.id); oo.delivery.driver = val || null; oo.delivery.seq = val ? x.orders.filter(y => y.delivery.driver === val && y.id !== o.id).reduce((m, y) => Math.max(m, y.delivery.seq || 0), 0) + 1 : null; oo.delivery.eta = val ? '15:20' : '—'; MG.log(x, 'Administración', 'Dueño', val ? 'Asignó ' + o.id + ' a ' + MG.emp(x, val).name : 'Quitó conductor de ' + o.id); });
+    const move = (o, dir) => MG.set(x => { const oo = x.orders.find(y => y.id === o.id); const mates = x.orders.filter(y => y.delivery.driver && y.delivery.driver === oo.delivery.driver).sort((a, b) => a.delivery.seq - b.delivery.seq); const i = mates.indexOf(oo); const j = i + dir; if (j < 0 || j >= mates.length) return; const t = mates[j].delivery.seq; mates[j].delivery.seq = oo.delivery.seq; oo.delivery.seq = t; });
+    const dCounts = ['por_alistar', 'cargado', 'en_ruta', 'entregado', 'novedad'].map(k => ({ chip: M.chip(k), n: doms.filter(o => o.delivery.status === k).length }));
+    const dRows = doms.slice().sort((a, b) => (a.delivery.driver || 'Z').localeCompare(b.delivery.driver || 'Z') || (a.delivery.seq || 0) - (b.delivery.seq || 0)).map(o => { const d = o.delivery; return { id: o.id, client: M.client(s, o.client).name, addr: d.addr, window: d.window, driver: d.driver || '', assign: e => assign(o, e.target.value), selBd: d.driver ? 'var(--line-2)' : 'var(--warn)', seq: d.seq || '—', up: () => move(o, -1), down: () => move(o, 1), chip: M.chip(d.status, o.status !== 'facturado' && d.status === 'por_alistar' ? 'En bodega' : null), note: d.status === 'novedad' ? d.novedad : d.status === 'entregado' && d.evidence ? 'Recibió ' + d.evidence.name + ' · ' + d.evidence.time : null, eta: d.status === 'entregado' ? (d.evidence ? d.evidence.time : '—') : d.eta || '—', bg: !d.driver ? 'var(--warn-tint)' : 'transparent', copy: () => this.flash('Enlace copiado: magnus.co/seguir/' + o.id.toLowerCase() + ' (ejemplo)') }; });
+
+    const pins = doms.map(o => { const [x, y] = POS[o.client] || [50, 50]; const d = o.delivery; const k = d.status; return { x: x + 6 + '%', y: y + 6 + '%', n: d.seq || '·', label: M.client(s, o.client).name, bg: k === 'entregado' ? 'var(--ok-tint)' : k === 'novedad' ? 'var(--err-tint)' : 'var(--surface)', bd: k === 'entregado' ? 'var(--ok)' : k === 'novedad' ? 'var(--err)' : 'var(--ink)', fg: k === 'entregado' ? 'var(--ok)' : k === 'novedad' ? 'var(--err)' : 'var(--ink)' }; });
+    const trucks = []; const drvCards = drivers.map(dv => {
+      const mine = doms.filter(o => o.delivery.driver === dv.v).sort((a, b) => a.delivery.seq - b.delivery.seq);
+      const on = dv.a && !dv.a.out;
+      const cur = mine.find(o => o.delivery.status === 'en_ruta') || mine.find(o => !['entregado', 'novedad'].includes(o.delivery.status));
+      if (on) { const ref = cur || mine[mine.length - 1]; const [x, y] = ref ? POS[ref.client] : [50, 60]; trucks.push({ x: x + (cur ? 2 : 6) + '%', y: y + (cur ? 12 : 6) + '%', label: dv.e.name.split(' ')[0] + (cur ? ' → ' + cur.delivery.seq : '') }); }
+      const trail = []; if (dv.a) trail.push({ time: dv.a.in, icon: 'icon-log-in', text: 'Inició turno con foto' });
+      let prev = dv.a ? dv.a.in : null;
+      mine.forEach(o => { const d = o.delivery; if (d.status === 'entregado' && d.evidence) { const mins = prev ? (+d.evidence.time.slice(0, 2) * 60 + +d.evidence.time.slice(3)) - (+prev.slice(0, 2) * 60 + +prev.slice(3)) : null; trail.push({ time: d.evidence.time, icon: 'icon-circle-check', text: 'Entregó ' + o.id + ' a ' + d.evidence.name + (mins != null ? ' · ' + mins + ' min desde la parada anterior' : '') }); prev = d.evidence.time; } else if (d.status === 'novedad') trail.push({ time: '—', icon: 'icon-octagon-alert', text: 'Novedad en ' + o.id + ': ' + d.novedad }); else trail.push({ time: d.eta || '—', icon: 'icon-clock', text: 'Llegada estimada a ' + M.client(s, o.client).name + ' (' + M.ST[d.status][0].toLowerCase() + ')' }); });
+      if (dv.a && dv.a.out) trail.push({ time: dv.a.out, icon: 'icon-log-out', text: 'Terminó turno · ubicación apagada' });
+      return { name: dv.e.name, chip: on ? M.chip('ok', 'En turno · en vivo') : M.chip('inactivo', dv.a ? 'Turno terminado' : 'Fuera de turno'), status: on ? (cur ? 'Va a parada ' + cur.delivery.seq + ' · ' + M.client(s, cur.client).name + ' · actualizado hace 1 min' : 'Sin entregas pendientes') : 'Ubicación no disponible fuera del turno.', trail };
+    });
+    /*MORE*/
+    if (st.dev === 'mobile' && !alt.on && !['panel', 'lote'].includes(st.screen)) show.mobileOther = true;
+    const mTabs = [['panel', 'Panel', 'layout-dashboard'], ['mapa', 'Reparto', 'truck'], ['eq', 'Equipo', 'users', 'Dueno Equipo.dc.html'], ['caja', 'Cartera', 'wallet', 'Caja.dc.html']].map(([id, label, icon, href]) => { const on = st.screen === id || (id === 'panel' && st.screen === 'lote'); return { label, icon: 'icon-' + icon, href: href || '#' + id, go: href ? undefined : e => { e.preventDefault(); this.nav(id); }, cur: on ? 'page' : 'false', fg: on ? 'var(--ink)' : 'var(--ink-3)', fw: on ? 800 : 600, bd: on ? 'var(--red)' : 'transparent' }; });
+    return { ...base, alt, show, menu, mTabs, kpis, alertRows, delivRows, carteraRows, logRows, lt, dStates: dCounts, dRows, drivers: drivers.map(d => ({ v: d.v, l: d.l, dis: d.dis })), pins, trucks, drvCards, ...this.more(s, st, M, show, alt) };
+  }
+  more(s, st, M) {
+    if (!s) return {};
+    const chipBtn = (on, set) => ({ on: on ? 'true' : 'false', go: set, bg: on ? 'var(--ink)' : 'var(--surface)', fg: on ? 'var(--bg)' : 'var(--ink)', bd: on ? 'var(--ink)' : 'var(--line-2)' });
+    const kindOf = p => { const k = M.stockStatus(p); if (k !== 'ok') return k; return p.lots.some(l => M.daysTo(l.exp) <= 30) ? 'vence' : 'ok'; };
+    const invF = [['todos', 'Todos', 'list'], ['vence', 'Por vencer', 'clock-alert'], ['agotado', 'Agotado', 'circle-x'], ['bajo', 'Bajo mínimo', 'triangle-alert'], ['ok', 'Correcto', 'circle-check']].map(([k, label, icon]) => ({ label, icon: 'icon-' + icon, n: k === 'todos' ? s.products.length : s.products.filter(p => kindOf(p) === k).length, ...chipBtn(st.invF === k, () => this.setState({ invF: k })) }));
+    const invRows = s.products.filter(p => st.invF === 'todos' || kindOf(p) === st.invF).map(p => { const f = M.fefo(p)[0]; const k = kindOf(p); return { code: p.code, name: p.name, lot: f ? f.lot + ' · ' + f.bod : '—', exp: f ? M.date(f.exp) : '—', stock: M.num(p.stock), min: M.num(p.min), pres: p.pres.map(x => x.name + ': ' + M.num(Math.floor(p.stock / x.units))).join(' · '), chip: M.chip(k, k === 'ok' ? 'Correcto' : k === 'vence' ? 'Vence en ' + M.daysTo(f.exp) + ' d' : null), go: () => f && this.setState({ screen: 'lote', lot: { pid: p.id, lot: f.lot } }) }; });
+    const q = st.cq.trim().toLowerCase();
+    const catRows = s.products.filter(p => (st.cat === 'Todas' || p.cat === st.cat) && (!q || (p.name + p.code + p.brand + p.ean).toLowerCase().includes(q))).map(p => { const pr = p.pres[0].price; return { code: p.code, ean: p.ean, name: p.name, cat: p.cat, brand: p.brand, pres: p.pres.map(x => x.name).join(' · '), p1: M.cop(pr), p2: M.cop(M.price({ list: 'Distribuidor' }, p, 0)), cost: M.cop(p.cost), margin: Math.round((pr - p.cost) / pr * 100) + ' %', op: p.active ? 1 : 0.6, on: p.active ? 'true' : 'false', toggleLabel: (p.active ? 'Inactivar ' : 'Activar ') + p.name, chip: p.active ? M.chip('ok', 'Activo') : M.chip('inactivo'), toggle: () => this.setState({ dlg: { title: (p.active ? '¿Inactivar ' : '¿Activar ') + p.name + '?', body: p.active ? 'Dejará de aparecer en la venta. Se conserva su historial.' : 'Volverá a aparecer en la venta.', rows: [], audit: M.now(), cta: p.active ? 'Inactivar' : 'Activar', ok: () => { MG.set(x => { const pp = MG.prod(x, p.id); pp.active = !pp.active; MG.log(x, 'Administración', 'Dueño', (pp.active ? 'Activó ' : 'Inactivó ') + pp.name); }); this.setState({ dlg: null }); } } }) }; });
+    const openImport = () => this.setState({ dlg: { title: 'Carga masiva desde Excel', body: 'Archivo: catalogo_magnus_nov2026.xlsx (ejemplo). Revisión antes de importar:', rows: [{ icon: 'icon-circle-check', text: '812 productos válidos', bd: 'var(--ok-line)', bg: 'var(--ok-tint)', fg: 'var(--ok)' }, { icon: 'icon-triangle-alert', text: '9 sin código de barras · se importan marcados', bd: 'var(--warn-line)', bg: 'var(--warn-tint)', fg: 'var(--warn)' }, { icon: 'icon-circle-x', text: '3 con precio vacío · no se importan (filas 118, 402, 655)', bd: 'var(--err-line)', bg: 'var(--err-tint)', fg: 'var(--err)' }], audit: M.now(), cta: 'Importar 821 productos', ok: () => { MG.set(x => MG.log(x, 'Administración', 'Dueño', 'Carga masiva de catálogo: 821 productos')); this.setState({ dlg: null }); this.flash('Catálogo actualizado: 821 productos'); } } });
+    const cliRows = s.clients.map(c => ({ name: c.name, nit: c.nit, list: c.list, seller: c.seller, chip: M.chip(c.lastDays >= 25 ? 'vence' : 'ok', 'hace ' + c.lastDays + ' d'), buy: M.cop(c.freq.length * 1840000 + c.name.length * 52000), margin: (14 + c.name.length % 7) + ' %', bal: M.cop(c.balance) }));
+    const lost = s.clients.filter(c => c.lastDays >= 25).map(c => ({ name: c.name, days: c.lastDays, usual: c.freq.map(id => M.prod(s, id).name).join(', '), seller: c.seller }));
+    const repTabs = [['producto', 'Por producto'], ['cliente', 'Por cliente'], ['vendedor', 'Por vendedor'], ['ruta', 'Por ruta'], ['margen', 'Margen'], ['rotacion', 'Rotación'], ['reponer', 'Qué reponer']].map(([k, label]) => ({ label, ...chipBtn(st.rep === k, () => this.setState({ rep: k })) }));
+    const cmpOpts = [['semana', 'Esta semana vs. anterior'], ['mes', 'Noviembre vs. octubre']].map(([k, label]) => ({ label, on: st.cmp === k ? 'true' : 'false', go: () => this.setState({ cmp: k }), bw: st.cmp === k ? '2px' : '1px', bd: st.cmp === k ? 'var(--ink)' : 'var(--line-2)' }));
+    const f = st.cmp === 'mes' ? 4.2 : 1, H = t => [...t].reduce((a, c) => a + c.charCodeAt(0), 0);
+    const mk = (list, c1, c3, c4, c5, desc) => { const max = Math.max(...list.map(r => r.v)) || 1; return { c1, c2: list.some(r => r.prev) ? 'Período actual · anterior (gris)' : 'Comparativo', c3, c4, c5, desc, rows: list.map(r => ({ a: r.a, w: Math.round(r.v / max * 100) + '%', w2: r.prev ? Math.round(Math.min(r.prev, max) / max * 100) + '%' : null, barBg: r.bar || 'var(--ink)', b: r.b, c: r.c, chip: r.chip || null })) }; };
+    const P10 = s.products.filter(p => p.active).slice(0, 10);
+    const R = {
+      producto: () => mk(P10.map(p => { const v = (H(p.name) % 90 + 20) * 61000 * f, prev = v * (0.8 + p.id % 5 / 10), d = Math.round((v / prev - 1) * 100); return { a: p.name, v, prev, b: M.cop(v), c: (d >= 0 ? '+' : '') + d + ' %', chip: d < -5 ? M.chip('bajo', 'Baja') : d > 5 ? M.chip('ok', 'Sube') : null }; }).sort((a, b) => b.v - a.v), 'Producto', 'Ventas', 'Variación', 'Tendencia', 'Ventas por producto comparadas con el período anterior.'),
+      cliente: () => mk(s.clients.map(c => { const v = (H(c.name) % 70 + 15) * 98000 * f; return { a: c.name, v, prev: v * 0.92, b: M.cop(v), c: c.lastDays >= 25 ? 'Sin pedir hace ' + c.lastDays + ' d' : 'Activo', chip: c.lastDays >= 25 ? M.chip('vence', 'Dejó de comprar') : null }; }).sort((a, b) => b.v - a.v), 'Cliente', 'Ventas', 'Actividad', 'Alerta', 'Los que más compran arriba; los que dejaron de comprar, marcados.'),
+      vendedor: () => mk([['Diana Restrepo', 9.1], ['Andrés Gómez', 7.4], ['Mostrador', 3.2]].map(([a, m]) => ({ a, v: m * 1e6 * f, prev: m * 0.94e6 * f, b: M.cop(m * 1e6 * f), c: Math.round(m * 3.1 * f) + ' pedidos' })), 'Vendedor', 'Ventas', 'Pedidos', '', 'Ventas por vendedor y canal.'),
+      ruta: () => mk([['Ruta Sur (Kennedy, Bosa, Soacha)', 6.2, '42'], ['Ruta Occidente (Fontibón, Engativá, Mosquera)', 5.5, '51'], ['Ruta Centro-Norte (Chapinero, Centro)', 3.1, '28']].map(([a, m, t]) => ({ a, v: m * 1e6 * f, b: M.cop(m * 1e6 * f), c: t + ' min entre entregas' })), 'Ruta', 'Ventas', 'Tiempo medio', '', 'Ventas y tiempos por ruta de reparto.'),
+      margen: () => mk(P10.map(p => { const pr = p.pres[0].price, m = (pr - p.cost) / pr; return { a: p.name, v: m, b: Math.round(m * 100) + ' %', c: M.cop(pr - p.cost) + ' / und', bar: m < 0.2 ? 'var(--warn)' : 'var(--ink)', chip: m < 0.2 ? M.chip('bajo', 'Margen bajo') : null }; }).sort((a, b) => b.v - a.v), 'Producto', 'Margen', 'Utilidad unidad', 'Alerta', 'Margen bruto sobre precio mayorista. Solo visible para administración.'),
+      rotacion: () => mk(P10.map(p => { const v = Math.max(3, Math.round(p.stock / Math.max(4, p.min / 14))); return { a: p.name, v: 1 / v, b: v + ' días', c: M.num(p.stock) + ' und en bodega', chip: v > 60 ? M.chip('vence', 'Lenta') : null }; }).sort((a, b) => b.v - a.v), 'Producto', 'Días de inventario', 'Stock', 'Alerta', 'Cuántos días dura el inventario al ritmo actual de venta.'),
+      reponer: () => mk(s.products.filter(p => p.active && p.stock < p.min * 1.2).map(p => ({ a: p.name, v: p.min - p.stock + p.min, b: M.num(Math.max(0, p.min * 2 - p.stock)) + ' und', c: 'Stock ' + M.num(p.stock) + ' / mín. ' + M.num(p.min), chip: M.chip(M.stockStatus(p)) })), 'Producto', 'Sugerido pedir', 'Situación', 'Estado', 'Sugerencia de compra para cubrir dos veces el mínimo.')
+    };
+    const logRolesAll = ['Todos', 'Dueño', 'Vendedor', 'Bodega', 'Caja', 'Conductor', 'Empleado', 'Sistema'];
+    const logAll = s.log.filter(l => (st.logRole || 'Todos') === 'Todos' || l.role === st.logRole).map(l => ({ when: M.date(l.when) + ' ' + l.when.slice(11), who: l.who, role: l.role, what: l.what }));
+    const COLS = ['Dueño', 'Vendedor', 'Mostrador', 'Caja', 'Bodega', 'Conductor', 'Empleado'];
+    const P = st.perms || { 'Ver costos y márgenes': [1, 0, 0, 0, 0, 0, 0], 'Editar precios y descuentos': [1, 0, 0, 0, 0, 0, 0], 'Tomar pedidos': [1, 1, 1, 1, 0, 0, 0], 'Facturar y anular': [1, 0, 0, 1, 0, 0, 0], 'Registrar abonos de cartera': [1, 0, 0, 1, 0, 0, 0], 'Ajustar inventario': [1, 0, 0, 0, 1, 0, 0], 'Ver ubicación de conductores': [1, 0, 0, 0, 0, 0, 0], 'Aprobar turnos y permisos': [1, 0, 0, 0, 0, 0, 0], 'Pagar nómina': [1, 0, 0, 0, 0, 0, 0], 'Ver reportes': [1, 0, 0, 0, 0, 0, 0] };
+    const locked = (k, i) => i === 0 || (/costos/.test(k) && [1, 4, 5].includes(i));
+    const perms = Object.keys(P).map(k => ({ label: k, cells: P[k].map((v, i) => { const lk = locked(k, i); return { on: v ? 'true' : 'false', aria: k + ' · ' + COLS[i], locked: lk, icon: lk && !v ? 'icon-lock' : v ? 'icon-check' : 'icon-minus', bg: v ? 'var(--ink)' : 'transparent', fg: v ? 'var(--bg)' : 'var(--ink-3)', bd: v ? 'var(--ink)' : 'var(--line-2)', toggle: () => { if (lk) return; const n = { ...P, [k]: P[k].map((x, j) => j === i ? 1 - x : x) }; this.setState({ perms: n }); MG.set(x => MG.log(x, 'Administración', 'Dueño', (v ? 'Quitó' : 'Dio') + ' permiso «' + k + '» a ' + COLS[i])); } }; }) }));
+    const lists = [['Mayorista', 'precio base del catálogo'], ['Distribuidor', 'base − 4 %']].map(([name, rule]) => ({ name, rule, n: s.clients.filter(c => c.list === name).length }));
+    return {
+      invF, invRows, cq: st.cq, setCq: e => this.setState({ cq: e.target.value }), catSel: st.cat, setCat: e => this.setState({ cat: e.target.value }), catOpts: ['Todas', 'Granos', 'Aceites', 'Harinas', 'Azúcar', 'Enlatados', 'Aseo', 'Bebidas'], catCount: catRows.length + ' de 824 productos (muestra de ejemplo)', catRows, openImport, newProd: () => this.flash('Formulario de nuevo producto (por diseñar)'),
+      cliRows, lost, repTabs, cmpOpts, rep: R[st.rep](), exportRep: () => this.flash('Reporte exportado a Excel (ejemplo)'),
+      logRole: st.logRole || 'Todos', setLogRole: e => this.setState({ logRole: e.target.value }), logRoles: logRolesAll, logAll, permCols: COLS, perms, lists,
+      editDisc: () => this.flash('Edición de escalas: pide confirmación y queda en el historial'), logoSrc: st.theme === 'dark' ? 'assets/logo-magnus-blanco.png' : 'assets/logo-magnus.png'
+    };
+  }
+}
+</script>
+</body>
+</html>

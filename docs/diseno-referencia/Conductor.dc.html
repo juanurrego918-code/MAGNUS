@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/lucide-static@0.469.0/font/lucide.css">
+<script src="magnus-store.js"></script>
+<style>
+body{margin:0;background:#E6E5E9;font-family:'Public Sans',system-ui,sans-serif;font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased;color:#17151A}
+*{box-sizing:border-box}
+button,input,select,textarea{font:inherit;color:inherit}
+a{color:inherit;text-underline-offset:3px}a:hover{color:#D91E26}
+:focus-visible{outline:3px solid #D91E26;outline-offset:2px}
+[data-theme=light]{--canvas:#E6E5E9;--bg:#F4F4F6;--surface:#FFFFFF;--sunk:#ECECEF;--line:#DCDBE1;--line-2:#ADABB4;--ink:#17151A;--ink-2:#46434C;--ink-3:#5F5C66;--red:#D91E26;--red-press:#A3141A;--red-text:#B3161D;--red-tint:#FDECEC;--on-red:#FFFFFF;--ok:#16653A;--ok-tint:#E4F3E9;--ok-line:#9CCFAF;--warn:#7A4E00;--warn-tint:#FFF2CC;--warn-line:#E6BD5C;--err:#A3141A;--err-tint:#FDEBEC;--err-line:#EFA2A5;--info:#17151A;--info-tint:#ECECEF;--info-line:#ADABB4;--mute:#56535C;--mute-tint:#EDEDF0;--mute-line:#C9C8CE;--ph:#E9E8EC;--shadow:0 1px 2px rgba(23,21,26,.06),0 6px 20px rgba(23,21,26,.07)}
+[data-theme=dark]{--canvas:#0B0A0D;--bg:#121115;--surface:#1B1A1F;--sunk:#25232A;--line:#35333B;--line-2:#5A5761;--ink:#F5F4F7;--ink-2:#CFCCD5;--ink-3:#ADA9B4;--red:#D91E26;--red-press:#B8181F;--red-text:#FF7378;--red-tint:#3A1517;--on-red:#FFFFFF;--ok:#6FD99A;--ok-tint:#12301F;--ok-line:#2D6B47;--warn:#F4C55B;--warn-tint:#352808;--warn-line:#7A5C14;--err:#FF7A7F;--err-tint:#3A1517;--err-line:#7D2A2E;--info:#F5F4F7;--info-tint:#25232A;--info-line:#5A5761;--mute:#B4B1BA;--mute-tint:#26252B;--mute-line:#45434B;--ph:#2A282F;--shadow:0 1px 2px rgba(0,0,0,.4),0 6px 20px rgba(0,0,0,.35)}
+@keyframes mg-pulse{0%,100%{opacity:.5}50%{opacity:1}}
+@keyframes mg-in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+</style>
+</helmet>
+<div data-theme="{{ theme }}" style="min-height:100vh;background:var(--canvas);color:var(--ink);display:flex;flex-direction:column">
+  <header style="position:sticky;top:0;z-index:20;background:#17151A;color:#F5F4F7;display:flex;align-items:center;gap:20px;padding:10px 20px;flex-wrap:wrap;border-bottom:1px solid #2C2A31">
+    <a href="Magnus Sistema.dc.html" style="display:flex;align-items:center;gap:10px;text-decoration:none;color:#F5F4F7"><img src="assets/simbolo-magnus-blanco.png" alt="Magnus" style="height:26px"><span style="font-weight:700;font-size:14px;letter-spacing:.02em;white-space:nowrap">Magnus · Prototipo</span></a>
+    <nav aria-label="Cambiar de rol" style="display:flex;gap:4px;flex-wrap:wrap"><sc-for list="{{ roles }}" as="r" hint-placeholder-count="8"><a href="{{ r.href }}" style="padding:7px 11px;border-radius:6px;font-size:13px;font-weight:600;text-decoration:none;color:{{ r.fg }};background:{{ r.bg }}">{{ r.label }}</a></sc-for></nav>
+    <div style="margin-left:auto;display:flex;gap:8px;align-items:center">
+      <button onClick="{{ toggleTheme }}" style="height:34px;padding:0 12px;border-radius:6px;border:1px solid #45434B;background:transparent;color:#F5F4F7;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap"><i class="{{ themeIcon }}"></i><span style="flex:1;min-width:0">{{ themeLabel }}</span></button>
+      <button onClick="{{ resetData }}" style="height:34px;padding:0 12px;border-radius:6px;border:1px solid #45434B;background:transparent;color:#F5F4F7;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap"><i class="icon-rotate-ccw"></i>Reiniciar datos</button>
+    </div>
+  </header>
+  <div style="display:flex;gap:32px;padding:28px 32px 48px;align-items:flex-start;flex-wrap:wrap;justify-content:center">
+    <aside style="width:250px;display:flex;flex-direction:column;gap:18px">
+      <div style="display:flex;flex-direction:column;gap:4px">
+        <span style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)">Rol · Celular en el vehículo</span>
+        <h1 style="margin:0;font-size:24px;font-weight:800">Conductor</h1>
+        <p style="margin:0;font-size:14px;line-height:1.45;color:var(--ink-2)">Jhon Fredy Mora reparte. Una mano, botones de 64 px en la zona del pulgar, una acción principal por pantalla. Sin precios unitarios ni costos.</p>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:2px">
+        <span style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);margin-bottom:6px">Pantallas</span>
+        <sc-for list="{{ screenList }}" as="sc" hint-placeholder-count="7"><button onClick="{{ sc.go }}" style="width:100%;text-align:left;min-height:40px;padding:8px 12px;border-radius:6px;border:1px solid {{ sc.bd }};background:{{ sc.bg }};color:var(--ink);font-size:14px;font-weight:{{ sc.fw }};cursor:pointer;display:flex;align-items:center;gap:10px"><span style="font-size:12px;color:var(--ink-3);width:18px">{{ sc.n }}</span><span style="flex:1;min-width:0">{{ sc.label }}</span></button></sc-for>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <span style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)">Estado de la pantalla</span>
+        <div role="radiogroup" aria-label="Estado de la pantalla" style="display:flex;flex-wrap:wrap;gap:6px"><sc-for list="{{ modes }}" as="m" hint-placeholder-count="6"><button role="radio" aria-checked="{{ m.on }}" onClick="{{ m.go }}" style="height:34px;padding:0 11px;border-radius:999px;border:1px solid {{ m.bd }};background:{{ m.bg }};color:{{ m.fg }};font-size:13px;font-weight:600;cursor:pointer">{{ m.label }}</button></sc-for></div>
+      </div>
+    </aside>
+
+    <div style="width:410px;height:864px;border-radius:54px;background:#0B0A0C;padding:10px;box-shadow:0 30px 60px rgba(0,0,0,.25);flex:none">
+      <div style="width:390px;height:844px;border-radius:44px;overflow:hidden;background:var(--bg);display:flex;flex-direction:column;position:relative">
+        <div style="height:46px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 28px 0 34px;font-size:15px;font-weight:700;background:var(--surface)"><span>10:38</span><span style="display:flex;gap:6px;font-size:16px;align-items:center"><sc-if value="{{ onShift }}" hint-placeholder-val="{{ true }}"><i class="icon-navigation" style="color:var(--red-text)"></i></sc-if><i class="icon-signal"></i><i class="icon-battery-medium"></i></span></div>
+        <sc-if value="{{ onShift }}" hint-placeholder-val="{{ true }}">
+          <div role="status" style="flex:none;background:var(--ink);color:var(--bg);display:flex;align-items:center;gap:8px;padding:8px 16px;font-size:13px;font-weight:600"><i class="icon-radio" style="font-size:16px"></i><span style="flex:1">Ubicación compartida con administración · solo durante el turno</span></div>
+        </sc-if>
+        <div style="flex:none;background:var(--surface);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:8px;padding:6px 12px 10px;min-height:64px">
+          <sc-if value="{{ hdr.back }}" hint-placeholder-val="{{ false }}"><button onClick="{{ hdr.goBack }}" aria-label="Volver" style="width:56px;height:56px;border-radius:12px;border:none;background:transparent;font-size:24px;display:flex;align-items:center;justify-content:center;cursor:pointer"><i class="icon-arrow-left"></i></button></sc-if>
+          <sc-if value="{{ hdr.logo }}" hint-placeholder-val="{{ true }}"><sc-if value="{{ isLight }}" hint-placeholder-val="{{ true }}"><img src="assets/simbolo-magnus.png" alt="Magnus" style="height:28px;margin:0 4px 0 6px"></sc-if><sc-if value="{{ isDark }}" hint-placeholder-val="{{ false }}"><img src="assets/simbolo-magnus-blanco.png" alt="Magnus" style="height:28px;margin:0 4px 0 6px"></sc-if></sc-if>
+          <div style="display:flex;flex-direction:column;min-width:0;flex:1"><span style="font-size:20px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ hdr.title }}</span><span style="font-size:13px;color:var(--ink-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ hdr.sub }}</span></div>
+        </div>
+
+        <div style="flex:1;overflow-y:auto;overflow-x:hidden;position:relative">
+          <sc-if value="{{ alt.on }}" hint-placeholder-val="{{ false }}">
+            <sc-if value="{{ alt.loading }}" hint-placeholder-val="{{ false }}"><div aria-busy="true" style="padding:16px;display:flex;flex-direction:column;gap:12px"><div style="height:150px;border-radius:14px;background:var(--sunk);animation:mg-pulse 1.2s infinite"></div><div style="height:90px;border-radius:14px;background:var(--sunk);animation:mg-pulse 1.2s infinite"></div><div style="height:90px;border-radius:14px;background:var(--sunk);animation:mg-pulse 1.2s infinite"></div><span style="font-size:15px;color:var(--ink-3);text-align:center">Cargando {{ alt.noun }}…</span></div></sc-if>
+            <sc-if value="{{ alt.msg }}" hint-placeholder-val="{{ false }}"><div style="min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:14px;padding:32px 28px"><div style="width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:36px;background:{{ alt.bg }};color:{{ alt.fg }};border:1px solid {{ alt.bd }}"><i class="{{ alt.icon }}"></i></div><h2 style="margin:0;font-size:23px;font-weight:800">{{ alt.title }}</h2><p style="margin:0;font-size:16px;line-height:1.5;color:var(--ink-2);text-wrap:pretty">{{ alt.body }}</p><button onClick="{{ alt.act }}" style="margin-top:6px;height:64px;padding:0 28px;border-radius:14px;border:1px solid var(--ink);background:var(--ink);color:var(--bg);font-size:18px;font-weight:800;cursor:pointer">{{ alt.cta }}</button></div></sc-if>
+          </sc-if>
+
+          <sc-if value="{{ show.turno }}" hint-placeholder-val="{{ true }}">
+            <div style="padding:20px 16px;display:flex;flex-direction:column;gap:16px">
+              <span style="font-size:22px;font-weight:800">Hola, Jhon Fredy</span>
+              <div style="display:flex;gap:12px;padding:14px;border-radius:14px;border:1px solid var(--line-2);background:var(--surface)"><i class="icon-map-pin" style="font-size:24px;flex:none"></i><div style="display:flex;flex-direction:column;gap:4px"><span style="font-size:16px;font-weight:800">Aviso de ubicación</span><span style="font-size:15px;line-height:1.5;color:var(--ink-2)">Al iniciar el turno, la administración ve dónde está el vehículo para calcular la hora de llegada. Se apaga al terminar el turno. Fuera del turno no se registra.</span></div></div>
+              <sc-if value="{{ onShift }}" hint-placeholder-val="{{ false }}">
+                <div style="display:flex;flex-direction:column;gap:10px;padding:16px;border-radius:14px;border:1px solid var(--ok-line);background:var(--ok-tint)"><span style="display:flex;gap:8px;align-items:center;font-size:18px;font-weight:800;color:var(--ok)"><i class="icon-circle-check"></i>Turno activo desde {{ shiftIn }}</span><span style="font-size:15px;color:var(--ink)">Entrada registrada con foto. Vehículo WFT-482.</span></div>
+                <button onClick="{{ goRuta }}" style="height:64px;border-radius:14px;border:none;background:var(--red);color:var(--on-red);font-size:18px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px" style-active="background:var(--red-press)"><i class="icon-route" style="font-size:22px"></i>Ver entregas del día</button>
+              </sc-if>
+              <sc-if value="{{ offShift }}" hint-placeholder-val="{{ false }}">
+                <button onClick="{{ snap }}" aria-label="Tomar foto de entrada" style="height:220px;border-radius:14px;border:2px dashed var(--line-2);background:{{ selfieBg }};display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;cursor:pointer;color:var(--ink-2)"><i class="{{ selfieIcon }}" style="font-size:40px"></i><span style="font-size:16px;font-weight:700">{{ selfieTxt }}</span></button>
+                <button onClick="{{ startShift }}" disabled="{{ noSelfie }}" style="height:64px;border-radius:14px;border:none;background:var(--red);color:var(--on-red);font-size:18px;font-weight:800;cursor:pointer;opacity:{{ startOp }}" style-active="background:var(--red-press)">Iniciar turno y compartir ubicación</button>
+              </sc-if>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ show.ruta }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:16px;display:flex;flex-direction:column;gap:12px">
+              <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px"><sc-for list="{{ rk }}" as="k" hint-placeholder-count="3"><div style="background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 12px;display:flex;flex-direction:column"><span style="font-size:24px;font-weight:800">{{ k.v }}</span><span style="font-size:13px;color:var(--ink-2);font-weight:600">{{ k.l }}</span></div></sc-for></div>
+              <sc-for list="{{ stops }}" as="d" hint-placeholder-count="3">
+                <button onClick="{{ d.open }}" style="text-align:left;background:var(--surface);border:{{ d.bw }} solid {{ d.bd }};border-radius:14px;padding:14px;display:flex;gap:12px;cursor:pointer;opacity:{{ d.op }}">
+                  <span style="width:42px;height:42px;flex:none;border-radius:50%;background:{{ d.nBg }};color:{{ d.nFg }};display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800">{{ d.seq }}</span>
+                  <div style="flex:1;display:flex;flex-direction:column;gap:5px;min-width:0"><span style="font-size:17px;font-weight:800">{{ d.client }}</span><span style="font-size:14px;color:var(--ink-2)">{{ d.addr }}</span><div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center"><span style="display:inline-flex;align-items:center;gap:5px;height:28px;padding:0 10px;border-radius:999px;border:1px solid {{ d.chip.bd }};background:{{ d.chip.bg }};color:{{ d.chip.fg }};font-size:13px;font-weight:700"><i class="{{ d.chip.icon }}"></i>{{ d.chip.label }}</span><span style="font-size:13px;color:var(--ink-2)">{{ d.window }}</span><sc-if value="{{ d.cod }}" hint-placeholder-val="{{ false }}"><span style="font-size:13px;font-weight:800;display:flex;gap:4px;align-items:center"><i class="icon-hand-coins"></i>Cobrar {{ d.cod }}</span></sc-if></div></div>
+                </button>
+              </sc-for>
+              <sc-if value="{{ noStops }}" hint-placeholder-val="{{ false }}"><div style="text-align:center;padding:30px;font-size:16px;color:var(--ink-2)">No tiene entregas asignadas todavía.</div></sc-if>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ show.detalle }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:16px 16px 24px;display:flex;flex-direction:column;gap:12px">
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><span style="font-size:15px;color:var(--ink-2)">Parada {{ dt.seq }} · {{ dt.id }}</span><span style="display:inline-flex;align-items:center;gap:5px;height:30px;padding:0 10px;border-radius:999px;border:1px solid {{ dt.chip.bd }};background:{{ dt.chip.bg }};color:{{ dt.chip.fg }};font-size:14px;font-weight:700"><i class="{{ dt.chip.icon }}"></i>{{ dt.chip.label }}</span></div>
+              <span style="font-size:24px;font-weight:800;line-height:1.2">{{ dt.client }}</span>
+              <span style="font-size:17px;line-height:1.4">{{ dt.addr }}</span>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+                <a href="{{ dt.map }}" target="_blank" rel="noopener" style="height:60px;border-radius:12px;border:2px solid var(--ink);display:flex;align-items:center;justify-content:center;gap:8px;font-size:16px;font-weight:800;text-decoration:none"><i class="icon-map" style="font-size:20px"></i>Abrir mapa</a>
+                <button onClick="{{ dt.call }}" style="height:60px;border-radius:12px;border:2px solid var(--ink);background:transparent;display:flex;align-items:center;justify-content:center;gap:8px;font-size:16px;font-weight:800;cursor:pointer"><i class="icon-phone" style="font-size:20px"></i>Llamar</button>
+              </div>
+              <div style="background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:4px 14px">
+                <div style="display:flex;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--line);font-size:15px"><span style="color:var(--ink-2)">Recibe</span><span style="font-weight:700">{{ dt.contact }}</span></div>
+                <div style="display:flex;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--line);font-size:15px"><span style="color:var(--ink-2)">Ventana</span><span style="font-weight:700">{{ dt.window }}</span></div>
+                <div style="display:flex;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--line);font-size:15px"><span style="color:var(--ink-2)">Llegada estimada</span><span style="font-weight:700">{{ dt.eta }}</span></div>
+                <div style="display:flex;justify-content:space-between;padding:11px 0;font-size:15px"><span style="color:var(--ink-2)">Cobro contra entrega</span><span style="font-weight:800">{{ dt.codTxt }}</span></div>
+              </div>
+              <div style="background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:4px 14px"><div style="padding:11px 0;border-bottom:1px solid var(--line);font-size:15px;font-weight:800">Lleva · factura {{ dt.inv }}</div><sc-for list="{{ dt.items }}" as="it" hint-placeholder-count="3"><div style="display:flex;justify-content:space-between;gap:8px;padding:10px 0;border-bottom:1px solid var(--line);font-size:15px"><span>{{ it.name }}</span><span style="font-weight:800;white-space:nowrap">{{ it.qty }}</span></div></sc-for></div>
+              <sc-if value="{{ dt.evidence }}" hint-placeholder-val="{{ false }}"><div style="padding:14px;border-radius:14px;border:1px solid var(--ok-line);background:var(--ok-tint);display:flex;flex-direction:column;gap:4px"><span style="font-size:16px;font-weight:800;color:var(--ok);display:flex;gap:6px;align-items:center"><i class="icon-circle-check"></i>Entregado {{ dt.evidence.time }}</span><span style="font-size:15px">Recibió: {{ dt.evidence.name }} · foto y firma guardadas</span></div></sc-if>
+              <sc-if value="{{ dt.nov }}" hint-placeholder-val="{{ false }}"><div style="padding:14px;border-radius:14px;border:1px solid var(--err-line);background:var(--err-tint);color:var(--err);font-size:15px;font-weight:700;display:flex;gap:6px;align-items:center"><i class="icon-octagon-alert"></i>{{ dt.nov }}</div></sc-if>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ show.evidencia }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:16px 16px 24px;display:flex;flex-direction:column;gap:14px">
+              <span style="font-size:16px;color:var(--ink-2)">{{ dt.client }} · {{ dt.id }}</span>
+              <button onClick="{{ ev.snap }}" aria-label="Tomar foto de la entrega" style="height:170px;border-radius:14px;border:2px dashed {{ ev.photoBd }};background:{{ ev.photoBg }};display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;cursor:pointer;color:var(--ink-2)"><i class="{{ ev.photoIcon }}" style="font-size:36px"></i><span style="font-size:16px;font-weight:700">{{ ev.photoTxt }}</span></button>
+              <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:16px;font-weight:800">Nombre de quien recibe</span><input value="{{ ev.name }}" onInput="{{ ev.setName }}" placeholder="Nombre y apellido" style="height:60px;border-radius:12px;border:{{ ev.nameBw }} solid {{ ev.nameBd }};background:var(--surface);padding:0 14px;font-size:18px"></label>
+              <div style="display:flex;flex-direction:column;gap:6px"><div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:16px;font-weight:800">Firma (opcional)</span><button onClick="{{ ev.clearSig }}" style="height:40px;padding:0 12px;border-radius:8px;border:1px solid var(--line-2);background:transparent;font-size:14px;font-weight:700;cursor:pointer">Borrar</button></div><canvas ref="{{ sigRef }}" width="716" height="260" aria-label="Área de firma" style="width:358px;height:130px;border-radius:12px;border:1px solid var(--line-2);background:var(--surface);touch-action:none;cursor:crosshair"></canvas></div>
+              <sc-if value="{{ ev.hasCod }}" hint-placeholder-val="{{ false }}">
+                <div style="display:flex;flex-direction:column;gap:10px;padding:14px;border-radius:14px;border:2px solid var(--ink);background:var(--surface)">
+                  <span style="font-size:16px;font-weight:800;display:flex;gap:6px;align-items:center"><i class="icon-hand-coins"></i>Cobrar contra entrega</span>
+                  <span style="font-size:30px;font-weight:800">{{ ev.cod }}</span>
+                  <span style="font-size:14px;color:var(--ink-2)">Cuadra con la factura {{ dt.inv }}</span>
+                  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><sc-for list="{{ ev.methods }}" as="m" hint-placeholder-count="2"><button onClick="{{ m.go }}" aria-pressed="{{ m.on }}" style="height:60px;border-radius:12px;border:{{ m.bw }} solid {{ m.bd }};background:var(--surface);font-size:16px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px"><i class="{{ m.icon }}"></i><span style="flex:1;min-width:0">{{ m.label }}</span></button></sc-for></div>
+                </div>
+              </sc-if>
+              <sc-if value="{{ ev.err }}" hint-placeholder-val="{{ false }}"><div role="alert" style="display:flex;gap:8px;align-items:center;padding:12px;border-radius:12px;border:1px solid var(--err-line);background:var(--err-tint);color:var(--err);font-size:15px;font-weight:700"><i class="icon-circle-x"></i>{{ ev.err }}</div></sc-if>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ show.novedad }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:16px;display:flex;flex-direction:column;gap:10px">
+              <span style="font-size:16px;color:var(--ink-2)">{{ dt.client }} · {{ dt.id }}</span>
+              <span style="font-size:18px;font-weight:800">¿Qué pasó?</span>
+              <sc-for list="{{ reasons }}" as="r" hint-placeholder-count="4"><button onClick="{{ r.go }}" aria-pressed="{{ r.on }}" style="text-align:left;height:68px;padding:0 16px;border-radius:14px;border:{{ r.bw }} solid {{ r.bd }};background:var(--surface);font-size:18px;font-weight:700;cursor:pointer;display:flex;gap:12px;align-items:center"><i class="{{ r.icon }}" style="font-size:24px"></i><span style="flex:1;min-width:0">{{ r.label }}</span></button></sc-for>
+              <label style="display:flex;flex-direction:column;gap:6px;margin-top:4px"><span style="font-size:15px;font-weight:800">Detalle (opcional)</span><input value="{{ novNote }}" onInput="{{ setNovNote }}" placeholder="Ej. el local abre a las 2 p. m." style="height:60px;border-radius:12px;border:1px solid var(--line-2);background:var(--surface);padding:0 14px;font-size:17px"></label>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ show.cierre }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:16px;display:flex;flex-direction:column;gap:12px">
+              <div style="background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:4px 14px"><sc-for list="{{ endRows }}" as="r" hint-placeholder-count="4"><div style="display:flex;justify-content:space-between;padding:13px 0;border-bottom:1px solid var(--line);font-size:16px"><span>{{ r.l }}</span><span style="font-weight:800">{{ r.v }}</span></div></sc-for></div>
+              <div style="display:flex;gap:10px;padding:14px;border-radius:14px;border:1px solid var(--warn-line);background:var(--warn-tint);color:var(--warn);font-size:15px;font-weight:600;line-height:1.45"><i class="icon-banknote" style="font-size:22px;flex:none"></i>Entregue el recaudo en caja antes de salir. Caja lo cuadra contra las facturas.</div>
+              <sc-if value="{{ offShift }}" hint-placeholder-val="{{ false }}"><div style="padding:14px;border-radius:14px;border:1px solid var(--ok-line);background:var(--ok-tint);color:var(--ok);font-size:16px;font-weight:800;display:flex;gap:8px;align-items:center"><i class="icon-circle-check"></i>Turno terminado. Ubicación apagada.</div></sc-if>
+            </div>
+          </sc-if>
+        </div>
+
+        <sc-if value="{{ action }}" hint-placeholder-val="{{ false }}">
+          <div style="flex:none;padding:12px 14px 14px;background:var(--surface);border-top:1px solid var(--line);display:flex;flex-direction:column;gap:8px">
+            <button onClick="{{ action.go }}" disabled="{{ action.dis }}" style="height:68px;border-radius:16px;border:none;background:{{ action.bg }};color:{{ action.fg }};font-size:19px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;opacity:{{ action.op }}"><i class="{{ action.icon }}" style="font-size:24px"></i><span style="flex:1;min-width:0">{{ action.label }}</span></button>
+            <sc-if value="{{ action.alt }}" hint-placeholder-val="{{ false }}"><button onClick="{{ action.altGo }}" style="height:56px;border-radius:14px;border:2px solid var(--err-line);background:transparent;color:var(--err);font-size:16px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px"><i class="icon-octagon-alert"></i><span style="flex:1;min-width:0">{{ action.alt }}</span></button></sc-if>
+          </div>
+        </sc-if>
+        <sc-if value="{{ toast }}" hint-placeholder-val="{{ false }}"><div role="status" style="position:absolute;left:16px;right:16px;top:150px;z-index:12;background:var(--ink);color:var(--bg);border-radius:12px;padding:16px;font-size:16px;font-weight:700;display:flex;gap:10px;align-items:center;animation:mg-in .25s ease-out;box-shadow:var(--shadow)"><i class="icon-circle-check" style="font-size:20px"></i>{{ toast }}</div></sc-if>
+        <nav aria-label="Menú del conductor" style="flex:none;height:84px;background:var(--surface);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(3,1fr);padding:0 4px 18px">
+          <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="3"><button onClick="{{ t.go }}" aria-current="{{ t.cur }}" style="border:none;background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:13px;font-weight:{{ t.fw }};color:{{ t.fg }};cursor:pointer;border-top:3px solid {{ t.bd }};min-height:60px"><i class="{{ t.icon }}" style="font-size:24px"></i><span style="flex:1;min-width:0">{{ t.label }}</span></button></sc-for>
+        </nav>
+      </div>
+    </div>
+
+    <aside style="width:280px;display:flex;flex-direction:column;gap:14px">
+      <span style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)">Nota de diseño</span>
+      <p style="margin:0;font-size:14px;line-height:1.55;color:var(--ink-2);text-wrap:pretty">{{ note2 }}</p>
+      <div style="border-top:1px solid var(--line-2);padding-top:14px;display:flex;flex-direction:column;gap:8px">
+        <span style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)">Flujo 2 · Domicilio</span>
+        <ol style="margin:0;padding-left:18px;font-size:14px;line-height:1.7;color:var(--ink-2)"><li><a href="Dueno.dc.html">Dueño asigna conductor y ruta</a></li><li><strong style="color:var(--ink)">Conductor entrega con foto y firma</strong></li><li><a href="Dueno.dc.html">Dueño lo ve en el mapa y el panel</a></li></ol>
+      </div>
+    </aside>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const ROLES = [['Sistema', 'Magnus Sistema.dc.html'], ['Vendedor', 'Vendedor.dc.html'], ['Mostrador', 'Mostrador.dc.html'], ['Caja', 'Caja.dc.html'], ['Bodega', 'Bodega.dc.html'], ['Conductor', 'Conductor.dc.html'], ['Empleado', 'Empleado.dc.html'], ['Dueño', 'Dueno.dc.html']];
+const ME = 'E06', MYNAME = 'Jhon Fredy Mora';
+const SCREENS = [
+  { id: 'turno', label: 'Asistencia al turno', title: 'Mi turno', sub: 'Jhon Fredy Mora · Conductor', logo: true, noun: 'su turno', empty: ['No tiene turno hoy', 'Según el calendario, hoy no le corresponde turno.', 'Ver mis turnos'], ok: ['Turno iniciado', 'Su entrada quedó registrada con foto.'], note: 'Antes de compartir ubicación se explica para qué y cuándo. Mientras el turno está activo hay una franja oscura fija arriba que lo recuerda.' },
+  { id: 'ruta', label: 'Entregas del día', title: 'Entregas de hoy', sub: 'En orden de ruta', noun: 'sus entregas', empty: ['Sin entregas asignadas', 'La administración le asigna la ruta. Le llegará un aviso.', 'Actualizar'], ok: ['Ruta completa', 'Todas las entregas del día quedaron registradas.'], note: 'Paradas numeradas en el orden que definió la administración. La siguiente parada va resaltada; las entregadas se atenúan.' },
+  { id: 'detalle', label: 'Detalle de la entrega', title: 'Entrega', back: 'ruta', noun: 'la entrega', empty: ['Entrega no encontrada', 'Puede que la hayan reasignado.', 'Volver a la ruta'], ok: ['Estado actualizado', 'La administración ya lo ve en el mapa.'], note: 'Una sola acción principal abajo, al alcance del pulgar: cambia según el estado (cargado → en ruta → entregado). Novedad siempre disponible como segunda opción.' },
+  { id: 'evidencia', label: 'Evidencia y cobro', title: 'Registrar entrega', back: 'detalle', noun: 'el registro', empty: ['—', '', 'Volver'], ok: ['Entrega registrada', 'Foto, nombre y firma guardados.'], note: 'Foto y nombre obligatorios; firma opcional con el dedo. Si hay cobro contra entrega, el valor aparece grande y cuadra con la factura.' },
+  { id: 'novedad', label: 'Reportar novedad', title: 'Reportar novedad', back: 'detalle', noun: 'la novedad', empty: ['—', '', 'Volver'], ok: ['Novedad reportada', 'La administración la ve en rojo en el panel.'], note: 'Motivos grandes de un toque. La novedad llega en rojo al panel del dueño.' },
+  { id: 'cierre', label: 'Fin de turno', title: 'Fin de turno', sub: 'Resumen del día', noun: 'el resumen', empty: ['Sin actividad', 'No registró entregas hoy.', 'Volver'], ok: ['Turno cerrado', 'Ubicación apagada. Buen descanso.'], note: 'Resumen de entregas, novedades y recaudo para entregar en caja. Al terminar se apaga la ubicación.' }
+];
+const sel = on => ({ bw: on ? '2px' : '1px', bd: on ? 'var(--ink)' : 'var(--line-2)' });
+
+class Component extends DCLogic {
+  state = { s: null, theme: 'light', screen: 'turno', mode: 'normal', oid: null, photo: false, recvName: '', codMethod: 'Efectivo', tried: false, reason: null, novNote: '', selfie: false, toast: null };
+  sigRef = el => {
+    if (!el || el === this.sig) return; this.sig = el; const ctx = el.getContext('2d'); let down = false;
+    const pos = e => { const r = el.getBoundingClientRect(); return [(e.clientX - r.left) * 2, (e.clientY - r.top) * 2]; };
+    el.onpointerdown = e => { down = true; el.setPointerCapture(e.pointerId); ctx.beginPath(); ctx.moveTo(...pos(e)); this.signed = true; };
+    el.onpointermove = e => { if (!down) return; ctx.lineWidth = 4; ctx.lineCap = 'round'; ctx.strokeStyle = getComputedStyle(el).color; ctx.lineTo(...pos(e)); ctx.stroke(); };
+    el.onpointerup = () => { down = false; };
+  };
+  componentDidMount() {
+    const go = () => { if (!window.MG) return setTimeout(go, 40); this.setState({ s: MG.get(), theme: MG.theme() }); this.un = MG.subscribe(s => this.setState({ s })); this.th = () => this.setState({ theme: MG.theme() }); window.addEventListener('magnus-theme', this.th); window.addEventListener('storage', this.th); };
+    go();
+  }
+  componentWillUnmount() { this.un && this.un(); window.removeEventListener('magnus-theme', this.th); window.removeEventListener('storage', this.th); }
+  nav(screen) { this.setState({ screen, mode: 'normal' }); }
+  flash(t) { this.setState({ toast: t }); clearTimeout(this.tt); this.tt = setTimeout(() => this.setState({ toast: null }), 2400); }
+  setStatus(id, status, extra, msg) { MG.set(s => { const o = s.orders.find(x => x.id === id); o.delivery.status = status; Object.assign(o.delivery, extra || {}); MG.log(s, MYNAME, 'Conductor', msg || (id + ' → ' + MG.ST[status][0])); }); }
+  renderVals() {
+    const st = this.state, s = st.s, M = window.MG;
+    const scr = SCREENS.find(x => x.id === st.screen);
+    const base = {
+      theme: st.theme, isLight: st.theme !== 'dark', isDark: st.theme === 'dark', roles: ROLES.map(([label, href]) => ({ label, href, bg: label === 'Conductor' ? '#F5F4F7' : 'transparent', fg: label === 'Conductor' ? '#17151A' : '#CFCCD5' })),
+      themeIcon: st.theme === 'dark' ? 'icon-sun' : 'icon-moon', themeLabel: st.theme === 'dark' ? 'Claro' : 'Oscuro',
+      toggleTheme: () => M && M.setTheme(st.theme === 'dark' ? 'light' : 'dark'),
+      resetData: () => { if (M && confirm('¿Reiniciar todos los datos de ejemplo del prototipo?')) { M.reset(); this.setState({ screen: 'turno', oid: null }); } },
+      symbolSrc: st.theme === 'dark' ? 'assets/simbolo-magnus-blanco.png' : 'assets/simbolo-magnus.png',
+      screenList: SCREENS.map((x, i) => ({ n: String(i + 1).padStart(2, '0'), label: x.label, go: () => { if (['detalle', 'evidencia', 'novedad'].includes(x.id) && !st.oid && s) { const o = s.orders.find(o => o.delivery.driver === ME && o.delivery.status !== 'entregado'); if (o) return this.setState({ oid: o.id, screen: x.id, mode: 'normal' }); } this.nav(x.id); }, bg: x.id === st.screen ? 'var(--surface)' : 'transparent', bd: x.id === st.screen ? 'var(--line-2)' : 'transparent', fw: x.id === st.screen ? 700 : 500 })),
+      modes: [['normal', 'Normal'], ['vacio', 'Vacío'], ['cargando', 'Cargando'], ['error', 'Error'], ['permiso', 'Sin permiso'], ['exito', 'Éxito']].map(([k, label]) => ({ label, on: st.mode === k ? 'true' : 'false', go: () => this.setState({ mode: k }), bg: st.mode === k ? 'var(--ink)' : 'transparent', fg: st.mode === k ? 'var(--bg)' : 'var(--ink)', bd: st.mode === k ? 'var(--ink)' : 'var(--line-2)' })),
+      note2: scr.note, hdr: { title: scr.title, sub: scr.sub || '', back: !!scr.back, logo: !!scr.logo, goBack: () => this.nav(scr.back) },
+      toast: st.toast, show: {}, alt: { on: false }, action: null, sigRef: this.sigRef, goRuta: () => this.nav('ruta'), novNote: st.novNote, setNovNote: e => this.setState({ novNote: e.target.value })
+    };
+    if (!s) return { ...base, tabs: [] };
+    const alt = { on: st.mode !== 'normal', noun: scr.noun, loading: st.mode === 'cargando', msg: !['normal', 'cargando'].includes(st.mode) };
+    const back = () => this.setState({ mode: 'normal' });
+    if (st.mode === 'vacio') Object.assign(alt, { icon: 'icon-inbox', title: scr.empty[0], body: scr.empty[1], cta: scr.empty[2], act: back, bg: 'var(--mute-tint)', fg: 'var(--mute)', bd: 'var(--mute-line)' });
+    if (st.mode === 'error') Object.assign(alt, { icon: 'icon-wifi-off', title: 'Sin señal', body: 'Lo que marque se guarda en el celular y se envía apenas vuelva la señal. Puede seguir entregando.', cta: 'Reintentar', act: back, bg: 'var(--err-tint)', fg: 'var(--err)', bd: 'var(--err-line)' });
+    if (st.mode === 'permiso') Object.assign(alt, { icon: 'icon-lock', title: 'Sin permiso', body: 'El rol Conductor solo ve sus entregas del día. Precios unitarios, costos y otras rutas no están disponibles.', cta: 'Volver', act: back, bg: 'var(--mute-tint)', fg: 'var(--mute)', bd: 'var(--mute-line)' });
+    if (st.mode === 'exito') Object.assign(alt, { icon: 'icon-circle-check', title: scr.ok[0], body: scr.ok[1], cta: 'Continuar', act: back, bg: 'var(--ok-tint)', fg: 'var(--ok)', bd: 'var(--ok-line)' });
+    const show = {}; if (!alt.on) show[st.screen] = true;
+
+    const att = s.attendance.find(a => a.emp === ME && a.date === M.HOY);
+    const onShift = !!(att && !att.out);
+    const mine = s.orders.filter(o => o.delivery.type === 'domicilio' && o.delivery.driver === ME).sort((a, b) => (a.delivery.seq || 99) - (b.delivery.seq || 99));
+    const nextId = (mine.find(o => !['entregado', 'novedad'].includes(o.delivery.status)) || {}).id;
+    const stops = mine.map(o => { const d = o.delivery; const done = ['entregado', 'novedad'].includes(d.status); const nx = o.id === nextId; return { seq: d.seq, client: M.client(s, o.client).name, addr: d.addr, window: d.window, chip: M.chip(d.status, d.status === 'por_alistar' ? 'En bodega' : null), cod: d.cod && d.status !== 'entregado' ? M.cop(d.cod) : null, op: done ? 0.6 : 1, bw: nx ? '2px' : '1px', bd: nx ? 'var(--ink)' : 'var(--line)', nBg: nx ? 'var(--red)' : done ? 'var(--sunk)' : 'var(--ink)', nFg: nx ? '#fff' : done ? 'var(--ink-2)' : 'var(--bg)', open: () => this.setState({ oid: o.id, screen: 'detalle', photo: false, recvName: '', tried: false, reason: null, novNote: '' }) }; });
+    const cnt = k => mine.filter(o => o.delivery.status === k).length;
+    const rk = [{ v: mine.length, l: 'Asignadas' }, { v: cnt('entregado'), l: 'Entregadas' }, { v: mine.length - cnt('entregado') - cnt('novedad'), l: 'Pendientes' }];
+
+    const o = s.orders.find(x => x.id === st.oid) || mine.find(x => x.id === nextId);
+    let dt = { items: [], chip: M.chip('pendiente') }, action = null;
+    if (o) {
+      const c = M.client(s, o.client); const d = o.delivery;
+      dt = { id: o.id, seq: d.seq || '—', client: c.name, addr: d.addr, chip: M.chip(d.status), map: 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(d.addr + ', Colombia'), call: () => this.flash('Llamando a ' + c.contact.name + ' (número protegido)'), contact: c.contact.name, window: d.window, eta: d.eta || '—', codTxt: d.cod ? M.cop(d.cod) : 'No aplica', inv: o.invoice ? o.invoice.num : 'pendiente', items: o.lines.map(l => { const p = M.prod(s, l.pid); return { name: p.name, qty: l.qty + ' ' + p.pres[l.pi].name.toLowerCase() }; }), evidence: d.status === 'entregado' && d.evidence ? d.evidence : null, nov: d.status === 'novedad' ? 'Novedad: ' + d.novedad : null };
+      if (st.screen === 'detalle' && !alt.on) {
+        const nextMap = { por_alistar: ['cargado', 'Marcar cargado', 'package'], cargado: ['en_ruta', 'Salir a ruta', 'truck'], en_ruta: [null, 'Llegué · registrar entrega', 'map-pin-check'] };
+        const nm = nextMap[d.status];
+        if (nm) action = { label: nm[1], icon: 'icon-' + nm[2], bg: 'var(--red)', fg: 'var(--on-red)', op: onShift ? 1 : 0.45, dis: !onShift, alt: d.status === 'en_ruta' || d.status === 'cargado' ? 'Reportar novedad' : null, altGo: () => this.nav('novedad'), go: () => { if (!nm[0]) return this.setState({ screen: 'evidencia', photo: false, recvName: '', tried: false }); this.setStatus(o.id, nm[0], nm[0] === 'en_ruta' ? { eta: '10:55' } : null); this.flash(nm[0] === 'en_ruta' ? 'En ruta · el cliente recibe el enlace de seguimiento' : 'Marcado como cargado'); } };
+        if (!onShift && nm) action.label = 'Inicie turno para continuar';
+      }
+    }
+    const recvOk = st.recvName.trim().length >= 3;
+    const ev = {
+      snap: () => this.setState({ photo: true }), photoBg: st.photo ? 'repeating-linear-gradient(135deg,var(--ph) 0 10px,var(--sunk) 10px 20px)' : 'var(--surface)', photoBd: st.tried && !st.photo ? 'var(--err)' : 'var(--line-2)', photoIcon: st.photo ? 'icon-image' : 'icon-camera', photoTxt: st.photo ? 'Foto tomada ' + M.now() + ' · tocar para repetir' : 'Tomar foto de la entrega',
+      name: st.recvName, setName: e => this.setState({ recvName: e.target.value }), nameBw: st.tried && !recvOk ? '2px' : '1px', nameBd: st.tried && !recvOk ? 'var(--err)' : 'var(--line-2)',
+      clearSig: () => { if (this.sig) { this.sig.getContext('2d').clearRect(0, 0, 716, 260); this.signed = false; } },
+      hasCod: !!(o && o.delivery.cod), cod: o ? M.cop(o.delivery.cod) : '', methods: ['Efectivo', 'Transferencia'].map(m => ({ label: m, icon: m === 'Efectivo' ? 'icon-banknote' : 'icon-landmark', on: st.codMethod === m ? 'true' : 'false', go: () => this.setState({ codMethod: m }), ...sel(st.codMethod === m) })),
+      err: st.tried && (!st.photo || !recvOk) ? [!st.photo && 'falta la foto', !recvOk && 'escriba el nombre de quien recibe'].filter(Boolean).join(' y ').replace(/^./, c => c.toUpperCase()) : null
+    };
+    if (o && st.screen === 'evidencia' && !alt.on) action = { label: o.delivery.cod ? 'Confirmar entrega y cobro' : 'Confirmar entrega', icon: 'icon-circle-check', bg: 'var(--red)', fg: 'var(--on-red)', op: 1, dis: false, go: () => {
+      if (!st.photo || !recvOk) return this.setState({ tried: true });
+      const t = M.now();
+      MG.set(x => { const oo = x.orders.find(y => y.id === o.id); oo.delivery.status = 'entregado'; oo.delivery.evidence = { name: st.recvName.trim(), time: t, photo: true, signature: !!this.signed }; if (oo.delivery.cod) { oo.delivery.codPaid = { v: oo.delivery.cod, m: st.codMethod }; if (oo.invoice) oo.invoice.paid = 1; } MG.log(x, MYNAME, 'Conductor', 'Entregó ' + o.id + ' · recibió ' + st.recvName.trim() + (oo.delivery.cod ? ' · cobró ' + M.cop(oo.delivery.cod) + ' (' + st.codMethod.toLowerCase() + ')' : '')); });
+      this.setState({ screen: 'ruta', oid: null }); this.flash('Entrega registrada. El dueño ya la ve en el mapa.');
+    } };
+    const reasons = [['No estaba', 'door-closed'], ['Rechazó el pedido', 'hand'], ['Faltó producto', 'package-x'], ['Dirección errada', 'map-pin-off']].map(([label, icon]) => ({ label, icon: 'icon-' + icon, on: st.reason === label ? 'true' : 'false', go: () => this.setState({ reason: label }), ...sel(st.reason === label) }));
+    if (o && st.screen === 'novedad' && !alt.on) action = { label: 'Enviar novedad', icon: 'icon-send', bg: 'var(--red)', fg: 'var(--on-red)', op: st.reason ? 1 : 0.45, dis: !st.reason, go: () => { this.setStatus(o.id, 'novedad', { novedad: st.reason + (st.novNote ? ' — ' + st.novNote : ''), eta: '—' }, 'Novedad en ' + o.id + ': ' + st.reason); this.setState({ screen: 'ruta', oid: null }); this.flash('Novedad enviada a la administración'); } };
+    const collected = mine.filter(x => x.delivery.codPaid).reduce((a, x) => a + x.delivery.codPaid.v, 0);
+    const endRows = [{ l: 'Entregas realizadas', v: cnt('entregado') + ' de ' + mine.length }, { l: 'Novedades', v: cnt('novedad') }, { l: 'Recaudo contra entrega', v: M.cop(collected) }, { l: 'Entrada', v: att ? att.in : '—' }];
+    if (st.screen === 'cierre' && !alt.on && onShift) action = { label: 'Terminar turno', icon: 'icon-log-out', bg: 'var(--ink)', fg: 'var(--bg)', op: 1, dis: false, go: () => { MG.set(x => { const a = x.attendance.find(y => y.emp === ME && y.date === M.HOY); a.out = M.now(); MG.log(x, MYNAME, 'Conductor', 'Terminó turno · ubicación apagada'); }); this.flash('Turno terminado · ubicación apagada'); } };
+    const tabs = [['turno', 'Turno', 'clock'], ['ruta', 'Entregas', 'route'], ['cierre', 'Cierre', 'flag']].map(([id, label, icon]) => { const on = st.screen === id || (id === 'ruta' && ['detalle', 'evidencia', 'novedad'].includes(st.screen)); return { label, icon: 'icon-' + icon, go: () => this.nav(id), cur: on ? 'page' : 'false', fg: on ? 'var(--ink)' : 'var(--ink-3)', fw: on ? 800 : 600, bd: on ? 'var(--red)' : 'transparent' }; });
+    return {
+      ...base, alt, show, tabs, onShift, offShift: !onShift, shiftIn: att ? att.in : '', stops, noStops: !stops.length, rk, dt, ev, reasons, endRows, action,
+      selfieBg: st.selfie ? 'repeating-linear-gradient(135deg,var(--ph) 0 10px,var(--sunk) 10px 20px)' : 'var(--surface)', selfieIcon: st.selfie ? 'icon-image' : 'icon-camera', selfieTxt: st.selfie ? 'Foto de entrada lista · tocar para repetir' : 'Tomar foto de entrada', snap: () => this.setState({ selfie: true }), noSelfie: !st.selfie, startOp: st.selfie ? 1 : 0.45,
+      startShift: () => { MG.set(x => { const a = x.attendance.find(y => y.emp === ME && y.date === M.HOY); if (a) { a.out = null; } else x.attendance.push({ emp: ME, date: M.HOY, in: M.now(), out: null, photo: true, late: 0 }); MG.log(x, MYNAME, 'Conductor', 'Inició turno con foto · ubicación activa'); }); this.setState({ selfie: false }); this.flash('Turno iniciado · ubicación activa'); }
+    };
+  }
+}
+</script>
+</body>
+</html>

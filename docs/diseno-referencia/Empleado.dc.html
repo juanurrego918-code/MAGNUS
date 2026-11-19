@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/lucide-static@0.469.0/font/lucide.css">
+<script src="magnus-store.js"></script>
+<style>
+body{margin:0;background:#E6E5E9;font-family:'Public Sans',system-ui,sans-serif;font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased;color:#17151A}
+*{box-sizing:border-box}
+button,input,select,textarea{font:inherit;color:inherit}
+a{color:inherit;text-underline-offset:3px}a:hover{color:#D91E26}
+:focus-visible{outline:3px solid #D91E26;outline-offset:2px}
+[data-theme=light]{--canvas:#E6E5E9;--bg:#F4F4F6;--surface:#FFFFFF;--sunk:#ECECEF;--line:#DCDBE1;--line-2:#ADABB4;--ink:#17151A;--ink-2:#46434C;--ink-3:#5F5C66;--red:#D91E26;--red-press:#A3141A;--red-text:#B3161D;--red-tint:#FDECEC;--on-red:#FFFFFF;--ok:#16653A;--ok-tint:#E4F3E9;--ok-line:#9CCFAF;--warn:#7A4E00;--warn-tint:#FFF2CC;--warn-line:#E6BD5C;--err:#A3141A;--err-tint:#FDEBEC;--err-line:#EFA2A5;--info:#17151A;--info-tint:#ECECEF;--info-line:#ADABB4;--mute:#56535C;--mute-tint:#EDEDF0;--mute-line:#C9C8CE;--ph:#E9E8EC;--shadow:0 1px 2px rgba(23,21,26,.06),0 6px 20px rgba(23,21,26,.07)}
+[data-theme=dark]{--canvas:#0B0A0D;--bg:#121115;--surface:#1B1A1F;--sunk:#25232A;--line:#35333B;--line-2:#5A5761;--ink:#F5F4F7;--ink-2:#CFCCD5;--ink-3:#ADA9B4;--red:#D91E26;--red-press:#B8181F;--red-text:#FF7378;--red-tint:#3A1517;--on-red:#FFFFFF;--ok:#6FD99A;--ok-tint:#12301F;--ok-line:#2D6B47;--warn:#F4C55B;--warn-tint:#352808;--warn-line:#7A5C14;--err:#FF7A7F;--err-tint:#3A1517;--err-line:#7D2A2E;--info:#F5F4F7;--info-tint:#25232A;--info-line:#5A5761;--mute:#B4B1BA;--mute-tint:#26252B;--mute-line:#45434B;--ph:#2A282F;--shadow:0 1px 2px rgba(0,0,0,.4),0 6px 20px rgba(0,0,0,.35)}
+@keyframes mg-in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes mg-pulse{0%,100%{opacity:.5}50%{opacity:1}}
+</style>
+</helmet>
+<div data-theme="{{ theme }}" style="min-height:100vh;background:var(--canvas);color:var(--ink);display:flex;flex-direction:column">
+  <header style="position:sticky;top:0;z-index:20;background:#17151A;color:#F5F4F7;display:flex;align-items:center;gap:20px;padding:10px 20px;flex-wrap:wrap;border-bottom:1px solid #2C2A31">
+    <a href="Magnus Sistema.dc.html" style="display:flex;align-items:center;gap:10px;text-decoration:none;color:#F5F4F7"><img src="assets/simbolo-magnus-blanco.png" alt="Magnus" style="height:26px"><span style="font-weight:700;font-size:14px;letter-spacing:.02em;white-space:nowrap">Magnus · Prototipo</span></a>
+    <nav aria-label="Cambiar de rol" style="display:flex;gap:4px;flex-wrap:wrap"><sc-for list="{{ roles }}" as="r" hint-placeholder-count="8"><a href="{{ r.href }}" style="padding:7px 11px;border-radius:6px;font-size:13px;font-weight:600;text-decoration:none;color:{{ r.fg }};background:{{ r.bg }}">{{ r.label }}</a></sc-for></nav>
+    <div style="margin-left:auto;display:flex;gap:8px;align-items:center">
+      <button onClick="{{ toggleTheme }}" style="height:34px;padding:0 12px;border-radius:6px;border:1px solid #45434B;background:transparent;color:#F5F4F7;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap"><i class="{{ themeIcon }}"></i><span style="flex:1;min-width:0">{{ themeLabel }}</span></button>
+      <button onClick="{{ resetData }}" style="height:34px;padding:0 12px;border-radius:6px;border:1px solid #45434B;background:transparent;color:#F5F4F7;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap"><i class="icon-rotate-ccw"></i>Reiniciar datos</button>
+    </div>
+  </header>
+  <div style="display:flex;gap:32px;padding:28px 32px 48px;align-items:flex-start;flex-wrap:wrap;justify-content:center">
+    <aside style="width:250px;display:flex;flex-direction:column;gap:18px">
+      <div style="display:flex;flex-direction:column;gap:4px">
+        <span style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)">Rol · Celular personal</span>
+        <h1 style="margin:0;font-size:24px;font-weight:800">Empleado</h1>
+        <p style="margin:0;font-size:14px;line-height:1.45;color:var(--ink-2)">Camilo Vargas, auxiliar de bodega (turno 14:00–22:00). Marca asistencia con foto, ve sus turnos, horas y desprendible, y pide permisos.</p>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:2px">
+        <span style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);margin-bottom:6px">Pantallas</span>
+        <sc-for list="{{ screenList }}" as="sc" hint-placeholder-count="5"><button onClick="{{ sc.go }}" style="width:100%;text-align:left;min-height:40px;padding:8px 12px;border-radius:6px;border:1px solid {{ sc.bd }};background:{{ sc.bg }};color:var(--ink);font-size:14px;font-weight:{{ sc.fw }};cursor:pointer;display:flex;align-items:center;gap:10px"><span style="font-size:12px;color:var(--ink-3);width:18px">{{ sc.n }}</span><span style="flex:1;min-width:0">{{ sc.label }}</span></button></sc-for>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <span style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)">Estado de la pantalla</span>
+        <div role="radiogroup" aria-label="Estado de la pantalla" style="display:flex;flex-wrap:wrap;gap:6px"><sc-for list="{{ modes }}" as="m" hint-placeholder-count="6"><button role="radio" aria-checked="{{ m.on }}" onClick="{{ m.go }}" style="height:34px;padding:0 11px;border-radius:999px;border:1px solid {{ m.bd }};background:{{ m.bg }};color:{{ m.fg }};font-size:13px;font-weight:600;cursor:pointer">{{ m.label }}</button></sc-for></div>
+      </div>
+    </aside>
+
+    <div style="width:410px;height:864px;border-radius:54px;background:#0B0A0C;padding:10px;box-shadow:0 30px 60px rgba(0,0,0,.25);flex:none">
+      <div style="width:390px;height:844px;border-radius:44px;overflow:hidden;background:var(--bg);display:flex;flex-direction:column;position:relative">
+        <div style="height:46px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 28px 0 34px;font-size:15px;font-weight:700;background:var(--surface)"><span>{{ clock }}</span><span style="display:flex;gap:6px;font-size:16px"><i class="icon-signal"></i><i class="icon-wifi"></i><i class="icon-battery-full"></i></span></div>
+        <div style="flex:none;background:var(--surface);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px;padding:6px 16px 10px;min-height:60px"><sc-if value="{{ isLight }}" hint-placeholder-val="{{ true }}"><img src="assets/simbolo-magnus.png" alt="Magnus" style="height:28px"></sc-if><sc-if value="{{ isDark }}" hint-placeholder-val="{{ false }}"><img src="assets/simbolo-magnus-blanco.png" alt="Magnus" style="height:28px"></sc-if><div style="display:flex;flex-direction:column;flex:1;min-width:0"><span style="font-size:19px;font-weight:800">{{ hdrTitle }}</span><span style="font-size:13px;color:var(--ink-3)">Camilo Vargas · Bodega</span></div></div>
+        <div style="flex:1;overflow-y:auto">
+          <sc-if value="{{ alt.on }}" hint-placeholder-val="{{ false }}">
+            <sc-if value="{{ alt.loading }}" hint-placeholder-val="{{ false }}"><div aria-busy="true" style="padding:16px;display:flex;flex-direction:column;gap:12px"><div style="height:180px;border-radius:14px;background:var(--sunk);animation:mg-pulse 1.2s infinite"></div><div style="height:80px;border-radius:12px;background:var(--sunk);animation:mg-pulse 1.2s infinite"></div><span style="font-size:14px;color:var(--ink-3);text-align:center">Cargando {{ alt.noun }}…</span></div></sc-if>
+            <sc-if value="{{ alt.msg }}" hint-placeholder-val="{{ false }}"><div style="min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:14px;padding:32px 28px"><div style="width:72px;height:72px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:32px;background:{{ alt.bg }};color:{{ alt.fg }};border:1px solid {{ alt.bd }}"><i class="{{ alt.icon }}"></i></div><h2 style="margin:0;font-size:21px;font-weight:800">{{ alt.title }}</h2><p style="margin:0;font-size:15px;line-height:1.5;color:var(--ink-2)">{{ alt.body }}</p><button onClick="{{ alt.act }}" style="height:52px;padding:0 22px;border-radius:10px;border:none;background:var(--ink);color:var(--bg);font-size:16px;font-weight:700;cursor:pointer">{{ alt.cta }}</button></div></sc-if>
+          </sc-if>
+
+          <sc-if value="{{ show.marcar }}" hint-placeholder-val="{{ true }}">
+            <div style="padding:18px 16px;display:flex;flex-direction:column;gap:14px">
+              <div style="display:flex;flex-direction:column;gap:2px;align-items:center;padding:6px 0"><span style="font-size:44px;font-weight:800;letter-spacing:-.02em">{{ clock }}</span><span style="font-size:15px;color:var(--ink-2)">Martes 17/11/2026 · turno {{ shiftTxt }}</span></div>
+              <div style="display:flex;gap:10px;align-items:center;padding:12px 14px;border-radius:12px;border:1px solid {{ att.bd }};background:{{ att.bg }};color:{{ att.fg }};font-size:15px;font-weight:700"><i class="{{ att.icon }}" style="font-size:20px"></i>{{ att.text }}</div>
+              <sc-if value="{{ att.canMark }}" hint-placeholder-val="{{ true }}">
+                <button onClick="{{ snap }}" aria-label="Tomar foto" style="height:220px;border-radius:16px;border:2px dashed var(--line-2);background:{{ selfieBg }};display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;cursor:pointer;color:var(--ink-2)"><i class="{{ selfieIcon }}" style="font-size:40px"></i><span style="font-size:16px;font-weight:700">{{ selfieTxt }}</span><span style="font-size:13px">La foto confirma que es usted quien marca</span></button>
+                <button onClick="{{ mark }}" disabled="{{ noSelfie }}" style="height:64px;border-radius:14px;border:none;background:var(--red);color:var(--on-red);font-size:18px;font-weight:800;cursor:pointer;opacity:{{ markOp }};display:flex;align-items:center;justify-content:center;gap:10px" style-active="background:var(--red-press)"><i class="{{ att.markIcon }}" style="font-size:22px"></i><span style="flex:1;min-width:0">{{ att.markLabel }}</span></button>
+              </sc-if>
+              <sc-if value="{{ att.calc }}" hint-placeholder-val="{{ false }}"><div style="background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:4px 14px"><sc-for list="{{ att.calc }}" as="r" hint-placeholder-count="3"><div style="display:flex;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--line);font-size:15px"><span>{{ r.l }}</span><span style="font-weight:800">{{ r.v }}</span></div></sc-for></div></sc-if>
+              <a href="Dueno Equipo.dc.html#asistencia" style="font-size:14px;font-weight:700;align-self:center">Ver cómo lo recibe administración →</a>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ show.turnos }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:16px;display:flex;flex-direction:column;gap:8px">
+              <sc-for list="{{ week }}" as="d" hint-placeholder-count="7"><div style="background:var(--surface);border:{{ d.bw }} solid {{ d.bd }};border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:12px;min-height:64px"><div style="width:48px;display:flex;flex-direction:column;align-items:center"><span style="font-size:12px;font-weight:700;color:var(--ink-3)">{{ d.dow }}</span><span style="font-size:20px;font-weight:800">{{ d.n }}</span></div><div style="flex:1;display:flex;flex-direction:column;gap:2px"><span style="font-size:16px;font-weight:700">{{ d.shift }}</span><span style="font-size:13px;color:var(--ink-2)">{{ d.note }}</span></div><sc-if value="{{ d.chip }}" hint-placeholder-val="{{ false }}"><span style="display:inline-flex;align-items:center;gap:5px;height:26px;padding:0 9px;border-radius:999px;border:1px solid {{ d.chip.bd }};background:{{ d.chip.bg }};color:{{ d.chip.fg }};font-size:12.5px;font-weight:700;white-space:nowrap"><i class="{{ d.chip.icon }}"></i>{{ d.chip.label }}</span></sc-if></div></sc-for>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ show.horas }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:16px;display:flex;flex-direction:column;gap:12px">
+              <span style="font-size:14px;color:var(--ink-2)">Quincena 16/11/2026 – 30/11/2026 · en curso</span>
+              <div style="background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:4px 14px"><sc-for list="{{ hours }}" as="r" hint-placeholder-count="6"><div style="display:flex;justify-content:space-between;gap:10px;padding:12px 0;border-bottom:1px solid var(--line);font-size:15px"><span style="display:flex;flex-direction:column;gap:2px"><span style="font-weight:600">{{ r.l }}</span><span style="font-size:12.5px;color:var(--ink-3)">{{ r.s }}</span></span><span style="font-weight:800;white-space:nowrap">{{ r.v }}</span></div></sc-for></div>
+              <div style="display:flex;justify-content:space-between;padding:14px;border-radius:12px;background:var(--ink);color:var(--bg);font-size:17px;font-weight:800"><span>Neto estimado</span><span>{{ netEst }}</span></div>
+              <span style="font-size:12.5px;line-height:1.45;color:var(--ink-3)">Recargos de referencia 2026 (extra diurna 25 %, nocturno 35 % desde las 19:00, dominical/festivo 90 %). Valores de ejemplo: los valida el contador.</span>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ show.solicitar }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:16px;display:flex;flex-direction:column;gap:12px">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><sc-for list="{{ rqTypes }}" as="t" hint-placeholder-count="2"><button onClick="{{ t.go }}" aria-pressed="{{ t.on }}" style="height:56px;border-radius:12px;border:{{ t.bw }} solid {{ t.bd }};background:var(--surface);font-size:15px;font-weight:700;cursor:pointer;display:flex;gap:8px;align-items:center;justify-content:center"><i class="{{ t.icon }}"></i><span style="flex:1;min-width:0">{{ t.label }}</span></button></sc-for></div>
+              <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:15px;font-weight:800">Detalle</span><textarea value="{{ rqText }}" onInput="{{ setRq }}" rows="3" placeholder="{{ rqPh }}" style="border:1px solid var(--line-2);border-radius:12px;padding:12px;font-size:16px;background:var(--surface);resize:none"></textarea></label>
+              <button onClick="{{ sendRq }}" disabled="{{ rqDis }}" style="height:60px;border-radius:14px;border:none;background:var(--red);color:var(--on-red);font-size:17px;font-weight:800;cursor:pointer;opacity:{{ rqOp }}">Enviar solicitud</button>
+              <span style="font-size:15px;font-weight:800;margin-top:6px">Mis solicitudes</span>
+              <sc-for list="{{ myReqs }}" as="r" hint-placeholder-count="2"><div style="background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:6px"><div style="display:flex;justify-content:space-between;gap:8px;align-items:center"><strong style="font-size:15px">{{ r.type }}</strong><span style="display:inline-flex;align-items:center;gap:5px;height:26px;padding:0 9px;border-radius:999px;border:1px solid {{ r.chip.bd }};background:{{ r.chip.bg }};color:{{ r.chip.fg }};font-size:12.5px;font-weight:700"><i class="{{ r.chip.icon }}"></i>{{ r.chip.label }}</span></div><span style="font-size:14px;color:var(--ink-2)">{{ r.detail }}</span></div></sc-for>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ show.desprendible }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:16px;display:flex;flex-direction:column;gap:12px">
+              <sc-for list="{{ slips }}" as="p" hint-placeholder-count="1">
+                <div style="background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:10px">
+                  <div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><span style="font-size:15px;font-weight:800">{{ p.period }}</span><span style="display:inline-flex;align-items:center;gap:5px;height:26px;padding:0 9px;border-radius:999px;border:1px solid {{ p.chip.bd }};background:{{ p.chip.bg }};color:{{ p.chip.fg }};font-size:12.5px;font-weight:700"><i class="{{ p.chip.icon }}"></i>{{ p.chip.label }}</span></div>
+                  <sc-for list="{{ p.rows }}" as="r" hint-placeholder-count="5"><div style="display:flex;justify-content:space-between;font-size:14.5px"><span style="color:var(--ink-2)">{{ r.l }}</span><span style="font-weight:700">{{ r.v }}</span></div></sc-for>
+                  <div style="display:flex;justify-content:space-between;border-top:1px solid var(--line);padding-top:10px;font-size:18px;font-weight:800"><span>Neto pagado</span><span>{{ p.net }}</span></div>
+                  <button onClick="{{ p.dl }}" style="height:52px;border-radius:12px;border:1px solid var(--ink);background:transparent;font-size:15px;font-weight:700;cursor:pointer;display:flex;gap:8px;align-items:center;justify-content:center"><i class="icon-download"></i>Descargar PDF</button>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+        </div>
+        <sc-if value="{{ toast }}" hint-placeholder-val="{{ false }}"><div role="status" style="position:absolute;left:16px;right:16px;top:116px;z-index:12;background:var(--ink);color:var(--bg);border-radius:12px;padding:14px;font-size:15px;font-weight:600;display:flex;gap:10px;align-items:center;animation:mg-in .25s ease-out"><i class="icon-circle-check"></i>{{ toast }}</div></sc-if>
+        <nav aria-label="Menú del empleado" style="flex:none;height:84px;background:var(--surface);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(5,1fr);padding:0 4px 18px"><sc-for list="{{ tabs }}" as="t" hint-placeholder-count="5"><button onClick="{{ t.go }}" aria-current="{{ t.cur }}" style="border:none;background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:12px;font-weight:{{ t.fw }};color:{{ t.fg }};cursor:pointer;border-top:3px solid {{ t.bd }};min-height:56px"><i class="{{ t.icon }}" style="font-size:22px"></i><span style="flex:1;min-width:0">{{ t.label }}</span></button></sc-for></nav>
+      </div>
+    </div>
+    <aside style="width:280px;display:flex;flex-direction:column;gap:14px">
+      <span style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)">Nota de diseño</span>
+      <p style="margin:0;font-size:14px;line-height:1.55;color:var(--ink-2);text-wrap:pretty">{{ note2 }}</p>
+      <div style="border-top:1px solid var(--line-2);padding-top:14px;display:flex;flex-direction:column;gap:8px">
+        <span style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)">Flujo 3 · Asistencia a nómina</span>
+        <ol style="margin:0;padding-left:18px;font-size:14px;line-height:1.7;color:var(--ink-2)"><li><strong style="color:var(--ink)">Empleado marca con foto</strong></li><li><a href="Dueno Equipo.dc.html#asistencia">Se calculan horas y recargos</a></li><li><a href="Dueno Equipo.dc.html#nomina">Prenómina y pago</a></li><li><strong style="color:var(--ink)">Desprendible aquí</strong></li></ol>
+      </div>
+    </aside>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const ROLES = [['Sistema', 'Magnus Sistema.dc.html'], ['Vendedor', 'Vendedor.dc.html'], ['Mostrador', 'Mostrador.dc.html'], ['Caja', 'Caja.dc.html'], ['Bodega', 'Bodega.dc.html'], ['Conductor', 'Conductor.dc.html'], ['Empleado', 'Empleado.dc.html'], ['Dueño', 'Dueno.dc.html']];
+const ME = 'E04', MYNAME = 'Camilo Vargas';
+const SCREENS = [
+  { id: 'marcar', label: 'Marcar asistencia', title: 'Asistencia', icon: 'scan-face', tab: 'Marcar', noun: 'su asistencia', empty: ['Hoy no tiene turno', 'Según el calendario, hoy es su día de descanso.', 'Ver mis turnos'], ok: ['Entrada registrada', 'Llegó a tiempo. Buen turno.'], note: 'Una acción: foto y marcar. El sistema dice si llegó a tiempo o tarde y, al salir, calcula horas ordinarias, nocturnas y extra.' },
+  { id: 'turnos', label: 'Mis turnos', title: 'Mis turnos', icon: 'calendar-days', tab: 'Turnos', noun: 'sus turnos', empty: ['Sin turnos publicados', 'Administración publica el calendario cada semana.', 'Actualizar'], ok: ['Cambio aprobado', 'Su calendario se actualizó.'], note: 'Semana en lista vertical: más legible en celular que una cuadrícula. Hoy resaltado; festivos y cambios marcados con texto.' },
+  { id: 'horas', label: 'Horas y recargos', title: 'Mis horas', icon: 'clock', tab: 'Horas', noun: 'sus horas', empty: ['Sin horas en la quincena', 'Las horas aparecen al marcar salida.', 'Marcar asistencia'], ok: ['Horas confirmadas', 'Administración aprobó su quincena.'], note: 'El empleado ve el mismo cálculo que administración, explicado en palabras.' },
+  { id: 'solicitar', label: 'Permisos y cambios', title: 'Solicitudes', icon: 'send', tab: 'Pedir', noun: 'sus solicitudes', empty: ['Sin solicitudes', 'Pida un permiso o un cambio de turno.', 'Nueva solicitud'], ok: ['Solicitud enviada', 'Le avisaremos cuando la respondan.'], note: 'Dos tipos, texto libre y estado visible. La respuesta llega desde Equipo en el panel del dueño.' },
+  { id: 'desprendible', label: 'Desprendible de pago', title: 'Desprendibles', icon: 'file-text', tab: 'Pagos', noun: 'sus desprendibles', empty: ['Aún no hay pagos', 'El primer desprendible aparece al pagar la quincena.', 'Volver'], ok: ['Descargado', ''], note: 'Desprendible de cada quincena pagada. Una nómina pagada queda bloqueada y no cambia.' }
+];
+const sel = on => ({ bw: on ? '2px' : '1px', bd: on ? 'var(--ink)' : 'var(--line-2)' });
+
+class Component extends DCLogic {
+  state = { s: null, theme: 'light', screen: 'marcar', mode: 'normal', selfie: false, rqType: 'Permiso', rq: '', toast: null, now: '' };
+  componentDidMount() {
+    const go = () => { if (!window.MG) return setTimeout(go, 40); this.setState({ s: MG.get(), theme: MG.theme(), now: MG.now() }); this.un = MG.subscribe(s => this.setState({ s })); this.th = () => this.setState({ theme: MG.theme() }); window.addEventListener('magnus-theme', this.th); window.addEventListener('storage', this.th); this.ck = setInterval(() => this.setState({ now: MG.now() }), 20000); };
+    go();
+  }
+  componentWillUnmount() { this.un && this.un(); clearInterval(this.ck); window.removeEventListener('magnus-theme', this.th); window.removeEventListener('storage', this.th); }
+  nav(screen) { this.setState({ screen, mode: 'normal' }); }
+  flash(t) { this.setState({ toast: t }); clearTimeout(this.tt); this.tt = setTimeout(() => this.setState({ toast: null }), 2400); }
+  renderVals() {
+    const st = this.state, s = st.s, M = window.MG;
+    const scr = SCREENS.find(x => x.id === st.screen);
+    const base = {
+      theme: st.theme, isLight: st.theme !== 'dark', isDark: st.theme === 'dark', roles: ROLES.map(([label, href]) => ({ label, href, bg: label === 'Empleado' ? '#F5F4F7' : 'transparent', fg: label === 'Empleado' ? '#17151A' : '#CFCCD5' })),
+      themeIcon: st.theme === 'dark' ? 'icon-sun' : 'icon-moon', themeLabel: st.theme === 'dark' ? 'Claro' : 'Oscuro', toggleTheme: () => M && M.setTheme(st.theme === 'dark' ? 'light' : 'dark'),
+      resetData: () => { if (M && confirm('¿Reiniciar todos los datos de ejemplo del prototipo?')) M.reset(); },
+      symbolSrc: st.theme === 'dark' ? 'assets/simbolo-magnus-blanco.png' : 'assets/simbolo-magnus.png',
+      screenList: SCREENS.map((x, i) => ({ n: String(i + 1).padStart(2, '0'), label: x.label, go: () => this.nav(x.id), bg: x.id === st.screen ? 'var(--surface)' : 'transparent', bd: x.id === st.screen ? 'var(--line-2)' : 'transparent', fw: x.id === st.screen ? 700 : 500 })),
+      modes: [['normal', 'Normal'], ['vacio', 'Vacío'], ['cargando', 'Cargando'], ['error', 'Error'], ['permiso', 'Sin permiso'], ['exito', 'Éxito']].map(([k, label]) => ({ label, on: st.mode === k ? 'true' : 'false', go: () => this.setState({ mode: k }), bg: st.mode === k ? 'var(--ink)' : 'transparent', fg: st.mode === k ? 'var(--bg)' : 'var(--ink)', bd: st.mode === k ? 'var(--ink)' : 'var(--line-2)' })),
+      tabs: SCREENS.map(x => { const on = x.id === st.screen; return { label: x.tab, icon: 'icon-' + x.icon, go: () => this.nav(x.id), cur: on ? 'page' : 'false', fg: on ? 'var(--ink)' : 'var(--ink-3)', fw: on ? 800 : 600, bd: on ? 'var(--red)' : 'transparent' }; }),
+      note2: scr.note, hdrTitle: scr.title, clock: st.now || '13:52', toast: st.toast, show: {}, alt: { on: false }, att: {}
+    };
+    if (!s) return base;
+    const alt = { on: st.mode !== 'normal', noun: scr.noun, loading: st.mode === 'cargando', msg: !['normal', 'cargando'].includes(st.mode) };
+    const back = () => this.setState({ mode: 'normal' });
+    if (st.mode === 'vacio') Object.assign(alt, { icon: 'icon-inbox', title: scr.empty[0], body: scr.empty[1], cta: scr.empty[2], act: back, bg: 'var(--mute-tint)', fg: 'var(--mute)', bd: 'var(--mute-line)' });
+    if (st.mode === 'error') Object.assign(alt, { icon: 'icon-camera-off', title: 'No se pudo usar la cámara', body: 'Para marcar asistencia necesita dar permiso a la cámara en el celular. Si no puede, avise a su jefe para marcar manualmente.', cta: 'Reintentar', act: back, bg: 'var(--err-tint)', fg: 'var(--err)', bd: 'var(--err-line)' });
+    if (st.mode === 'permiso') Object.assign(alt, { icon: 'icon-lock', title: 'Sin permiso', body: 'Solo puede ver su propia información. Turnos y pagos de otras personas no están disponibles.', cta: 'Volver', act: back, bg: 'var(--mute-tint)', fg: 'var(--mute)', bd: 'var(--mute-line)' });
+    if (st.mode === 'exito') Object.assign(alt, { icon: 'icon-circle-check', title: scr.ok[0], body: scr.ok[1], cta: 'Continuar', act: back, bg: 'var(--ok-tint)', fg: 'var(--ok)', bd: 'var(--ok-line)' });
+    const show = {}; if (!alt.on) show[st.screen] = true;
+
+    const a = s.attendance.find(x => x.emp === ME && x.date === M.HOY);
+    let att;
+    if (!a) att = { text: 'Aún no ha marcado entrada', icon: 'icon-clock', bd: 'var(--warn-line)', bg: 'var(--warn-tint)', fg: 'var(--warn)', canMark: true, markLabel: 'Marcar entrada', markIcon: 'icon-log-in' };
+    else if (!a.out) att = { text: 'Entrada ' + a.in + (a.late ? ' · ' + a.late + ' min tarde' : ' · a tiempo'), icon: a.late ? 'icon-triangle-alert' : 'icon-circle-check', bd: a.late ? 'var(--warn-line)' : 'var(--ok-line)', bg: a.late ? 'var(--warn-tint)' : 'var(--ok-tint)', fg: a.late ? 'var(--warn)' : 'var(--ok)', canMark: true, markLabel: 'Marcar salida', markIcon: 'icon-log-out' };
+    else att = { text: 'Turno cerrado · entrada ' + a.in + ' · salida ' + a.out, icon: 'icon-circle-check', bd: 'var(--ok-line)', bg: 'var(--ok-tint)', fg: 'var(--ok)', canMark: false, calc: [{ l: 'Horas ordinarias', v: a.calc.ord + ' h' }, { l: 'Horas nocturnas (desde 19:00)', v: a.calc.noct + ' h' }, { l: 'Horas extra', v: a.calc.ext + ' h' }] };
+    const mark = () => {
+      const t = M.now();
+      MG.set(x => { const r = x.attendance.find(y => y.emp === ME && y.date === M.HOY); if (!r) { const late = Math.max(0, (+t.slice(0, 2) * 60 + +t.slice(3)) - 14 * 60); x.attendance.push({ emp: ME, date: M.HOY, in: t, out: null, photo: true, late: late > 5 ? late : 0 }); MG.log(x, MYNAME, 'Empleado', 'Marcó entrada ' + t + ' con foto'); } else { r.out = t; r.calc = { ord: 8, noct: 3, ext: 0 }; MG.log(x, MYNAME, 'Empleado', 'Marcó salida ' + t + ' · 8 h (3 nocturnas)'); } });
+      this.setState({ selfie: false }); this.flash(a ? 'Salida registrada · horas calculadas' : 'Entrada registrada con foto');
+    };
+    const days = ['LUN', 'MAR', 'MIÉ', 'JUE', 'VIE', 'SÁB', 'DOM'];
+    const reqOk = s.requests.find(r => r.id === 'S-221' && r.status === 'aprobada');
+    const week = days.map((dow, i) => { const n = 16 + i; const today = n === 17; const fest = n === 16; const off = i === 6; const swap = i === 5 && reqOk; return { dow, n, shift: off ? 'Descanso' : swap ? '06:00–14:00' : '14:00–22:00', note: fest ? 'Festivo · recargo 90 %' : off ? 'Domingo' : swap ? 'Cambio aprobado con Marcela Ortiz' : 'Bodega Principal · 3 h nocturnas', chip: today ? M.chip('ok', 'Hoy') : fest ? M.chip('vence', 'Festivo') : swap ? M.chip('aprobada', 'Cambio') : null, bw: today ? '2px' : '1px', bd: today ? 'var(--ink)' : 'var(--line)' }; });
+    const p = M.payroll(s, ME);
+    const hours = [{ l: 'Básico de la quincena', s: M.cop(p.e.base) + ' mensual', v: M.cop(p.basic) }, { l: 'Recargo nocturno', s: p.h.noct + ' h × 35 %', v: M.cop(p.noct) }, { l: 'Horas extra', s: p.h.ext + ' h × 125 %', v: M.cop(p.ext) }, { l: 'Recargo festivo', s: p.h.fest + ' h × 90 % (lunes 16/11)', v: M.cop(p.fest) }, { l: 'Auxilio de transporte', s: 'valor de ejemplo', v: M.cop(p.aux) }, { l: 'Salud y pensión', s: '4 % + 4 %', v: '− ' + M.cop(p.ded) }];
+    const myReqs = s.requests.filter(r => r.emp === ME).map(r => ({ type: r.type, detail: r.detail, chip: M.chip(r.status === 'rechazada' ? 'rechazada' : r.status) }));
+    const slips = s.payroll.filter(x => x.status === 'pagada').map(x => ({ period: x.period, chip: M.chip('pagada', 'Pagada ' + x.paidAt.slice(0, 10)), rows: [{ l: 'Básico', v: M.cop(p.e.base / 2) }, { l: 'Recargos y extras', v: M.cop(118400) }, { l: 'Auxilio de transporte', v: M.cop(p.aux) }, { l: 'Salud y pensión', v: '− ' + M.cop((p.e.base / 2 + 118400) * 0.08) }], net: M.cop(p.e.base / 2 + 118400 + p.aux - (p.e.base / 2 + 118400) * 0.08), dl: () => this.flash('Desprendible descargado (ejemplo)') }));
+    return {
+      ...base, alt, show, att, mark, shiftTxt: '14:00–22:00',
+      selfieBg: st.selfie ? 'repeating-linear-gradient(135deg,var(--ph) 0 10px,var(--sunk) 10px 20px)' : 'var(--surface)', selfieIcon: st.selfie ? 'icon-image' : 'icon-camera', selfieTxt: st.selfie ? 'Foto lista · tocar para repetir' : 'Tomar foto', snap: () => this.setState({ selfie: true }), noSelfie: !st.selfie, markOp: st.selfie ? 1 : 0.45,
+      week, hours, netEst: M.cop(p.net),
+      rqTypes: [['Permiso', 'calendar-x'], ['Cambio de turno', 'repeat']].map(([label, icon]) => ({ label, icon: 'icon-' + icon, on: st.rqType === label ? 'true' : 'false', go: () => this.setState({ rqType: label }), ...sel(st.rqType === label) })),
+      rqText: st.rq, setRq: e => this.setState({ rq: e.target.value }), rqPh: st.rqType === 'Permiso' ? 'Ej. jueves 26/11 de 14:00 a 16:00, diligencia' : 'Ej. cambiar el sábado con Marcela Ortiz', rqDis: st.rq.trim().length < 5, rqOp: st.rq.trim().length < 5 ? 0.45 : 1,
+      sendRq: () => { MG.set(x => { x.requests.unshift({ id: 'S-' + (230 + x.requests.length), emp: ME, type: st.rqType, detail: st.rq.trim(), status: 'pendiente' }); MG.log(x, MYNAME, 'Empleado', 'Pidió ' + st.rqType.toLowerCase() + ': ' + st.rq.trim()); }); this.setState({ rq: '' }); this.flash('Solicitud enviada a administración'); },
+      myReqs, slips
+    };
+  }
+}
+</script>
+</body>
+</html>

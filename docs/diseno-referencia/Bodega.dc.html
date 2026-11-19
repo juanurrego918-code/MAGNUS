@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/lucide-static@0.469.0/font/lucide.css">
+<script src="magnus-store.js"></script>
+<style>
+body{margin:0;background:#E6E5E9;font-family:'Public Sans',system-ui,sans-serif;font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased;color:#17151A}
+*{box-sizing:border-box}
+button,input,select,textarea{font:inherit;color:inherit}
+a{color:inherit;text-underline-offset:3px}a:hover{color:#D91E26}
+:focus-visible{outline:3px solid #D91E26;outline-offset:2px}
+[data-theme=light]{--canvas:#E6E5E9;--bg:#F4F4F6;--surface:#FFFFFF;--sunk:#ECECEF;--line:#DCDBE1;--line-2:#ADABB4;--ink:#17151A;--ink-2:#46434C;--ink-3:#5F5C66;--red:#D91E26;--red-press:#A3141A;--red-text:#B3161D;--red-tint:#FDECEC;--on-red:#FFFFFF;--ok:#16653A;--ok-tint:#E4F3E9;--ok-line:#9CCFAF;--warn:#7A4E00;--warn-tint:#FFF2CC;--warn-line:#E6BD5C;--err:#A3141A;--err-tint:#FDEBEC;--err-line:#EFA2A5;--info:#17151A;--info-tint:#ECECEF;--info-line:#ADABB4;--mute:#56535C;--mute-tint:#EDEDF0;--mute-line:#C9C8CE;--ph:#E9E8EC;--shadow:0 1px 2px rgba(23,21,26,.06),0 6px 20px rgba(23,21,26,.07)}
+[data-theme=dark]{--canvas:#0B0A0D;--bg:#121115;--surface:#1B1A1F;--sunk:#25232A;--line:#35333B;--line-2:#5A5761;--ink:#F5F4F7;--ink-2:#CFCCD5;--ink-3:#ADA9B4;--red:#D91E26;--red-press:#B8181F;--red-text:#FF7378;--red-tint:#3A1517;--on-red:#FFFFFF;--ok:#6FD99A;--ok-tint:#12301F;--ok-line:#2D6B47;--warn:#F4C55B;--warn-tint:#352808;--warn-line:#7A5C14;--err:#FF7A7F;--err-tint:#3A1517;--err-line:#7D2A2E;--info:#F5F4F7;--info-tint:#25232A;--info-line:#5A5761;--mute:#B4B1BA;--mute-tint:#26252B;--mute-line:#45434B;--ph:#2A282F;--shadow:0 1px 2px rgba(0,0,0,.4),0 6px 20px rgba(0,0,0,.35)}
+@keyframes mg-pulse{0%,100%{opacity:.5}50%{opacity:1}}
+@keyframes mg-in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+</style>
+</helmet>
+<div data-theme="{{ theme }}" style="min-height:100vh;background:var(--canvas);color:var(--ink);display:flex;flex-direction:column">
+  <header style="position:sticky;top:0;z-index:20;background:#17151A;color:#F5F4F7;display:flex;align-items:center;gap:20px;padding:10px 20px;flex-wrap:wrap;border-bottom:1px solid #2C2A31">
+    <a href="Magnus Sistema.dc.html" style="display:flex;align-items:center;gap:10px;text-decoration:none;color:#F5F4F7"><img src="assets/simbolo-magnus-blanco.png" alt="Magnus" style="height:26px"><span style="font-weight:700;font-size:14px;letter-spacing:.02em;white-space:nowrap">Magnus · Prototipo</span></a>
+    <nav aria-label="Cambiar de rol" style="display:flex;gap:4px;flex-wrap:wrap">
+      <sc-for list="{{ roles }}" as="r" hint-placeholder-count="8"><a href="{{ r.href }}" style="padding:7px 11px;border-radius:6px;font-size:13px;font-weight:600;text-decoration:none;color:{{ r.fg }};background:{{ r.bg }}">{{ r.label }}</a></sc-for>
+    </nav>
+    <div style="margin-left:auto;display:flex;gap:8px;align-items:center">
+      <button onClick="{{ toggleTheme }}" style="height:34px;padding:0 12px;border-radius:6px;border:1px solid #45434B;background:transparent;color:#F5F4F7;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap"><i class="{{ themeIcon }}"></i><span style="flex:1;min-width:0">{{ themeLabel }}</span></button>
+      <button onClick="{{ resetData }}" style="height:34px;padding:0 12px;border-radius:6px;border:1px solid #45434B;background:transparent;color:#F5F4F7;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap"><i class="icon-rotate-ccw"></i>Reiniciar datos</button>
+    </div>
+  </header>
+  <div style="display:flex;gap:32px;padding:28px 32px 48px;align-items:flex-start;flex-wrap:wrap;justify-content:center">
+    <aside style="width:250px;display:flex;flex-direction:column;gap:18px">
+      <div style="display:flex;flex-direction:column;gap:4px">
+        <span style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)">Rol · Celular con guantes</span>
+        <h1 style="margin:0;font-size:24px;font-weight:800;letter-spacing:-.01em">Bodega</h1>
+        <p style="margin:0;font-size:14px;line-height:1.45;color:var(--ink-2)">Marcela Ortiz alista, recibe y cuenta. Botones de 56 px o más, texto grande y el lote que sale primero siempre arriba. Sin precios ni costos.</p>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:2px">
+        <span style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);margin-bottom:6px">Pantallas</span>
+        <sc-for list="{{ screenList }}" as="sc" hint-placeholder-count="8"><button onClick="{{ sc.go }}" style="width:100%;text-align:left;min-height:40px;padding:8px 12px;border-radius:6px;border:1px solid {{ sc.bd }};background:{{ sc.bg }};color:var(--ink);font-size:14px;font-weight:{{ sc.fw }};cursor:pointer;display:flex;align-items:center;gap:10px"><span style="font-size:12px;color:var(--ink-3);width:18px">{{ sc.n }}</span><span style="flex:1;min-width:0">{{ sc.label }}</span></button></sc-for>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <span style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)">Estado de la pantalla</span>
+        <div role="radiogroup" aria-label="Estado de la pantalla" style="display:flex;flex-wrap:wrap;gap:6px"><sc-for list="{{ modes }}" as="m" hint-placeholder-count="6"><button role="radio" aria-checked="{{ m.on }}" onClick="{{ m.go }}" style="height:34px;padding:0 11px;border-radius:999px;border:1px solid {{ m.bd }};background:{{ m.bg }};color:{{ m.fg }};font-size:13px;font-weight:600;cursor:pointer">{{ m.label }}</button></sc-for></div>
+      </div>
+    </aside>
+
+    <div style="width:410px;height:864px;border-radius:54px;background:#0B0A0C;padding:10px;box-shadow:0 30px 60px rgba(0,0,0,.25);flex:none">
+      <div style="width:390px;height:844px;border-radius:44px;overflow:hidden;background:var(--bg);display:flex;flex-direction:column;position:relative">
+        <div style="height:46px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 28px 0 34px;font-size:15px;font-weight:700;background:var(--surface)"><span>10:31</span><span style="display:flex;gap:6px;font-size:16px"><i class="icon-signal"></i><i class="icon-wifi"></i><i class="icon-battery-medium"></i></span></div>
+        <div style="flex:none;background:var(--surface);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:8px;padding:6px 12px 10px;min-height:64px">
+          <sc-if value="{{ hdr.back }}" hint-placeholder-val="{{ false }}"><button onClick="{{ hdr.goBack }}" aria-label="Volver" style="width:56px;height:56px;border-radius:12px;border:none;background:transparent;font-size:24px;display:flex;align-items:center;justify-content:center;cursor:pointer"><i class="icon-arrow-left"></i></button></sc-if>
+          <sc-if value="{{ hdr.logo }}" hint-placeholder-val="{{ true }}"><sc-if value="{{ isLight }}" hint-placeholder-val="{{ true }}"><img src="assets/simbolo-magnus.png" alt="Magnus" style="height:28px;margin:0 4px 0 6px"></sc-if><sc-if value="{{ isDark }}" hint-placeholder-val="{{ false }}"><img src="assets/simbolo-magnus-blanco.png" alt="Magnus" style="height:28px;margin:0 4px 0 6px"></sc-if></sc-if>
+          <div style="display:flex;flex-direction:column;min-width:0;flex:1"><span style="font-size:20px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ hdr.title }}</span><span style="font-size:13px;color:var(--ink-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ hdr.sub }}</span></div>
+          <span style="display:flex;align-items:center;gap:5px;font-size:12px;font-weight:600;color:var(--ok);padding:0 6px;white-space:nowrap"><i class="icon-cloud-check" style="font-size:16px"></i>En línea</span>
+        </div>
+
+        <div style="flex:1;overflow-y:auto;overflow-x:hidden;position:relative">
+          <sc-if value="{{ alt.on }}" hint-placeholder-val="{{ false }}">
+            <sc-if value="{{ alt.loading }}" hint-placeholder-val="{{ false }}">
+              <div aria-busy="true" style="padding:16px;display:flex;flex-direction:column;gap:12px"><div style="height:60px;border-radius:12px;background:var(--sunk);animation:mg-pulse 1.2s infinite"></div><div style="height:120px;border-radius:12px;background:var(--sunk);animation:mg-pulse 1.2s infinite"></div><div style="height:120px;border-radius:12px;background:var(--sunk);animation:mg-pulse 1.2s infinite"></div><span style="font-size:15px;color:var(--ink-3);text-align:center">Cargando {{ alt.noun }}…</span></div>
+            </sc-if>
+            <sc-if value="{{ alt.msg }}" hint-placeholder-val="{{ false }}">
+              <div style="min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:14px;padding:32px 28px">
+                <div style="width:76px;height:76px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:34px;background:{{ alt.bg }};color:{{ alt.fg }};border:1px solid {{ alt.bd }}"><i class="{{ alt.icon }}"></i></div>
+                <h2 style="margin:0;font-size:22px;font-weight:800">{{ alt.title }}</h2>
+                <p style="margin:0;font-size:16px;line-height:1.5;color:var(--ink-2);text-wrap:pretty">{{ alt.body }}</p>
+                <button onClick="{{ alt.act }}" style="margin-top:6px;height:60px;padding:0 26px;border-radius:12px;border:1px solid var(--ink);background:var(--ink);color:var(--bg);font-size:17px;font-weight:800;cursor:pointer">{{ alt.cta }}</button>
+              </div>
+            </sc-if>
+          </sc-if>
+
+          <sc-if value="{{ show.cola }}" hint-placeholder-val="{{ true }}">
+            <div style="padding:16px;display:flex;flex-direction:column;gap:12px">
+              <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+                <sc-for list="{{ qk }}" as="k" hint-placeholder-count="3"><div style="background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:2px"><span style="font-size:26px;font-weight:800">{{ k.v }}</span><span style="font-size:13px;color:var(--ink-2);font-weight:600">{{ k.l }}</span></div></sc-for>
+              </div>
+              <sc-for list="{{ queue }}" as="o" hint-placeholder-count="3">
+                <button onClick="{{ o.open }}" style="text-align:left;background:var(--surface);border:{{ o.bw }} solid {{ o.bd }};border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:10px;cursor:pointer">
+                  <div style="display:flex;justify-content:space-between;gap:8px;align-items:center"><span style="font-size:20px;font-weight:800">{{ o.id }}</span><span style="display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 10px;border-radius:999px;border:1px solid {{ o.chip.bd }};background:{{ o.chip.bg }};color:{{ o.chip.fg }};font-size:14px;font-weight:700"><i class="{{ o.chip.icon }}"></i>{{ o.chip.label }}</span></div>
+                  <span style="font-size:16px;font-weight:600">{{ o.client }}</span>
+                  <div style="display:flex;gap:14px;font-size:14px;color:var(--ink-2);flex-wrap:wrap"><span style="display:flex;gap:5px;align-items:center"><i class="icon-list"></i>{{ o.lines }} líneas</span><span style="display:flex;gap:5px;align-items:center"><i class="{{ o.dIcon }}"></i>{{ o.dest }}</span></div>
+                  <sc-if value="{{ o.isNew }}" hint-placeholder-val="{{ false }}"><span style="font-size:13px;font-weight:700;color:var(--red-text);display:flex;gap:6px;align-items:center"><i class="icon-circle-dot"></i>Llegó hace un momento de {{ o.seller }}</span></sc-if>
+                </button>
+              </sc-for>
+              <sc-if value="{{ queueEmpty }}" hint-placeholder-val="{{ false }}"><div style="text-align:center;padding:40px 16px;display:flex;flex-direction:column;gap:8px;align-items:center"><i class="icon-package-check" style="font-size:36px;color:var(--ok)"></i><span style="font-size:18px;font-weight:800">Todo alistado</span><span style="font-size:15px;color:var(--ink-2)">No hay pedidos en cola.</span></div></sc-if>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ show.alistar }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:16px 16px 110px;display:flex;flex-direction:column;gap:12px">
+              <div style="display:flex;flex-direction:column;gap:4px"><span style="font-size:15px;color:var(--ink-2)">{{ pk.client }}</span><span style="font-size:14px;color:var(--ink-3)">{{ pk.dest }}</span></div>
+              <div style="display:flex;gap:10px;align-items:center;padding:12px 14px;border:1px solid var(--warn-line);background:var(--warn-tint);color:var(--warn);border-radius:12px;font-size:14px;font-weight:600;line-height:1.4"><i class="icon-calendar-arrow-up" style="font-size:22px;flex:none"></i>Primero vence, primero sale: saque los lotes en el orden que se muestra.</div>
+              <sc-for list="{{ pk.lines }}" as="l" hint-placeholder-count="3">
+                <div style="background:var(--surface);border:{{ l.bw }} solid {{ l.bd }};border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:12px">
+                  <div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start">
+                    <div style="display:flex;flex-direction:column;gap:3px"><span style="font-size:18px;font-weight:800;line-height:1.25">{{ l.name }}</span><span style="font-size:14px;color:var(--ink-3)">{{ l.code }}</span></div>
+                    <div style="display:flex;flex-direction:column;align-items:flex-end;flex:none"><span style="font-size:26px;font-weight:800;line-height:1">{{ l.qty }}</span><span style="font-size:13px;font-weight:600;color:var(--ink-2)">{{ l.pres }}</span></div>
+                  </div>
+                  <sc-for list="{{ l.lots }}" as="lt" hint-placeholder-count="1">
+                    <div style="display:flex;gap:12px;align-items:center;padding:12px;border-radius:10px;background:var(--sunk);border:1px solid {{ lt.bd }}">
+                      <span style="width:34px;height:34px;flex:none;border-radius:50%;background:var(--ink);color:var(--bg);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px">{{ lt.n }}</span>
+                      <div style="flex:1;display:flex;flex-direction:column;gap:2px"><span style="font-size:16px;font-weight:800">Lote {{ lt.lot }}</span><span style="font-size:14px;color:var(--ink-2)">Vence {{ lt.exp }} · {{ lt.bod }}</span></div>
+                      <span style="font-size:18px;font-weight:800;white-space:nowrap">{{ lt.qty }} und</span>
+                    </div>
+                  </sc-for>
+                  <sc-if value="{{ l.missing }}" hint-placeholder-val="{{ false }}"><span style="display:flex;gap:6px;align-items:center;font-size:14px;font-weight:700;color:var(--err)"><i class="icon-octagon-alert"></i>{{ l.missing }}</span></sc-if>
+                  <button onClick="{{ l.toggle }}" aria-pressed="{{ l.done }}" style="height:60px;border-radius:12px;border:2px solid {{ l.btnBd }};background:{{ l.btnBg }};color:{{ l.btnFg }};font-size:17px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px"><i class="{{ l.btnIcon }}" style="font-size:22px"></i><span style="flex:1;min-width:0">{{ l.btn }}</span></button>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ show.listo }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:28px 18px;display:flex;flex-direction:column;gap:16px;align-items:stretch;animation:mg-in .35s ease-out">
+              <div style="display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center"><div style="width:80px;height:80px;border-radius:50%;background:var(--ok-tint);border:1px solid var(--ok-line);color:var(--ok);display:flex;align-items:center;justify-content:center;font-size:38px"><i class="icon-package-check"></i></div><span style="font-size:23px;font-weight:800">{{ done.id }} alistado</span><span style="font-size:16px;color:var(--ink-2)">Pasó a caja para facturar. Los lotes quedaron registrados en la trazabilidad.</span></div>
+              <div style="background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:4px 14px"><sc-for list="{{ done.lots }}" as="x" hint-placeholder-count="3"><div style="display:flex;justify-content:space-between;gap:8px;padding:11px 0;border-bottom:1px solid var(--line);font-size:14px"><span>{{ x.name }}</span><span style="font-weight:700;white-space:nowrap">{{ x.lot }}</span></div></sc-for></div>
+              <a href="Caja.dc.html" style="height:60px;border-radius:12px;background:var(--ink);color:var(--bg);font-size:17px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none">Ver en Caja<i class="icon-arrow-right"></i></a>
+              <button onClick="{{ goCola }}" style="height:60px;border-radius:12px;border:2px solid var(--ink);background:transparent;font-size:17px;font-weight:800;cursor:pointer">Siguiente pedido</button>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ show.alertas }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:16px;display:flex;flex-direction:column;gap:12px">
+              <div role="tablist" style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px">
+                <sc-for list="{{ aTabs }}" as="t" hint-placeholder-count="3"><button role="tab" aria-selected="{{ t.on }}" onClick="{{ t.go }}" style="height:52px;border-radius:10px;border:{{ t.bw }} solid {{ t.bd }};background:var(--surface);font-size:14px;font-weight:700;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.2"><span>{{ t.label }}</span><span style="font-size:13px;color:var(--ink-3)">{{ t.n }}</span></button></sc-for>
+              </div>
+              <sc-for list="{{ alertList }}" as="a" hint-placeholder-count="4">
+                <div style="background:var(--surface);border:1px solid {{ a.chip.bd }};border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:8px">
+                  <div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start"><span style="font-size:17px;font-weight:800;line-height:1.25">{{ a.name }}</span><span style="display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 10px;border-radius:999px;border:1px solid {{ a.chip.bd }};background:{{ a.chip.bg }};color:{{ a.chip.fg }};font-size:13px;font-weight:700;white-space:nowrap"><i class="{{ a.chip.icon }}"></i>{{ a.chip.label }}</span></div>
+                  <span style="font-size:15px;color:var(--ink-2)">{{ a.text }}</span>
+                  <span style="font-size:14px;font-weight:700">{{ a.detail }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ show.recibir }}" hint-placeholder-val="{{ false }}">
+            <form onSubmit="{{ saveRecv }}" style="padding:16px 16px 24px;display:flex;flex-direction:column;gap:14px">
+              <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:15px;font-weight:800">Producto</span><select value="{{ rv.pid }}" onChange="{{ rv.setPid }}" style="height:56px;border-radius:12px;border:1px solid var(--line-2);background:var(--surface);padding:0 12px;font-size:16px"><sc-for list="{{ prodOpts }}" as="o" hint-placeholder-count="5"><option value="{{ o.v }}">{{ o.l }}</option></sc-for></select></label>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+                <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:15px;font-weight:800">Presentación</span><select value="{{ rv.pi }}" onChange="{{ rv.setPi }}" style="height:56px;border-radius:12px;border:1px solid var(--line-2);background:var(--surface);padding:0 10px;font-size:16px"><sc-for list="{{ rv.presOpts }}" as="o" hint-placeholder-count="2"><option value="{{ o.v }}">{{ o.l }}</option></sc-for></select></label>
+                <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:15px;font-weight:800">Cantidad</span><input inputMode="numeric" value="{{ rv.qty }}" onInput="{{ rv.setQty }}" aria-invalid="{{ rv.qtyBad }}" style="height:56px;border-radius:12px;border:{{ rv.qtyBw }} solid {{ rv.qtyBd }};background:var(--surface);padding:0 12px;font-size:18px;font-weight:700"></label>
+              </div>
+              <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:15px;font-weight:800">Lote del proveedor</span><input value="{{ rv.lot }}" onInput="{{ rv.setLot }}" placeholder="Ej. L-24490" style="height:56px;border-radius:12px;border:{{ rv.lotBw }} solid {{ rv.lotBd }};background:var(--surface);padding:0 12px;font-size:17px"></label>
+              <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:15px;font-weight:800">Fecha de vencimiento</span><input type="date" value="{{ rv.exp }}" onInput="{{ rv.setExp }}" style="height:56px;border-radius:12px;border:{{ rv.expBw }} solid {{ rv.expBd }};background:var(--surface);padding:0 12px;font-size:17px"><span style="font-size:13px;color:var(--ink-3)">Se muestra como día/mes/año: {{ rv.expFmt }}</span></label>
+              <div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:15px;font-weight:800">Bodega</span><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><sc-for list="{{ rv.bods }}" as="b" hint-placeholder-count="2"><button type="button" onClick="{{ b.go }}" aria-pressed="{{ b.on }}" style="height:56px;border-radius:12px;border:{{ b.bw }} solid {{ b.bd }};background:var(--surface);font-size:16px;font-weight:700;cursor:pointer">{{ b.label }}</button></sc-for></div></div>
+              <sc-if value="{{ rv.err }}" hint-placeholder-val="{{ false }}"><div role="alert" style="display:flex;gap:8px;align-items:center;padding:12px;border-radius:10px;border:1px solid var(--err-line);background:var(--err-tint);color:var(--err);font-size:14px;font-weight:700"><i class="icon-circle-x"></i>{{ rv.err }}</div></sc-if>
+              <button type="submit" style="height:64px;border-radius:14px;border:none;background:var(--red);color:var(--on-red);font-size:18px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px" style-active="background:var(--red-press)"><i class="icon-package-plus" style="font-size:22px"></i>Registrar entrada</button>
+            </form>
+          </sc-if>
+
+          <sc-if value="{{ show.conteo }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:16px;display:flex;flex-direction:column;gap:14px">
+              <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:15px;font-weight:800">Producto a contar</span><select value="{{ ct.pid }}" onChange="{{ ct.setPid }}" style="height:56px;border-radius:12px;border:1px solid var(--line-2);background:var(--surface);padding:0 12px;font-size:16px"><sc-for list="{{ prodOpts }}" as="o" hint-placeholder-count="5"><option value="{{ o.v }}">{{ o.l }}</option></sc-for></select></label>
+              <span style="font-size:14px;color:var(--ink-2);line-height:1.45">Conteo ciego: cuente cada lote y escriba las unidades. El sistema compara después.</span>
+              <sc-for list="{{ ct.lots }}" as="l" hint-placeholder-count="2">
+                <div style="background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:10px">
+                  <div style="display:flex;justify-content:space-between"><span style="font-size:17px;font-weight:800">Lote {{ l.lot }}</span><span style="font-size:14px;color:var(--ink-2)">Vence {{ l.exp }}</span></div>
+                  <label style="display:flex;align-items:center;gap:10px"><span style="font-size:15px;font-weight:700;flex:1">Unidades contadas</span><input inputMode="numeric" value="{{ l.val }}" onInput="{{ l.set }}" style="width:130px;height:56px;border-radius:12px;border:1px solid var(--line-2);background:var(--surface);padding:0 12px;font-size:20px;font-weight:800;text-align:right"></label>
+                  <sc-if value="{{ l.cmp }}" hint-placeholder-val="{{ false }}"><span style="display:flex;gap:6px;align-items:center;font-size:14px;font-weight:700;color:{{ l.cmpFg }}"><i class="{{ l.cmpIcon }}"></i>{{ l.cmp }}</span></sc-if>
+                </div>
+              </sc-for>
+              <button onClick="{{ ct.submit }}" disabled="{{ ct.disabled }}" style="height:64px;border-radius:14px;border:none;background:var(--red);color:var(--on-red);font-size:18px;font-weight:800;cursor:pointer;opacity:{{ ct.op }}" style-active="background:var(--red-press)">{{ ct.cta }}</button>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ show.ajuste }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:16px;display:flex;flex-direction:column;gap:14px">
+              <div style="display:flex;gap:10px;align-items:center;padding:12px 14px;border:1px solid var(--line-2);border-radius:12px;font-size:14px;line-height:1.4"><i class="icon-shield-check" style="font-size:20px;flex:none"></i>Acción sensible: pide confirmación y queda en el historial con su nombre y hora.</div>
+              <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:15px;font-weight:800">Producto</span><select value="{{ aj.pid }}" onChange="{{ aj.setPid }}" style="height:56px;border-radius:12px;border:1px solid var(--line-2);background:var(--surface);padding:0 12px;font-size:16px"><sc-for list="{{ prodOpts }}" as="o" hint-placeholder-count="5"><option value="{{ o.v }}">{{ o.l }}</option></sc-for></select></label>
+              <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:15px;font-weight:800">Lote</span><select value="{{ aj.lot }}" onChange="{{ aj.setLot }}" style="height:56px;border-radius:12px;border:1px solid var(--line-2);background:var(--surface);padding:0 12px;font-size:16px"><sc-for list="{{ aj.lotOpts }}" as="o" hint-placeholder-count="2"><option value="{{ o.v }}">{{ o.l }}</option></sc-for></select></label>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><sc-for list="{{ aj.kinds }}" as="b" hint-placeholder-count="2"><button onClick="{{ b.go }}" aria-pressed="{{ b.on }}" style="height:56px;border-radius:12px;border:{{ b.bw }} solid {{ b.bd }};background:var(--surface);font-size:16px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px"><i class="{{ b.icon }}"></i><span style="flex:1;min-width:0">{{ b.label }}</span></button></sc-for></div>
+              <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:15px;font-weight:800">Unidades</span><input inputMode="numeric" value="{{ aj.qty }}" onInput="{{ aj.setQty }}" style="height:56px;border-radius:12px;border:1px solid var(--line-2);background:var(--surface);padding:0 12px;font-size:18px;font-weight:700"></label>
+              <div style="display:flex;flex-direction:column;gap:6px"><span style="font-size:15px;font-weight:800">Motivo</span><sc-for list="{{ aj.reasons }}" as="r" hint-placeholder-count="4"><button onClick="{{ r.go }}" aria-pressed="{{ r.on }}" style="text-align:left;height:56px;padding:0 14px;border-radius:12px;border:{{ r.bw }} solid {{ r.bd }};background:var(--surface);font-size:16px;font-weight:600;cursor:pointer;display:flex;gap:10px;align-items:center"><i class="{{ r.icon }}"></i><span style="flex:1;min-width:0">{{ r.label }}</span></button></sc-for></div>
+              <button onClick="{{ aj.ask }}" disabled="{{ aj.disabled }}" style="height:64px;border-radius:14px;border:none;background:var(--red);color:var(--on-red);font-size:18px;font-weight:800;cursor:pointer;opacity:{{ aj.op }}" style-active="background:var(--red-press)">Registrar ajuste</button>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ show.traza }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:16px;display:flex;flex-direction:column;gap:12px">
+              <label style="display:flex;flex-direction:column;gap:6px"><span style="font-size:15px;font-weight:800">Número de lote</span><span style="display:flex;align-items:center;gap:8px;height:56px;border:1px solid var(--line-2);border-radius:12px;padding:0 14px;background:var(--surface)"><i class="icon-search" style="font-size:20px;color:var(--ink-3)"></i><input value="{{ tz.q }}" onInput="{{ tz.set }}" style="border:none;outline:none;background:transparent;flex:1;font-size:18px;font-weight:700;height:100%"></span></label>
+              <sc-if value="{{ tz.found }}" hint-placeholder-val="{{ true }}">
+                <div style="background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:6px"><span style="font-size:17px;font-weight:800">{{ tz.name }}</span><span style="font-size:14px;color:var(--ink-2)">Vence {{ tz.exp }} · quedan {{ tz.left }} und en {{ tz.bod }}</span></div>
+                <span style="font-size:14px;font-weight:800;margin-top:4px">Salidas de este lote</span>
+                <sc-for list="{{ tz.rows }}" as="r" hint-placeholder-count="2"><div style="background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;justify-content:space-between;gap:8px;font-size:15px"><span><strong>{{ r.id }}</strong> · {{ r.client }}</span><span style="font-weight:700">{{ r.qty }} und</span></div></sc-for>
+                <sc-if value="{{ tz.none }}" hint-placeholder-val="{{ false }}"><span style="font-size:15px;color:var(--ink-2)">Aún no ha salido en ningún pedido. Aliste un pedido para verlo aquí.</span></sc-if>
+              </sc-if>
+              <sc-if value="{{ tz.missing }}" hint-placeholder-val="{{ false }}"><span style="font-size:15px;color:var(--ink-2)">No hay ningún lote «{{ tz.q }}».</span></sc-if>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ show.mas }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:16px;display:flex;flex-direction:column;gap:10px">
+              <sc-for list="{{ moreLinks }}" as="m" hint-placeholder-count="2"><button onClick="{{ m.go }}" style="text-align:left;height:72px;padding:0 16px;border-radius:14px;border:1px solid var(--line);background:var(--surface);font-size:17px;font-weight:700;cursor:pointer;display:flex;gap:14px;align-items:center"><i class="{{ m.icon }}" style="font-size:24px"></i><span style="flex:1">{{ m.label }}</span><i class="icon-chevron-right"></i></button></sc-for>
+            </div>
+          </sc-if>
+        </div>
+
+        <sc-if value="{{ bar }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;left:12px;right:12px;bottom:92px;z-index:5"><button onClick="{{ bar.go }}" disabled="{{ bar.disabled }}" style="width:100%;height:64px;border-radius:14px;border:none;background:var(--red);color:var(--on-red);font-size:17px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:10px;cursor:pointer;box-shadow:var(--shadow);opacity:{{ bar.op }}" style-active="background:var(--red-press)"><i class="icon-package-check" style="font-size:22px"></i><span style="flex:1;min-width:0">{{ bar.label }}</span></button></div>
+        </sc-if>
+
+        <sc-if value="{{ confirm }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;padding:20px">
+            <div style="position:absolute;inset:0;background:rgba(11,10,13,.55)"></div>
+            <div role="alertdialog" aria-label="{{ confirm.title }}" style="position:relative;background:var(--surface);border-radius:18px;padding:20px;display:flex;flex-direction:column;gap:12px;width:100%;animation:mg-in .2s ease-out">
+              <span style="font-size:20px;font-weight:800">{{ confirm.title }}</span>
+              <span style="font-size:15px;line-height:1.5;color:var(--ink-2)">{{ confirm.body }}</span>
+              <span style="font-size:13px;color:var(--ink-3);display:flex;gap:6px;align-items:center"><i class="icon-history"></i>Quedará en el historial: Marcela Ortiz · hoy {{ confirm.time }}</span>
+              <button onClick="{{ confirm.ok }}" style="height:60px;border-radius:12px;border:none;background:var(--red);color:var(--on-red);font-size:17px;font-weight:800;cursor:pointer">{{ confirm.cta }}</button>
+              <button onClick="{{ closeConfirm }}" style="height:56px;border-radius:12px;border:1px solid var(--ink);background:transparent;font-size:16px;font-weight:700;cursor:pointer">Cancelar</button>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ toast }}" hint-placeholder-val="{{ false }}"><div role="status" style="position:absolute;left:16px;right:16px;top:122px;z-index:12;background:var(--ink);color:var(--bg);border-radius:12px;padding:14px 16px;font-size:15px;font-weight:600;display:flex;gap:10px;align-items:center;animation:mg-in .25s ease-out;box-shadow:var(--shadow)"><i class="icon-circle-check" style="font-size:18px"></i>{{ toast }}</div></sc-if>
+
+        <nav aria-label="Menú de bodega" style="flex:none;height:84px;background:var(--surface);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(5,1fr);padding:0 4px 18px">
+          <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="5"><button onClick="{{ t.go }}" aria-current="{{ t.cur }}" style="border:none;background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:12px;font-weight:{{ t.fw }};color:{{ t.fg }};cursor:pointer;border-top:3px solid {{ t.bd }};min-height:60px;position:relative"><i class="{{ t.icon }}" style="font-size:24px"></i><span style="flex:1;min-width:0">{{ t.label }}</span><sc-if value="{{ t.badge }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;top:6px;right:14px;min-width:20px;height:20px;border-radius:10px;background:var(--red);color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;padding:0 5px">{{ t.badge }}</span></sc-if></button></sc-for>
+        </nav>
+      </div>
+    </div>
+
+    <aside style="width:280px;display:flex;flex-direction:column;gap:14px">
+      <span style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)">Nota de diseño</span>
+      <p style="margin:0;font-size:14px;line-height:1.55;color:var(--ink-2);text-wrap:pretty">{{ note2 }}</p>
+      <div style="border-top:1px solid var(--line-2);padding-top:14px;display:flex;flex-direction:column;gap:8px">
+        <span style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)">Flujo 1 · Pedido a cartera</span>
+        <ol style="margin:0;padding-left:18px;font-size:14px;line-height:1.7;color:var(--ink-2)"><li><a href="Vendedor.dc.html">Vendedor toma el pedido</a></li><li><strong style="color:var(--ink)">Bodega alista por lote (FEFO)</strong></li><li><a href="Caja.dc.html">Caja factura</a></li><li><a href="Caja.dc.html">Queda en cartera</a></li></ol>
+        <span style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);margin-top:8px">Flujo 4 · Lote por vencer</span>
+        <span style="font-size:14px;line-height:1.55;color:var(--ink-2)">Las alertas que ve bodega son las mismas que llegan al <a href="Dueno.dc.html">panel del dueño</a>, con producto, lote y cantidad en riesgo.</span>
+      </div>
+    </aside>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const ROLES = [['Sistema', 'Magnus Sistema.dc.html'], ['Vendedor', 'Vendedor.dc.html'], ['Mostrador', 'Mostrador.dc.html'], ['Caja', 'Caja.dc.html'], ['Bodega', 'Bodega.dc.html'], ['Conductor', 'Conductor.dc.html'], ['Empleado', 'Empleado.dc.html'], ['Dueño', 'Dueno.dc.html']];
+const ME = 'Marcela Ortiz';
+const SCREENS = [
+  { id: 'cola', label: 'Pedidos por alistar', title: 'Por alistar', sub: 'Marcela Ortiz · Bodega Principal', logo: true, noun: 'los pedidos', empty: ['No hay pedidos por alistar', 'Cuando un vendedor, el mostrador o caja envíe un pedido, aparecerá aquí con sonido.', 'Actualizar'], ok: ['Cola al día', 'Todos los pedidos del turno están alistados.'], note: 'La cola muestra lo nuevo arriba con un aviso rojo. Cada tarjeta dice destino (domicilio o turno de mostrador) y número de líneas. Sin precios.' },
+  { id: 'alistar', label: 'Alistar por lote (FEFO)', title: 'Alistar', back: 'cola', noun: 'el pedido', empty: ['Este pedido no tiene líneas', 'Avise a quien lo creó para corregirlo.', 'Volver a la cola'], ok: ['Línea confirmada', 'Siga con la próxima línea.'], note: 'Por cada línea el sistema asigna los lotes en orden de vencimiento (1, 2…) y la bodega donde están. Confirmar una línea es un botón de 60 px; al confirmar todas, el pedido pasa a caja.' },
+  { id: 'listo', label: 'Pedido alistado', title: 'Pedido alistado', back: 'cola', noun: 'el resultado', empty: ['Nada alistado aún', 'Aliste un pedido de la cola.', 'Ir a la cola'], ok: ['Pedido alistado', 'Pasó a caja para facturar.'], note: 'Confirmación clara con los lotes que salieron. Desde aquí se sigue a Caja (flujo 1).' },
+  { id: 'alertas', label: 'Alertas de stock', title: 'Alertas', sub: 'Por vencer · agotado · bajo mínimo', noun: 'las alertas', empty: ['Sin alertas', 'Ningún lote vence en 30 días y todo está sobre el mínimo.', 'Volver'], ok: ['Alertas revisadas', 'Se avisó a la administración.'], note: 'Cada alerta combina color, ícono y texto. Por vencer muestra lote, fecha y unidades en riesgo.' },
+  { id: 'recibir', label: 'Recibir mercancía', title: 'Recibir mercancía', sub: 'Entrada con lote y vencimiento', noun: 'el formulario', empty: ['Sin órdenes de compra pendientes', 'Puede registrar una entrada manual.', 'Registrar entrada'], ok: ['Entrada registrada', 'El lote ya está disponible para la venta.'], note: 'Toda entrada exige lote y fecha de vencimiento: es la base del FEFO. Validación en línea con mensajes en texto, no solo color.' },
+  { id: 'conteo', label: 'Conteo físico', title: 'Conteo físico', sub: 'Desde el celular', noun: 'el conteo', empty: ['No hay conteos programados', 'La administración programa los conteos por pasillo.', 'Contar un producto'], ok: ['Conteo enviado', 'La administración revisa las diferencias.'], note: 'Conteo ciego por lote; la diferencia con el sistema aparece al escribir. Si hay diferencia, se registra como ajuste con confirmación.' },
+  { id: 'ajuste', label: 'Ajuste y merma', title: 'Ajuste y merma', back: 'mas', noun: 'el ajuste', empty: ['Sin ajustes hoy', 'Los ajustes registrados aparecen en el historial.', 'Registrar ajuste'], ok: ['Ajuste registrado', 'Quedó en el historial de quién hizo qué.'], note: 'Ajuste con motivo obligatorio y diálogo de confirmación. Queda en el historial del dueño.' },
+  { id: 'traza', label: 'Trazabilidad de lote', title: 'Trazabilidad', back: 'mas', noun: 'la trazabilidad', empty: ['Lote sin movimientos', 'Este lote aún no ha salido en ninguna venta.', 'Buscar otro'], ok: ['Trazabilidad exportada', 'Se envió el reporte a administración.'], note: 'Qué lote salió en cada venta. Útil para retiros de producto o reclamos.' },
+  { id: 'mas', label: 'Más opciones', title: 'Más', noun: 'el menú', empty: ['Sin opciones', '', 'Volver'], ok: ['Listo', '', 'Volver'], note: 'Opciones menos frecuentes para no cargar la barra inferior.' }
+];
+const TABS = [['cola', 'Alistar', 'package-open'], ['alertas', 'Alertas', 'bell'], ['recibir', 'Recibir', 'package-plus'], ['conteo', 'Conteo', 'clipboard-check'], ['mas', 'Más', 'ellipsis']];
+const sel = on => ({ bw: on ? '2px' : '1px', bd: on ? 'var(--ink)' : 'var(--line-2)' });
+
+class Component extends DCLogic {
+  state = { s: null, theme: 'light', screen: 'cola', mode: 'normal', oid: null, picks: {}, doneId: null, aTab: 'vence', rv: { pid: 3, pi: 0, qty: '', lot: '', exp: '', bod: 'Principal', tried: false }, ct: { pid: 3, vals: {} }, aj: { pid: 11, lot: '', kind: 'merma', qty: '', reason: '' }, tz: 'L-24311', confirm: null, toast: null };
+  componentDidMount() {
+    const go = () => { if (!window.MG) return setTimeout(go, 40); this.setState({ s: MG.get(), theme: MG.theme() }); this.un = MG.subscribe(s => this.setState({ s })); this.th = () => this.setState({ theme: MG.theme() }); window.addEventListener('magnus-theme', this.th); window.addEventListener('storage', this.th); };
+    go();
+  }
+  componentWillUnmount() { this.un && this.un(); window.removeEventListener('magnus-theme', this.th); window.removeEventListener('storage', this.th); }
+  nav(screen) { this.setState({ screen, mode: 'normal', confirm: null }); }
+  flash(t) { this.setState({ toast: t }); clearTimeout(this.tt); this.tt = setTimeout(() => this.setState({ toast: null }), 2400); }
+  plan(s, o) {
+    const used = {};
+    return o.lines.map(l => {
+      const p = MG.prod(s, l.pid); const units = MG.lineUnits(s, l);
+      const lots = MG.fefo(p).map(x => ({ ...x, qty: x.qty - (used[x.lot] || 0) }));
+      const out = []; let left = units;
+      lots.forEach(x => { if (left <= 0 || x.qty <= 0) return; const t = Math.min(x.qty, left); out.push({ lot: x.lot, exp: x.exp, qty: t, bod: x.bod }); used[x.lot] = (used[x.lot] || 0) + t; left -= t; });
+      return { p, l, units, lots: out, missing: left };
+    });
+  }
+  finish() {
+    const st = this.state, id = st.oid;
+    MG.set(s => {
+      const o = s.orders.find(x => x.id === id); const plan = this.plan(s, o);
+      plan.forEach((pl, i) => { o.lines[i].picked = pl.lots; pl.lots.forEach(a => { const lot = pl.p.lots.find(x => x.lot === a.lot); lot.qty -= a.qty; }); pl.p.stock -= pl.units - pl.missing; pl.p.lots = pl.p.lots.filter(x => x.qty > 0); });
+      o.status = 'alistado'; if (o.delivery.type === 'domicilio') o.delivery.status = 'por_alistar';
+      MG.log(s, ME, 'Bodega', 'Alistó ' + id + ' por FEFO (' + plan.map(p => p.lots.map(x => x.lot).join('+')).join(', ') + ')');
+    });
+    this.setState({ doneId: id, screen: 'listo', picks: {} });
+  }
+  renderVals() {
+    const st = this.state, s = st.s, M = window.MG;
+    const scr = SCREENS.find(x => x.id === st.screen);
+    const base = {
+      theme: st.theme, isLight: st.theme !== 'dark', isDark: st.theme === 'dark', roles: ROLES.map(([label, href]) => ({ label, href, bg: label === 'Bodega' ? '#F5F4F7' : 'transparent', fg: label === 'Bodega' ? '#17151A' : '#CFCCD5' })),
+      themeIcon: st.theme === 'dark' ? 'icon-sun' : 'icon-moon', themeLabel: st.theme === 'dark' ? 'Claro' : 'Oscuro',
+      toggleTheme: () => M && M.setTheme(st.theme === 'dark' ? 'light' : 'dark'),
+      resetData: () => { if (M && confirm('¿Reiniciar todos los datos de ejemplo del prototipo?')) { M.reset(); this.setState({ screen: 'cola', picks: {}, oid: null }); } },
+      symbolSrc: st.theme === 'dark' ? 'assets/simbolo-magnus-blanco.png' : 'assets/simbolo-magnus.png',
+      screenList: SCREENS.map((x, i) => ({ n: String(i + 1).padStart(2, '0'), label: x.label, go: () => { if (x.id === 'alistar' && !st.oid && s) { const o = s.orders.find(o => ['nuevo', 'alistando'].includes(o.status)); if (o) return this.setState({ oid: o.id, screen: 'alistar', mode: 'normal' }); } this.nav(x.id); }, bg: x.id === st.screen ? 'var(--surface)' : 'transparent', bd: x.id === st.screen ? 'var(--line-2)' : 'transparent', fw: x.id === st.screen ? 700 : 500 })),
+      modes: [['normal', 'Normal'], ['vacio', 'Vacío'], ['cargando', 'Cargando'], ['error', 'Error'], ['permiso', 'Sin permiso'], ['exito', 'Éxito']].map(([k, label]) => ({ label, on: st.mode === k ? 'true' : 'false', go: () => this.setState({ mode: k }), bg: st.mode === k ? 'var(--ink)' : 'transparent', fg: st.mode === k ? 'var(--bg)' : 'var(--ink)', bd: st.mode === k ? 'var(--ink)' : 'var(--line-2)' })),
+      note2: scr.note, hdr: { title: scr.title, sub: scr.sub || '', back: !!scr.back, logo: !!scr.logo, goBack: () => this.nav(scr.back) },
+      toast: st.toast, confirm: null, bar: null, show: {}, alt: { on: false }, closeConfirm: () => this.setState({ confirm: null }), goCola: () => this.nav('cola')
+    };
+    if (!s) return { ...base, tabs: [] };
+    const alt = { on: st.mode !== 'normal', noun: scr.noun, loading: st.mode === 'cargando', msg: !['normal', 'cargando'].includes(st.mode) };
+    const back = () => this.setState({ mode: 'normal' });
+    if (st.mode === 'vacio') Object.assign(alt, { icon: 'icon-inbox', title: scr.empty[0], body: scr.empty[1], cta: scr.empty[2], act: back, bg: 'var(--mute-tint)', fg: 'var(--mute)', bd: 'var(--mute-line)' });
+    if (st.mode === 'error') Object.assign(alt, { icon: 'icon-wifi-off', title: 'Sin señal en bodega', body: 'No se pudo cargar ' + scr.noun + '. Lo que confirme se guarda en el celular y se sincroniza al volver la señal.', cta: 'Reintentar', act: back, bg: 'var(--err-tint)', fg: 'var(--err)', bd: 'var(--err-line)' });
+    if (st.mode === 'permiso') Object.assign(alt, { icon: 'icon-lock', title: 'Sin permiso', body: 'El rol Bodega no ve precios, costos ni márgenes, ni puede anular ajustes ya registrados. Pida apoyo a la administración.', cta: 'Volver', act: back, bg: 'var(--mute-tint)', fg: 'var(--mute)', bd: 'var(--mute-line)' });
+    if (st.mode === 'exito') Object.assign(alt, { icon: 'icon-circle-check', title: scr.ok[0], body: scr.ok[1], cta: 'Continuar', act: back, bg: 'var(--ok-tint)', fg: 'var(--ok)', bd: 'var(--ok-line)' });
+    const show = {}; if (!alt.on) show[st.screen] = true;
+
+    const pending = s.orders.filter(o => ['nuevo', 'alistando'].includes(o.status));
+    const destOf = o => o.delivery.type === 'domicilio' ? 'Domicilio ' + o.delivery.window : (o.turno ? 'Mostrador · turno ' + o.turno : 'Recoge en punto');
+    const queue = pending.slice().reverse().map((o, i) => { const fresh = o.seller === 'Diana Restrepo' && o.id > 'PED-10481'; return { id: o.id, client: M.client(s, o.client).name, lines: o.lines.length, dest: destOf(o), dIcon: o.delivery.type === 'domicilio' ? 'icon-truck' : 'icon-store', chip: M.chip(o.status === 'nuevo' ? 'por_alistar' : 'alistando'), isNew: fresh, seller: o.seller, bw: fresh ? '2px' : '1px', bd: fresh ? 'var(--red)' : 'var(--line)', open: () => { MG.set(x => { const oo = x.orders.find(y => y.id === o.id); if (oo.status === 'nuevo') oo.status = 'alistando'; }); this.setState({ oid: o.id, picks: {}, screen: 'alistar', mode: 'normal' }); } }; });
+    const alerts = M.alerts(s);
+    const qk = [{ v: pending.length, l: 'Por alistar' }, { v: s.orders.filter(o => o.status === 'alistado').length, l: 'Esperan caja' }, { v: alerts.filter(a => a.kind === 'vence').length, l: 'Lotes por vencer' }];
+
+    let pk = { client: '', dest: '', lines: [] }, bar = null;
+    const o = st.oid && s.orders.find(x => x.id === st.oid);
+    if (o) {
+      const plan = this.plan(s, o);
+      pk = { client: M.client(s, o.client).name, dest: destOf(o), lines: plan.map((pl, i) => { const done = !!st.picks[i]; return { name: pl.p.name, code: pl.p.code + ' · ' + M.num(pl.units) + ' und', qty: pl.l.qty, pres: pl.p.pres[pl.l.pi].name, lots: pl.lots.map((x, j) => ({ n: j + 1, lot: x.lot, exp: M.date(x.exp), bod: 'Bodega ' + x.bod, qty: M.num(x.qty), bd: j === 0 ? 'var(--ink)' : 'var(--line)' })), missing: pl.missing ? 'Faltan ' + pl.missing + ' und: avise a caja para ajustar el pedido' : null, done: done ? 'true' : 'false', bw: done ? '2px' : '1px', bd: done ? 'var(--ok-line)' : 'var(--line)', btn: done ? 'Línea confirmada' : 'Confirmar línea', btnIcon: done ? 'icon-circle-check' : 'icon-check', btnBg: done ? 'var(--ok-tint)' : 'transparent', btnFg: done ? 'var(--ok)' : 'var(--ink)', btnBd: done ? 'var(--ok-line)' : 'var(--ink)', toggle: () => this.setState({ picks: { ...st.picks, [i]: !done } }) }; }) };
+      const n = plan.filter((_, i) => st.picks[i]).length;
+      if (!alt.on && st.screen === 'alistar') bar = { label: n === plan.length ? 'Pedido alistado · pasar a caja' : 'Confirmadas ' + n + ' de ' + plan.length, disabled: n !== plan.length, op: n === plan.length ? 1 : 0.5, go: () => this.finish() };
+      base.hdr.title = 'Alistar ' + o.id;
+    }
+    const doneO = st.doneId && s.orders.find(x => x.id === st.doneId);
+    const done = { id: st.doneId || '—', lots: doneO ? doneO.lines.flatMap(l => (l.picked || []).map(x => ({ name: M.prod(s, l.pid).name + ' · ' + x.qty + ' und', lot: x.lot }))) : [] };
+
+    const aKinds = [['vence', 'Por vencer'], ['agotado', 'Agotado'], ['bajo', 'Bajo mínimo']];
+    const aTabs = aKinds.map(([k, label]) => ({ label, n: alerts.filter(a => a.kind === k).length, on: st.aTab === k ? 'true' : 'false', go: () => this.setState({ aTab: k }), ...sel(st.aTab === k) }));
+    const alertList = alerts.filter(a => a.kind === st.aTab).map(a => ({ name: a.p.name, chip: M.chip(a.kind, a.kind === 'vence' ? (a.days <= 10 ? 'Vence en ' + a.days + ' d' : 'Por vencer') : null), text: a.kind === 'vence' ? 'Lote ' + a.lot.lot + ' · vence ' + M.date(a.lot.exp) : a.text, detail: a.kind === 'vence' ? M.num(a.lot.qty) + ' und en riesgo · Bodega ' + a.lot.bod + ' · sale primero' : a.kind === 'agotado' ? 'Mínimo ' + M.num(a.p.min) + ' und · pedir a compras' : 'Faltan ' + M.num(a.p.min - a.p.stock) + ' und para el mínimo' }));
+
+    const prodOpts = s.products.filter(p => p.active).map(p => ({ v: String(p.id), l: p.name + ' · ' + p.code }));
+    const rv = st.rv; const rp = M.prod(s, +rv.pid);
+    const setRv = patch => this.setState({ rv: { ...st.rv, ...patch } });
+    const qn = parseInt(rv.qty, 10); const expD = rv.exp ? M.daysTo(rv.exp) : null;
+    const errs = { qty: !(qn > 0), lot: !/^L-\d{4,}$/i.test(rv.lot.trim()), exp: !rv.exp || expD <= 0 };
+    const red = bad => rv.tried && bad ? { w: '2px', d: 'var(--err)' } : { w: '1px', d: 'var(--line-2)' };
+    const rvv = {
+      pid: String(rv.pid), pi: String(rv.pi), qty: rv.qty, lot: rv.lot, exp: rv.exp, expFmt: rv.exp ? M.date(rv.exp) : 'dd/mm/aaaa',
+      presOpts: rp.pres.map((pr, i) => ({ v: String(i), l: pr.name })),
+      setPid: e => setRv({ pid: +e.target.value, pi: 0 }), setPi: e => setRv({ pi: +e.target.value }), setQty: e => setRv({ qty: e.target.value.replace(/\D/g, '') }), setLot: e => setRv({ lot: e.target.value.toUpperCase() }), setExp: e => setRv({ exp: e.target.value }),
+      qtyBad: rv.tried && errs.qty ? 'true' : 'false', qtyBw: red(errs.qty).w, qtyBd: red(errs.qty).d, lotBw: red(errs.lot).w, lotBd: red(errs.lot).d, expBw: red(errs.exp).w, expBd: red(errs.exp).d,
+      bods: ['Principal', 'Norte'].map(b => ({ label: 'Bodega ' + b, on: rv.bod === b ? 'true' : 'false', go: () => setRv({ bod: b }), ...sel(rv.bod === b) })),
+      err: rv.tried && (errs.qty || errs.lot || errs.exp) ? [errs.qty && 'escriba la cantidad', errs.lot && 'el lote debe tener la forma L-24490', errs.exp && 'la fecha de vencimiento debe ser futura'].filter(Boolean).join(' · ').replace(/^./, c => c.toUpperCase()) : null
+    };
+    const saveRecv = e => {
+      e.preventDefault();
+      if (errs.qty || errs.lot || errs.exp) return setRv({ tried: true });
+      const units = qn * rp.pres[rv.pi].units;
+      MG.set(x => { const p = M.prod(x, rp.id); p.lots.push({ lot: rv.lot.trim(), exp: rv.exp, qty: units, bod: rv.bod }); p.stock += units; MG.log(x, ME, 'Bodega', 'Recibió ' + M.num(units) + ' und ' + p.name + ' lote ' + rv.lot + ' (vence ' + M.date(rv.exp) + ')'); });
+      this.setState({ rv: { pid: rv.pid, pi: 0, qty: '', lot: '', exp: '', bod: 'Principal', tried: false } });
+      this.flash('Entrada registrada: ' + M.num(units) + ' und · lote ' + rv.lot);
+    };
+
+    const cp = M.prod(s, +st.ct.pid);
+    const ctLots = M.fefo(cp).map(l => { const v = st.ct.vals[l.lot]; const has = v !== undefined && v !== ''; const diff = has ? +v - l.qty : 0; return { lot: l.lot, exp: M.date(l.exp), val: v || '', set: e => this.setState({ ct: { ...st.ct, vals: { ...st.ct.vals, [l.lot]: e.target.value.replace(/\D/g, '') } } }), cmp: has ? (diff === 0 ? 'Coincide con el sistema' : 'Diferencia: ' + (diff > 0 ? '+' : '') + diff + ' und (sistema ' + l.qty + ')') : null, cmpFg: diff === 0 ? 'var(--ok)' : 'var(--warn)', cmpIcon: diff === 0 ? 'icon-circle-check' : 'icon-triangle-alert', diff, l }; });
+    const filled = ctLots.length && ctLots.every(l => l.val !== '');
+    const anyDiff = ctLots.some(l => l.diff !== 0);
+    const ct = {
+      pid: String(st.ct.pid), lots: ctLots, setPid: e => this.setState({ ct: { pid: +e.target.value, vals: {} } }), disabled: !filled, op: filled ? 1 : 0.45, cta: filled && anyDiff ? 'Enviar conteo y registrar diferencia' : 'Enviar conteo',
+      submit: () => {
+        if (!anyDiff) { MG.set(x => MG.log(x, ME, 'Bodega', 'Conteo físico sin diferencias: ' + cp.name)); this.setState({ ct: { ...st.ct, vals: {} } }); return this.flash('Conteo enviado sin diferencias'); }
+        this.setState({ confirm: { title: 'Registrar diferencia de conteo', body: cp.name + ': ' + ctLots.filter(l => l.diff).map(l => l.lot + ' ' + (l.diff > 0 ? '+' : '') + l.diff).join(', ') + ' und. Se ajustará el inventario con motivo «Error de conteo».', cta: 'Sí, ajustar inventario', time: M.now(), ok: () => { MG.set(x => { const p = M.prod(x, cp.id); ctLots.forEach(cl => { const lot = p.lots.find(y => y.lot === cl.lot); lot.qty += cl.diff; p.stock += cl.diff; }); MG.log(x, ME, 'Bodega', 'Ajuste por conteo físico: ' + p.name + ' (' + ctLots.filter(l => l.diff).map(l => l.lot + ' ' + (l.diff > 0 ? '+' : '') + l.diff).join(', ') + ')'); }); this.setState({ confirm: null, ct: { ...st.ct, vals: {} } }); this.flash('Ajuste registrado en el historial'); } } });
+      }
+    };
+
+    const ap = M.prod(s, +st.aj.pid); const ajLot = st.aj.lot || (M.fefo(ap)[0] || {}).lot || '';
+    const setAj = patch => this.setState({ aj: { ...st.aj, ...patch } });
+    const aq = parseInt(st.aj.qty, 10);
+    const ajOk = aq > 0 && st.aj.reason && ajLot;
+    const aj = {
+      pid: String(st.aj.pid), lot: ajLot, qty: st.aj.qty, lotOpts: M.fefo(ap).map(l => ({ v: l.lot, l: l.lot + ' · vence ' + M.date(l.exp) + ' · ' + l.qty + ' und' })),
+      setPid: e => setAj({ pid: +e.target.value, lot: '' }), setLot: e => setAj({ lot: e.target.value }), setQty: e => setAj({ qty: e.target.value.replace(/\D/g, '') }),
+      kinds: [['merma', 'Merma (−)', 'minus'], ['sobrante', 'Sobrante (+)', 'plus']].map(([k, label, icon]) => ({ label, icon: 'icon-' + icon, on: st.aj.kind === k ? 'true' : 'false', go: () => setAj({ kind: k }), ...sel(st.aj.kind === k) })),
+      reasons: ['Empaque roto', 'Producto vencido', 'Daño en transporte', 'Error de conteo'].map(r => ({ label: r, icon: st.aj.reason === r ? 'icon-circle-dot' : 'icon-circle', on: st.aj.reason === r ? 'true' : 'false', go: () => setAj({ reason: r }), ...sel(st.aj.reason === r) })),
+      disabled: !ajOk, op: ajOk ? 1 : 0.45,
+      ask: () => { const sign = st.aj.kind === 'merma' ? -1 : 1; this.setState({ confirm: { title: '¿Ajustar inventario?', body: (sign < 0 ? '−' : '+') + aq + ' und de ' + ap.name + ' (lote ' + ajLot + '). Motivo: ' + st.aj.reason + '.', cta: 'Sí, registrar ajuste', time: M.now(), ok: () => { MG.set(x => { const p = M.prod(x, ap.id); const lot = p.lots.find(y => y.lot === ajLot); lot.qty = Math.max(0, lot.qty + sign * aq); p.stock = Math.max(0, p.stock + sign * aq); MG.log(x, ME, 'Bodega', 'Ajuste de inventario: ' + (sign < 0 ? '−' : '+') + aq + ' und ' + p.name + ' (' + ajLot + ') · motivo: ' + st.aj.reason.toLowerCase()); }); this.setState({ confirm: null, aj: { ...st.aj, qty: '', reason: '' } }); this.flash('Ajuste registrado en el historial'); } } }); }
+    };
+
+    const tq = st.tz.trim().toUpperCase(); let tz = { q: st.tz, set: e => this.setState({ tz: e.target.value }), found: false, missing: false, rows: [] };
+    const tp = s.products.find(p => p.lots.some(l => l.lot === tq)) || s.products.find(p => s.orders.some(o => o.lines.some(l => l.pid === p.id && (l.picked || []).some(x => x.lot === tq))));
+    if (tp) { const lot = tp.lots.find(l => l.lot === tq); const rows = []; s.orders.forEach(o => o.lines.forEach(l => (l.picked || []).forEach(x => { if (x.lot === tq) rows.push({ id: o.id, client: M.client(s, o.client).name, qty: M.num(x.qty) }); }))); tz = { ...tz, found: true, name: tp.name, exp: lot ? M.date(lot.exp) : '—', left: lot ? M.num(lot.qty) : 0, bod: lot ? 'Bodega ' + lot.bod : '—', rows, none: !rows.length }; } else if (tq) tz.missing = true;
+
+    const moreLinks = [['ajuste', 'Ajuste y merma', 'square-pen'], ['traza', 'Trazabilidad de lote', 'route']].map(([id, label, icon]) => ({ label, icon: 'icon-' + icon, go: () => this.nav(id) }));
+    const tabs = TABS.map(([id, label, icon]) => { const on = st.screen === id || (id === 'cola' && ['alistar', 'listo'].includes(st.screen)) || (id === 'mas' && ['ajuste', 'traza'].includes(st.screen)); return { label, icon: 'icon-' + icon, go: () => this.nav(id), cur: on ? 'page' : 'false', fg: on ? 'var(--ink)' : 'var(--ink-3)', fw: on ? 800 : 600, bd: on ? 'var(--red)' : 'transparent', badge: id === 'cola' ? (pending.length || null) : id === 'alertas' ? (alerts.length || null) : null }; });
+
+    return { ...base, alt, show, tabs, qk, queue, queueEmpty: !queue.length, pk, bar, done, aTabs, alertList, prodOpts, rv: rvv, saveRecv, ct, aj, tz, moreLinks, confirm: st.confirm };
+  }
+}
+</script>
+</body>
+</html>

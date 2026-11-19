@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/lucide-static@0.469.0/font/lucide.css">
+<script src="magnus-store.js"></script>
+<style>
+body{margin:0;background:#E6E5E9;font-family:'Public Sans',system-ui,sans-serif;font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased;color:#17151A}
+*{box-sizing:border-box}
+button,input{font:inherit;color:inherit}
+a{color:inherit;text-underline-offset:3px}a:hover{color:#D91E26}
+:focus-visible{outline:3px solid #D91E26;outline-offset:2px}
+[data-theme=light]{--canvas:#E6E5E9;--bg:#F4F4F6;--surface:#FFFFFF;--sunk:#ECECEF;--line:#DCDBE1;--line-2:#ADABB4;--ink:#17151A;--ink-2:#46434C;--ink-3:#5F5C66;--red:#D91E26;--red-press:#A3141A;--on-red:#FFFFFF;--ok:#16653A;--ok-tint:#E4F3E9;--ok-line:#9CCFAF;--warn:#7A4E00;--warn-tint:#FFF2CC;--warn-line:#E6BD5C;--err:#A3141A;--err-tint:#FDEBEC;--err-line:#EFA2A5;--info:#17151A;--info-tint:#ECECEF;--info-line:#ADABB4;--mute:#56535C;--mute-tint:#EDEDF0;--mute-line:#C9C8CE;--ph:#E9E8EC;--shadow:0 6px 20px rgba(23,21,26,.1)}
+[data-theme=dark]{--canvas:#0B0A0D;--bg:#121115;--surface:#1B1A1F;--sunk:#25232A;--line:#35333B;--line-2:#5A5761;--ink:#F5F4F7;--ink-2:#CFCCD5;--ink-3:#ADA9B4;--red:#D91E26;--red-press:#B8181F;--on-red:#FFFFFF;--ok:#6FD99A;--ok-tint:#12301F;--ok-line:#2D6B47;--warn:#F4C55B;--warn-tint:#352808;--warn-line:#7A5C14;--err:#FF7A7F;--err-tint:#3A1517;--err-line:#7D2A2E;--info:#F5F4F7;--info-tint:#25232A;--info-line:#5A5761;--mute:#B4B1BA;--mute-tint:#26252B;--mute-line:#45434B;--ph:#2A282F;--shadow:0 6px 20px rgba(0,0,0,.4)}
+@keyframes mg-in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes mg-pulse{0%,100%{opacity:.5}50%{opacity:1}}
+</style>
+</helmet>
+<div data-theme="{{ theme }}" style="min-height:100vh;background:var(--canvas);color:var(--ink);display:flex;flex-direction:column">
+  <header style="position:sticky;top:0;z-index:20;background:#17151A;color:#F5F4F7;display:flex;align-items:center;gap:20px;padding:10px 20px;flex-wrap:wrap;border-bottom:1px solid #2C2A31">
+    <a href="Magnus Sistema.dc.html" style="display:flex;align-items:center;gap:10px;text-decoration:none;color:#F5F4F7"><img src="assets/simbolo-magnus-blanco.png" alt="Magnus" style="height:26px"><span style="font-weight:700;font-size:14px;white-space:nowrap">Magnus · Prototipo</span></a>
+    <nav aria-label="Cambiar de rol" style="display:flex;gap:4px;flex-wrap:wrap"><sc-for list="{{ roles }}" as="r" hint-placeholder-count="8"><a href="{{ r.href }}" style="padding:7px 11px;border-radius:6px;font-size:13px;font-weight:600;text-decoration:none;color:{{ r.fg }};background:{{ r.bg }}">{{ r.label }}</a></sc-for></nav>
+    <div style="margin-left:auto;display:flex;gap:8px">
+      <button onClick="{{ toggleTheme }}" style="height:34px;padding:0 12px;border-radius:6px;border:1px solid #45434B;background:transparent;color:#F5F4F7;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap"><i class="{{ themeIcon }}"></i><span style="flex:1;min-width:0">{{ themeLabel }}</span></button>
+      <button onClick="{{ resetData }}" style="height:34px;padding:0 12px;border-radius:6px;border:1px solid #45434B;background:transparent;color:#F5F4F7;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap"><i class="icon-rotate-ccw"></i>Reiniciar datos</button>
+    </div>
+  </header>
+  <div style="display:flex;gap:28px;padding:28px 32px 48px;align-items:flex-start">
+    <aside style="width:240px;flex:none;display:flex;flex-direction:column;gap:18px">
+      <div style="display:flex;flex-direction:column;gap:4px"><span style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)">Rol · Tableta horizontal táctil</span><h1 style="margin:0;font-size:24px;font-weight:800">Mostrador</h1><p style="margin:0;font-size:14px;line-height:1.45;color:var(--ink-2)">El cliente arma su pedido tocando y recibe un número de turno. Botones de 64 px o más; sin teclado salvo para buscar.</p></div>
+      <div style="display:flex;flex-direction:column;gap:2px"><span style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);margin-bottom:6px">Pantallas</span><sc-for list="{{ screenList }}" as="sc" hint-placeholder-count="3"><button onClick="{{ sc.go }}" style="width:100%;text-align:left;min-height:40px;padding:8px 12px;border-radius:6px;border:1px solid {{ sc.bd }};background:{{ sc.bg }};color:var(--ink);font-size:14px;font-weight:{{ sc.fw }};cursor:pointer;display:flex;gap:10px"><span style="font-size:12px;color:var(--ink-3);width:18px">{{ sc.n }}</span><span style="flex:1;min-width:0">{{ sc.label }}</span></button></sc-for></div>
+      <div style="display:flex;flex-direction:column;gap:8px"><span style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)">Estado de la pantalla</span><div role="radiogroup" aria-label="Estado de la pantalla" style="display:flex;flex-wrap:wrap;gap:6px"><sc-for list="{{ modes }}" as="m" hint-placeholder-count="6"><button role="radio" aria-checked="{{ m.on }}" onClick="{{ m.go }}" style="height:34px;padding:0 11px;border-radius:999px;border:1px solid {{ m.bd }};background:{{ m.bg }};color:{{ m.fg }};font-size:13px;font-weight:600;cursor:pointer">{{ m.label }}</button></sc-for></div></div>
+      <div style="border-top:1px solid var(--line-2);padding-top:14px;display:flex;flex-direction:column;gap:8px"><span style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)">Nota de diseño</span><p style="margin:0;font-size:14px;line-height:1.55;color:var(--ink-2);text-wrap:pretty">{{ note2 }}</p></div>
+    </aside>
+    <div style="width:1214px;height:854px;flex:none;border-radius:36px;background:#0B0A0C;padding:10px;box-shadow:0 30px 60px rgba(0,0,0,.25)">
+      <div style="width:1194px;height:834px;border-radius:26px;overflow:hidden;background:var(--bg);display:flex;flex-direction:column;position:relative">
+        <div style="height:76px;flex:none;background:var(--surface);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:18px;padding:0 24px">
+          <sc-if value="{{ isLight }}" hint-placeholder-val="{{ true }}"><img src="assets/simbolo-magnus.png" alt="Magnus" style="height:40px"></sc-if><sc-if value="{{ isDark }}" hint-placeholder-val="{{ false }}"><img src="assets/simbolo-magnus-blanco.png" alt="Magnus" style="height:40px"></sc-if><span style="font-size:22px;font-weight:800">{{ hdr }}</span>
+          <sc-if value="{{ showCancel }}" hint-placeholder-val="{{ false }}"><button onClick="{{ restart }}" style="margin-left:auto;height:56px;padding:0 20px;border-radius:14px;border:2px solid var(--ink);background:transparent;font-size:17px;font-weight:800;cursor:pointer;display:flex;gap:8px;align-items:center"><i class="icon-x" style="font-size:20px"></i>Cancelar pedido</button></sc-if>
+        </div>
+        <div style="flex:1;min-height:0;position:relative;display:flex">
+          <sc-if value="{{ alt.on }}" hint-placeholder-val="{{ false }}"><div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:16px;padding:60px"><div style="width:96px;height:96px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:44px;background:{{ alt.bg }};color:{{ alt.fg }};border:1px solid {{ alt.bd }};animation:{{ alt.anim }}"><i class="{{ alt.icon }}"></i></div><h2 style="margin:0;font-size:30px;font-weight:800">{{ alt.title }}</h2><p style="margin:0;font-size:19px;line-height:1.5;color:var(--ink-2);max-width:560px">{{ alt.body }}</p><sc-if value="{{ alt.cta }}" hint-placeholder-val="{{ true }}"><button onClick="{{ alt.act }}" style="height:72px;padding:0 36px;border-radius:18px;border:none;background:var(--ink);color:var(--bg);font-size:20px;font-weight:800;cursor:pointer">{{ alt.cta }}</button></sc-if></div></sc-if>
+
+          <sc-if value="{{ show.inicio }}" hint-placeholder-val="{{ true }}">
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;padding:40px">
+              <sc-if value="{{ isLight }}" hint-placeholder-val="{{ true }}"><img src="assets/logo-magnus.png" alt="Magnus Company Colombia" style="height:190px"></sc-if><sc-if value="{{ isDark }}" hint-placeholder-val="{{ false }}"><img src="assets/logo-magnus-blanco.png" alt="Magnus Company Colombia" style="height:190px"></sc-if>
+              <span style="font-size:40px;font-weight:800;letter-spacing:-.01em;text-align:center">Arme su pedido aquí</span>
+              <span style="font-size:20px;color:var(--ink-2)">Elija productos, confirme y reciba su número de turno para pagar en caja.</span>
+              <button onClick="{{ start }}" style="height:96px;padding:0 64px;border-radius:24px;border:none;background:var(--red);color:var(--on-red);font-size:28px;font-weight:800;cursor:pointer;display:flex;gap:14px;align-items:center" style-active="background:var(--red-press)"><i class="icon-hand" style="font-size:32px"></i>Tocar para empezar</button>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ show.catalogo }}" hint-placeholder-val="{{ false }}">
+            <div style="flex:1;display:flex;min-width:0">
+              <div style="width:200px;flex:none;border-right:1px solid var(--line);background:var(--surface);padding:14px 12px;display:flex;flex-direction:column;gap:8px;overflow:auto">
+                <sc-for list="{{ cats }}" as="c" hint-placeholder-count="8"><button onClick="{{ c.go }}" aria-pressed="{{ c.on }}" style="min-height:64px;border-radius:14px;border:{{ c.bw }} solid {{ c.bd }};background:{{ c.bg }};color:{{ c.fg }};font-size:17px;font-weight:800;cursor:pointer;display:flex;gap:10px;align-items:center;padding:0 14px;text-align:left"><i class="{{ c.icon }}" style="font-size:22px"></i><span style="flex:1;min-width:0">{{ c.label }}</span></button></sc-for>
+              </div>
+              <div style="flex:1;min-width:0;display:flex;flex-direction:column">
+                <div style="padding:14px 18px;display:flex;gap:12px;align-items:center"><label style="flex:1;display:flex;align-items:center;gap:10px;height:64px;border:2px solid var(--line-2);border-radius:16px;padding:0 18px;background:var(--surface)"><i class="icon-search" style="font-size:24px;color:var(--ink-3)"></i><span style="position:absolute;left:-9999px">Buscar producto</span><input value="{{ q }}" onInput="{{ setQ }}" placeholder="Buscar producto" style="border:none;outline:none;background:transparent;flex:1;font-size:20px;height:100%"></label></div>
+                <div style="flex:1;overflow:auto;padding:0 18px 18px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;align-content:start">
+                  <sc-for list="{{ prods }}" as="p" hint-placeholder-count="6">
+                    <div style="background:var(--surface);border:{{ p.bw }} solid {{ p.bd }};border-radius:18px;padding:14px;display:flex;flex-direction:column;gap:10px;opacity:{{ p.op }}">
+                      <div style="height:120px;border-radius:12px;background:repeating-linear-gradient(135deg,var(--ph) 0 10px,var(--sunk) 10px 20px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:var(--ink-3)"><i class="icon-image" style="font-size:26px"></i><span style="font-size:12px;font-weight:600">Foto por definir</span></div>
+                      <span style="font-size:18px;font-weight:800;line-height:1.25;min-height:45px">{{ p.name }}</span>
+                      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><span style="font-size:20px;font-weight:800">{{ p.price }}</span><span style="display:inline-flex;align-items:center;gap:5px;height:28px;padding:0 10px;border-radius:999px;border:1px solid {{ p.chip.bd }};background:{{ p.chip.bg }};color:{{ p.chip.fg }};font-size:13px;font-weight:700;white-space:nowrap"><i class="{{ p.chip.icon }}"></i>{{ p.chip.label }}</span></div>
+                      <sc-if value="{{ p.inCart }}" hint-placeholder-val="{{ false }}"><div style="display:grid;grid-template-columns:72px 1fr 72px;align-items:center;border:2px solid var(--ink);border-radius:14px;overflow:hidden"><button onClick="{{ p.dec }}" aria-label="Quitar uno" style="height:64px;border:none;background:transparent;font-size:24px;cursor:pointer"><i class="icon-minus"></i></button><span style="text-align:center;font-size:24px;font-weight:800">{{ p.qty }}</span><button onClick="{{ p.inc }}" aria-label="Agregar uno" style="height:64px;border:none;background:transparent;font-size:24px;cursor:pointer"><i class="icon-plus"></i></button></div></sc-if>
+                      <sc-if value="{{ p.notInCart }}" hint-placeholder-val="{{ true }}"><button onClick="{{ p.inc }}" disabled="{{ p.out }}" style="height:64px;border-radius:14px;border:2px solid var(--ink);background:transparent;font-size:19px;font-weight:800;cursor:pointer;display:flex;gap:8px;align-items:center;justify-content:center"><i class="{{ p.icon }}" style="font-size:22px"></i><span style="flex:1;min-width:0">{{ p.btn }}</span></button></sc-if>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+              <div style="width:330px;flex:none;border-left:1px solid var(--line);background:var(--surface);display:flex;flex-direction:column">
+                <div style="padding:18px 20px;border-bottom:1px solid var(--line);font-size:20px;font-weight:800;display:flex;gap:10px;align-items:center"><i class="icon-shopping-basket"></i>Su pedido</div>
+                <div style="flex:1;overflow:auto;padding:4px 20px">
+                  <sc-for list="{{ cart }}" as="l" hint-placeholder-count="2"><div style="display:flex;justify-content:space-between;gap:10px;padding:14px 0;border-bottom:1px solid var(--line);font-size:16px"><span><strong style="font-size:18px">{{ l.qty }} ×</strong> {{ l.name }}</span><span style="font-weight:800;white-space:nowrap">{{ l.total }}</span></div></sc-for>
+                  <sc-if value="{{ cartEmpty }}" hint-placeholder-val="{{ true }}"><p style="font-size:17px;color:var(--ink-2);text-align:center;padding:40px 8px;line-height:1.5">Toque «Agregar» en los productos que necesita.</p></sc-if>
+                </div>
+                <div style="padding:16px 20px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:12px"><div style="display:flex;justify-content:space-between;font-size:24px;font-weight:800"><span>Total</span><span>{{ total }}</span></div><button onClick="{{ confirm }}" disabled="{{ cartEmpty }}" style="height:80px;border-radius:18px;border:none;background:var(--red);color:var(--on-red);font-size:22px;font-weight:800;cursor:pointer;opacity:{{ confOp }};display:flex;gap:10px;align-items:center;justify-content:center" style-active="background:var(--red-press)"><i class="icon-check" style="font-size:26px"></i>Confirmar pedido</button></div>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ show.turno }}" hint-placeholder-val="{{ false }}">
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;padding:40px;animation:mg-in .35s ease-out">
+              <span style="font-size:24px;font-weight:700;color:var(--ink-2)">Su número de turno</span>
+              <div style="width:280px;height:280px;border-radius:40px;border:6px solid var(--ink);display:flex;align-items:center;justify-content:center;font-size:150px;font-weight:800;letter-spacing:-.04em">{{ turno.n }}</div>
+              <span style="font-size:22px;text-align:center;line-height:1.5;max-width:640px">Pedido {{ turno.id }} · {{ turno.total }}<br>Bodega lo está alistando. Pase a caja cuando escuche su número.</span>
+              <div style="display:flex;gap:14px"><a href="Caja.dc.html" style="height:72px;padding:0 28px;border-radius:18px;border:2px solid var(--ink);display:flex;align-items:center;gap:10px;font-size:19px;font-weight:800;text-decoration:none">Ver en Caja<i class="icon-arrow-right"></i></a><button onClick="{{ restart }}" style="height:72px;padding:0 32px;border-radius:18px;border:none;background:var(--ink);color:var(--bg);font-size:19px;font-weight:800;cursor:pointer">Nuevo pedido</button></div>
+            </div>
+          </sc-if>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const ROLES = [['Sistema', 'Magnus Sistema.dc.html'], ['Vendedor', 'Vendedor.dc.html'], ['Mostrador', 'Mostrador.dc.html'], ['Caja', 'Caja.dc.html'], ['Bodega', 'Bodega.dc.html'], ['Conductor', 'Conductor.dc.html'], ['Empleado', 'Empleado.dc.html'], ['Dueño', 'Dueno.dc.html']];
+const SCREENS = [
+  { id: 'inicio', label: 'Bienvenida', hdr: 'Mostrador', note: 'Pantalla de reposo con el logo completo y una sola acción enorme. Vuelve aquí sola tras 60 s sin uso.' },
+  { id: 'catalogo', label: 'Armar pedido', hdr: 'Elija sus productos', note: 'Tres zonas fijas: categorías grandes a la izquierda, productos al centro, pedido a la derecha. Los contadores +/− miden 64 px. Precio de mostrador por unidad.' },
+  { id: 'turno', label: 'Número de turno', hdr: 'Pedido confirmado', note: 'El número de turno ocupa la pantalla. El pedido entra a la cola de Bodega y aparece en Caja con su turno.' }
+];
+const CATS = [['Todas', 'layout-grid'], ['Granos', 'wheat'], ['Aceites', 'droplet'], ['Harinas', 'cookie'], ['Azúcar', 'candy'], ['Enlatados', 'archive'], ['Aseo', 'sparkles'], ['Bebidas', 'coffee']];
+class Component extends DCLogic {
+  state = { s: null, theme: 'light', screen: 'inicio', mode: 'normal', cat: 'Todas', q: '', cart: {}, last: null };
+  componentDidMount() {
+    const go = () => { if (!window.MG) return setTimeout(go, 40); this.setState({ s: MG.get(), theme: MG.theme() }); this.un = MG.subscribe(s => this.setState({ s })); this.th = () => this.setState({ theme: MG.theme() }); window.addEventListener('magnus-theme', this.th); window.addEventListener('storage', this.th); };
+    go();
+  }
+  componentWillUnmount() { this.un && this.un(); window.removeEventListener('magnus-theme', this.th); window.removeEventListener('storage', this.th); }
+  renderVals() {
+    const st = this.state, s = st.s, M = window.MG, scr = SCREENS.find(x => x.id === st.screen);
+    const base = {
+      theme: st.theme, isLight: st.theme !== 'dark', isDark: st.theme === 'dark', roles: ROLES.map(([label, href]) => ({ label, href, bg: label === 'Mostrador' ? '#F5F4F7' : 'transparent', fg: label === 'Mostrador' ? '#17151A' : '#CFCCD5' })),
+      themeIcon: st.theme === 'dark' ? 'icon-sun' : 'icon-moon', themeLabel: st.theme === 'dark' ? 'Claro' : 'Oscuro', toggleTheme: () => M && M.setTheme(st.theme === 'dark' ? 'light' : 'dark'),
+      resetData: () => { if (M && confirm('¿Reiniciar todos los datos de ejemplo del prototipo?')) { M.reset(); this.setState({ screen: 'inicio', cart: {} }); } },
+      symbolSrc: st.theme === 'dark' ? 'assets/simbolo-magnus-blanco.png' : 'assets/simbolo-magnus.png', logoSrc: st.theme === 'dark' ? 'assets/logo-magnus-blanco.png' : 'assets/logo-magnus.png',
+      screenList: SCREENS.map((x, i) => ({ n: String(i + 1).padStart(2, '0'), label: x.label, go: () => this.setState({ screen: x.id, mode: 'normal' }), bg: x.id === st.screen ? 'var(--surface)' : 'transparent', bd: x.id === st.screen ? 'var(--line-2)' : 'transparent', fw: x.id === st.screen ? 700 : 500 })),
+      modes: [['normal', 'Normal'], ['vacio', 'Vacío'], ['cargando', 'Cargando'], ['error', 'Error'], ['permiso', 'Sin permiso'], ['exito', 'Éxito']].map(([k, label]) => ({ label, on: st.mode === k ? 'true' : 'false', go: () => this.setState({ mode: k }), bg: st.mode === k ? 'var(--ink)' : 'transparent', fg: st.mode === k ? 'var(--bg)' : 'var(--ink)', bd: st.mode === k ? 'var(--ink)' : 'var(--line-2)' })),
+      note2: scr.note, hdr: scr.hdr, show: {}, alt: { on: false }, start: () => this.setState({ screen: 'catalogo' }), restart: () => this.setState({ screen: 'inicio', cart: {}, q: '', cat: 'Todas' }), showCancel: st.screen === 'catalogo' && st.mode === 'normal'
+    };
+    if (!s) return base;
+    const back = () => this.setState({ mode: 'normal' });
+    const A = { vacio: ['icon-inbox', 'Sin productos en esta categoría', 'Pruebe otra categoría o pregunte en caja.', 'Ver todas', 'mute'], cargando: ['icon-loader', 'Cargando productos…', 'Un momento, por favor.', null, 'mute'], error: ['icon-wifi-off', 'El mostrador perdió conexión', 'Su pedido está guardado en esta pantalla. Pida ayuda en caja si no vuelve en un minuto.', 'Reintentar', 'err'], permiso: ['icon-lock', 'Función solo para personal', 'Descuentos y cambios de precio se hacen en caja.', 'Volver', 'mute'], exito: ['icon-circle-check', 'Pedido recibido', 'Su turno aparecerá en la pantalla de caja.', 'Continuar', 'ok'] }[st.mode];
+    const alt = A ? { on: true, icon: A[0], title: A[1], body: A[2], cta: A[3], act: back, bg: 'var(--' + A[4] + '-tint)', fg: 'var(--' + A[4] + ')', bd: 'var(--' + A[4] + '-line)', anim: st.mode === 'cargando' ? 'mg-pulse 1.2s infinite' : 'none' } : { on: false };
+    const show = {}; if (!alt.on) show[st.screen] = true;
+    const sel = on => ({ bw: on ? '2px' : '1px', bd: on ? 'var(--ink)' : 'var(--line)', bg: on ? 'var(--ink)' : 'var(--surface)', fg: on ? 'var(--bg)' : 'var(--ink)' });
+    const cats = CATS.map(([label, icon]) => ({ label, icon: 'icon-' + icon, on: st.cat === label ? 'true' : 'false', go: () => this.setState({ cat: label }), ...sel(st.cat === label) }));
+    const q = st.q.trim().toLowerCase();
+    const setQty = (id, n) => { const c = { ...st.cart }; if (n <= 0) delete c[id]; else c[id] = n; this.setState({ cart: c }); };
+    const prods = s.products.filter(p => p.active && (st.cat === 'Todas' || p.cat === st.cat) && (!q || p.name.toLowerCase().includes(q))).map(p => { const n = st.cart[p.id] || 0; const k = M.stockStatus(p); const out = k === 'agotado'; return { name: p.name, price: M.cop(p.pres[0].price) + ' c/u', chip: M.chip(k, k === 'ok' ? 'Hay' : k === 'bajo' ? 'Quedan pocos' : null), qty: n, inCart: n > 0, notInCart: n === 0, out, op: out ? 0.5 : 1, btn: out ? 'Agotado' : 'Agregar', icon: out ? 'icon-circle-x' : 'icon-plus', bw: n ? '2px' : '1px', bd: n ? 'var(--ink)' : 'var(--line)', inc: () => !out && n < p.stock && setQty(p.id, n + 1), dec: () => setQty(p.id, n - 1) }; });
+    const ids = Object.keys(st.cart);
+    const cart = ids.map(id => { const p = M.prod(s, +id); return { name: p.name, qty: st.cart[id], total: M.cop(p.pres[0].price * st.cart[id]) }; });
+    const sum = ids.reduce((a, id) => a + M.prod(s, +id).pres[0].price * st.cart[id], 0);
+    const confirm = () => { let id, n; MG.set(x => { id = 'PED-' + (x.seq.order++); n = x.seq.turno++; x.orders.push({ id, turno: n, client: 'C06', seller: 'Mostrador', channel: 'mostrador', created: M.HOY + ' ' + M.now(), status: 'nuevo', lines: ids.map(pid => ({ pid: +pid, pi: 0, qty: st.cart[pid], price: MG.prod(x, +pid).pres[0].price, picked: null })), delivery: { type: 'recoge' } }); MG.log(x, 'Mostrador', 'Sistema', 'Pedido de mostrador ' + id + ' · turno ' + n); }); this.setState({ screen: 'turno', last: { id, n, total: M.cop(sum) }, cart: {} }); };
+    return { ...base, alt, show, cats, q: st.q, setQ: e => this.setState({ q: e.target.value }), prods, cart, cartEmpty: !cart.length, confOp: cart.length ? 1 : 0.45, total: M.cop(sum), confirm, turno: st.last || { n: '—', id: '', total: '' } };
+  }
+}
+</script>
+</body>
+</html>

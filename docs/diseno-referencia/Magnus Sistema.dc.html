@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/lucide-static@0.469.0/font/lucide.css">
+<style>
+body{margin:0;background:#F4F4F6;font-family:'Public Sans',system-ui,sans-serif;font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased;color:#17151A}
+*{box-sizing:border-box}
+a{color:#17151A;text-underline-offset:3px}a:hover{color:#D91E26}
+:focus-visible{outline:3px solid #D91E26;outline-offset:2px}
+</style>
+</helmet>
+<div style="min-height:100vh;display:flex;flex-direction:column">
+  <header style="background:#17151A;color:#F5F4F7;padding:40px 48px;display:flex;gap:40px;align-items:center;flex-wrap:wrap">
+    <img src="assets/logo-magnus-blanco.png" alt="Magnus Company Colombia" style="height:150px">
+    <div style="display:flex;flex-direction:column;gap:10px;max-width:640px">
+      <span style="font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#ADA9B4">Sistema de gestión · prototipo</span>
+      <h1 style="margin:0;font-size:40px;font-weight:800;letter-spacing:-.02em;line-height:1.1">Magnus: ventas, bodega, reparto y equipo en un solo sistema</h1>
+      <p style="margin:0;font-size:17px;line-height:1.5;color:#CFCCD5">Ocho prototipos por rol que comparten los mismos datos de ejemplo. Lo que hace un rol aparece en los demás (en este navegador). Martes 17/11/2026.</p>
+    </div>
+  </header>
+
+  <section style="padding:40px 48px;display:flex;flex-direction:column;gap:20px">
+    <h2 style="margin:0;font-size:24px;font-weight:800">Prototipos por rol</h2>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px">
+      <sc-for list="{{ roles }}" as="r" hint-placeholder-count="8">
+        <a href="{{ r.href }}" style="text-decoration:none;background:#FFFFFF;border:1px solid #DCDBE1;border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:8px" style-hover="border-color:#17151A">
+          <div style="display:flex;align-items:center;gap:10px"><i class="{{ r.icon }}" style="font-size:22px"></i><span style="font-size:18px;font-weight:800">{{ r.name }}</span></div>
+          <span style="font-size:13px;font-weight:700;color:#5F5C66">{{ r.device }}</span>
+          <span style="font-size:14px;line-height:1.45;color:#46434C">{{ r.desc }}</span>
+        </a>
+      </sc-for>
+    </div>
+  </section>
+
+  <section style="padding:0 48px 40px;display:flex;flex-direction:column;gap:16px">
+    <h2 style="margin:0;font-size:24px;font-weight:800">Flujos conectados</h2>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px">
+      <sc-for list="{{ flows }}" as="f" hint-placeholder-count="4">
+        <div style="background:#FFFFFF;border:1px solid #DCDBE1;border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:10px">
+          <span style="font-size:16px;font-weight:800">{{ f.title }}</span>
+          <ol style="margin:0;padding-left:20px;font-size:14px;line-height:1.75;color:#46434C"><sc-for list="{{ f.steps }}" as="s" hint-placeholder-count="4"><li><a href="{{ s.href }}">{{ s.label }}</a></li></sc-for></ol>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+
+  <section style="padding:40px 48px;background:#FFFFFF;border-top:1px solid #DCDBE1;display:flex;flex-direction:column;gap:28px">
+    <div style="display:flex;flex-direction:column;gap:6px"><h2 style="margin:0;font-size:24px;font-weight:800">Sistema de diseño</h2><p style="margin:0;font-size:15px;color:#46434C;max-width:760px;line-height:1.5">Negro y blanco como base; el rojo Magnus solo para la acción principal de cada pantalla y avisos de marca. Los estados nunca dependen solo del color: siempre llevan ícono y texto.</p></div>
+
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <span style="font-size:13px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#5F5C66">Logo</span>
+      <div style="display:flex;gap:14px;flex-wrap:wrap">
+        <div style="width:260px;height:180px;border:1px solid #DCDBE1;border-radius:10px;display:flex;align-items:center;justify-content:center;background:#FFFFFF"><img src="assets/logo-magnus.png" alt="Logo completo" style="height:140px"></div>
+        <div style="width:260px;height:180px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:#17151A"><img src="assets/logo-magnus-blanco.png" alt="Logo completo en negativo" style="height:140px"></div>
+        <div style="width:180px;height:180px;border:1px solid #DCDBE1;border-radius:10px;display:flex;align-items:center;justify-content:center;background:#FFFFFF"><img src="assets/simbolo-magnus.png" alt="Símbolo" style="height:72px"></div>
+        <div style="width:180px;height:180px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:#17151A"><img src="assets/simbolo-magnus-blanco.png" alt="Símbolo en negativo" style="height:72px"></div>
+        <div style="flex:1;min-width:240px;font-size:14px;line-height:1.6;color:#46434C;display:flex;flex-direction:column;gap:4px;justify-content:center"><span><strong style="color:#17151A">Logo completo:</strong> bienvenida del mostrador, documentos impresos, Acerca de.</span><span><strong style="color:#17151A">Símbolo:</strong> barra superior de cada app y menú lateral.</span><span>Nunca se deforma ni cambia de color fuera de estas dos versiones.</span></div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <span style="font-size:13px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#5F5C66">Color</span>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px">
+        <sc-for list="{{ colors }}" as="c" hint-placeholder-count="10"><div style="border:1px solid #DCDBE1;border-radius:10px;overflow:hidden"><div style="height:64px;background:{{ c.hex }}"></div><div style="padding:8px 10px;display:flex;flex-direction:column;gap:2px"><span style="font-size:13px;font-weight:800">{{ c.name }}</span><span style="font-size:12px;color:#5F5C66">{{ c.hex }} · {{ c.use }}</span></div></div></sc-for>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:28px">
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <span style="font-size:13px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#5F5C66">Tipografía · Public Sans</span>
+        <sc-for list="{{ type }}" as="t" hint-placeholder-count="5"><div style="display:flex;align-items:baseline;gap:16px;border-bottom:1px solid #DCDBE1;padding-bottom:8px"><span style="width:110px;flex:none;font-size:12px;color:#5F5C66">{{ t.spec }}</span><span style="font-size:{{ t.size }};font-weight:{{ t.w }}">{{ t.sample }}</span></div></sc-for>
+        <span style="font-size:13px;color:#5F5C66">Cifras tabulares en todo el sistema · moneda «$ 1.234.567» · fechas dd/mm/aaaa.</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <span style="font-size:13px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#5F5C66">Estados · color + ícono + texto</span>
+        <div style="display:flex;flex-wrap:wrap;gap:8px"><sc-for list="{{ chips }}" as="c" hint-placeholder-count="12"><span style="display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 11px;border-radius:999px;border:1px solid {{ c.bd }};background:{{ c.bg }};color:{{ c.fg }};font-size:13px;font-weight:700"><i class="{{ c.icon }}"></i>{{ c.label }}</span></sc-for></div>
+        <span style="font-size:13px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#5F5C66;margin-top:10px">Botones · zonas táctiles</span>
+        <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center">
+          <button style="height:56px;padding:0 22px;border-radius:12px;border:none;background:#D91E26;color:#FFFFFF;font-size:16px;font-weight:800;cursor:pointer" style-hover="background:#A3141A">Principal · 1 por pantalla</button>
+          <button style="height:56px;padding:0 22px;border-radius:12px;border:1px solid #17151A;background:transparent;font-size:16px;font-weight:700;cursor:pointer">Secundario</button>
+          <button style="height:56px;padding:0 22px;border-radius:12px;border:none;background:#17151A;color:#FFFFFF;font-size:16px;font-weight:700;cursor:pointer">Navegación</button>
+          <button style="height:56px;padding:0 22px;border-radius:12px;border:2px solid #EFA2A5;background:transparent;color:#A3141A;font-size:16px;font-weight:800;cursor:pointer">Destructivo</button>
+        </div>
+        <div style="font-size:14px;line-height:1.6;color:#46434C">Mínimos: <strong>48 px</strong> vendedor · <strong>56–60 px</strong> bodega (guantes) · <strong>64–68 px</strong> conductor y mostrador · <strong>44 px</strong> escritorio. Acciones sensibles (anular, ajustar, pagar nómina) siempre piden confirmación y quedan en el historial.</div>
+      </div>
+    </div>
+  </section>
+  <footer style="padding:20px 48px;font-size:12px;color:#5F5C66;border-top:1px solid #DCDBE1">Desarrollado por SYSMOOO</footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    const roles = [
+      ['Vendedor', 'Vendedor.dc.html', 'briefcase', 'Celular', 'Clientes, catálogo por presentación, pedido con descuento bloqueado y comisiones.'],
+      ['Mostrador', 'Mostrador.dc.html', 'tablet', 'Tableta horizontal', 'Autoservicio táctil: arma el pedido y entrega número de turno.'],
+      ['Caja', 'Caja.dc.html', 'receipt', 'Computador', 'Cobro, factura, remisión, cotizaciones, cartera y cuadre de caja.'],
+      ['Bodega', 'Bodega.dc.html', 'boxes', 'Celular con guantes', 'Alistar por lote (FEFO), recibir, contar, ajustar y trazar lotes.'],
+      ['Conductor', 'Conductor.dc.html', 'truck', 'Celular en el vehículo', 'Ruta del día, evidencia con foto y firma, cobro contra entrega, novedades.'],
+      ['Empleado', 'Empleado.dc.html', 'id-card', 'Celular personal', 'Asistencia con foto, turnos, horas y recargos, permisos y desprendible.'],
+      ['Dueño · panel', 'Dueno.dc.html', 'layout-dashboard', 'Computador y celular', 'Panel del día, lotes en riesgo, domicilios, mapa, catálogo, reportes, permisos.'],
+      ['Dueño · equipo', 'Dueno Equipo.dc.html', 'users', 'Computador', 'Asistencia, calendario de turnos, solicitudes y nómina quincenal.']
+    ].map(([name, href, icon, device, desc]) => ({ name, href, icon: 'icon-' + icon, device, desc }));
+    const S = (label, href) => ({ label, href });
+    const flows = [
+      { title: '1 · Pedido a cartera', steps: [S('Vendedor toma el pedido', 'Vendedor.dc.html'), S('Bodega alista por lote (FEFO)', 'Bodega.dc.html'), S('Caja factura a crédito', 'Caja.dc.html'), S('Queda en cartera y en el panel', 'Dueno.dc.html')] },
+      { title: '2 · Domicilio con evidencia', steps: [S('Dueño asigna conductor y orden', 'Dueno.dc.html#domicilios'), S('Conductor sale a ruta y entrega con foto', 'Conductor.dc.html'), S('Dueño lo ve en el mapa', 'Dueno.dc.html#mapa')] },
+      { title: '3 · Asistencia a nómina', steps: [S('Empleado marca con foto', 'Empleado.dc.html'), S('Asistencia y recargos', 'Dueno Equipo.dc.html#asistencia'), S('Prenómina y pago bloqueado', 'Dueno Equipo.dc.html#nomina'), S('Desprendible al empleado', 'Empleado.dc.html')] },
+      { title: '4 · Lote por vencer', steps: [S('Bodega ve la alerta', 'Bodega.dc.html'), S('Dueño abre el lote en riesgo', 'Dueno.dc.html#lote'), S('Avisa a vendedores', 'Vendedor.dc.html')] }
+    ];
+    const colors = [['Rojo Magnus', '#D91E26', 'acción principal'], ['Rojo presionado', '#A3141A', 'hover · error'], ['Tinta', '#17151A', 'texto · navegación'], ['Tinta 2', '#46434C', 'texto secundario'], ['Línea', '#DCDBE1', 'bordes'], ['Fondo', '#F4F4F6', 'lienzo'], ['Correcto', '#16653A', 'estado ok'], ['Atención', '#7A4E00', 'por vencer · bajo'], ['Oscuro · fondo', '#121115', 'modo oscuro'], ['Oscuro · superficie', '#1B1A1F', 'modo oscuro']].map(([name, hex, use]) => ({ name, hex, use }));
+    const type = [['Display 40/800', '40px', 800, 'Arme su pedido'], ['Título 24/800', '24px', 800, 'Alistar PED-10481'], ['Subtítulo 17/700', '17px', 700, 'Arroz blanco 500 g'], ['Cuerpo 15/400', '15px', 400, 'Lote L-24311 · vence 26/11/2026'], ['Cifra 26/800', '26px', 800, '$ 2.314.600']].map(([spec, size, w, sample]) => ({ spec, size, w, sample }));
+    const C = (k, label, icon) => { const m = { ok: ['#E4F3E9', '#16653A', '#9CCFAF'], warn: ['#FFF2CC', '#7A4E00', '#E6BD5C'], err: ['#FDEBEC', '#A3141A', '#EFA2A5'], info: ['#ECECEF', '#17151A', '#ADABB4'], mute: ['#EDEDF0', '#56535C', '#C9C8CE'] }[k]; return { label, icon: 'icon-' + icon, bg: m[0], fg: m[1], bd: m[2] }; };
+    const chips = [C('ok', 'Disponible', 'circle-check'), C('ok', 'Entregado', 'circle-check'), C('ok', 'DIAN aceptada', 'circle-check'), C('warn', 'Por vencer', 'clock-alert'), C('warn', 'Bajo mínimo', 'triangle-alert'), C('warn', 'Por alistar', 'clock'), C('info', 'En ruta', 'truck'), C('info', 'Cargado', 'package'), C('err', 'Agotado', 'circle-x'), C('err', 'Novedad', 'octagon-alert'), C('err', 'Vencida', 'circle-x'), C('mute', 'Inactivo', 'circle-minus')];
+    return { roles, flows, colors, type, chips };
+  }
+}
+</script>
+</body>
+</html>
