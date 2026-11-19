@@ -27,3 +27,17 @@ describe('búsqueda segura', () => {
   it('quita caracteres de filtro', () => expect(safeTerm('a%b,c(d)*e\\f')).toBe('a b c d e f'));
   it('limita largo', () => expect(safeTerm('x'.repeat(200)).length).toBe(60));
 });
+
+describe('menú Fase 02', () => {
+  it('cada rol llega a su pantalla de trabajo', () => {
+    expect(canSee('vendedor', '/pedidos/nuevo')).toBe(true);
+    expect(canSee('bodega', '/alistar')).toBe(true);
+    expect(canSee('caja', '/caja')).toBe(true);
+    expect(canSee('vendedor', '/caja')).toBe(false);
+    expect(canSee('bodega', '/caja')).toBe(false);
+    expect(canSee('caja', '/alistar')).toBe(false);
+    expect(homeFor('vendedor')).toBe('/pedidos');
+    expect(homeFor('bodega')).toBe('/alistar');
+    expect(homeFor('caja')).toBe('/caja');
+  });
+});

@@ -11,21 +11,27 @@ export type NavItem = { href: string; label: string; icon: string };
 const NAV: Record<Role, NavItem[]> = {
   dueno: [
     { href: '/panel', label: 'Panel general', icon: 'layout-dashboard' },
+    { href: '/pedidos', label: 'Pedidos', icon: 'shopping-cart' },
+    { href: '/alistar', label: 'Pedidos por alistar', icon: 'package-check' },
+    { href: '/caja', label: 'Cobrar y cartera', icon: 'receipt' },
     { href: '/catalogo', label: 'Catálogo', icon: 'book-open' },
     { href: '/inventario', label: 'Inventario por lotes', icon: 'boxes' },
     { href: '/clientes', label: 'Clientes', icon: 'users' },
     { href: '/historial', label: 'Historial', icon: 'history' },
   ],
   vendedor: [
+    { href: '/pedidos', label: 'Pedidos', icon: 'shopping-cart' },
     { href: '/catalogo', label: 'Catálogo', icon: 'book-open' },
     { href: '/clientes', label: 'Clientes', icon: 'users' },
   ],
   mostrador: [{ href: '/catalogo', label: 'Catálogo', icon: 'book-open' }],
   caja: [
+    { href: '/caja', label: 'Cobrar y cartera', icon: 'receipt' },
     { href: '/catalogo', label: 'Catálogo', icon: 'book-open' },
     { href: '/clientes', label: 'Clientes', icon: 'users' },
   ],
   bodega: [
+    { href: '/alistar', label: 'Pedidos por alistar', icon: 'package-check' },
     { href: '/inventario', label: 'Inventario por lotes', icon: 'boxes' },
     { href: '/catalogo', label: 'Catálogo', icon: 'book-open' },
   ],
