@@ -43,7 +43,7 @@ select pg_temp.expect((select count(*) from clients) = 0, 'conductor NO lee clie
 select pg_temp.expect((select count(*) from lots) = 0, 'conductor NO lee lotes');
 
 -- Precio por lista: Distribuidor = base*0.96 redondeado a 50 (arroz 500 g unidad 2350 → 2250)
-select pg_temp.as_user(2);
+select pg_temp.as_admin();
 select pg_temp.expect(public.price_for((select id from clients where nit='830.441.982-1'),
   (select pr.id from presentations pr join products p on p.id=pr.product_id where p.code='GR-0101' and pr.name='Unidad')) = 2250, 'precio Distribuidor 2350 → 2250');
 select pg_temp.expect(public.price_for((select id from clients where nit='900.123.456-7'),
@@ -54,6 +54,7 @@ select pg_temp.expect(public.volume_rate(999999) = 0, 'sin descuento bajo $1.000
 select pg_temp.expect(public.volume_rate(1000000) = 0.03, '3 % desde $1.000.000');
 select pg_temp.expect(public.volume_rate(3000000) = 0.05, '5 % desde $3.000.000');
 
+select pg_temp.as_user(2);
 -- FEFO: arroz 500 g tiene lotes 9d (340), 64d (900)... pedir 500 → 340 del primero + 160 del segundo
 select pg_temp.expect((select qty from public.fefo_allocate((select id from products where code='GR-0101'), 500) where lot_code='L-24311') = 340, 'FEFO toma primero el lote que vence antes');
 select pg_temp.expect((select sum(qty) from public.fefo_allocate((select id from products where code='GR-0101'), 500)) = 500, 'FEFO completa la cantidad');

@@ -17,7 +17,7 @@ async function alistar(form: FormData) {
 export default async function Alistar() {
   await requireSession('/alistar');
   const sb = await supabaseServer();
-  const { data, error } = await sb.from('warehouse_queue').select('*').order('created_at');
+  const { data, error } = await sb.rpc('warehouse_queue');
   const rows = (data ?? []) as Q[];
   const orders = [...new Map(rows.map((r) => [r.order_id, r])).values()];
   return (<>

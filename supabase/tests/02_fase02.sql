@@ -56,8 +56,8 @@ select pg_temp.expect((select total from o2) = 4700, 'mostrador paga precio Mayo
 select pg_temp.expect_fail($$select * from public.create_order(null, '[]'::jsonb, 'recoge', null, null, 'contado', null, 'vendedor')$$, 'mostrador no usa canal vendedor');
 select pg_temp.as_user(3);
 select pg_temp.expect((select count(*) from orders) = 0, 'bodega NO lee pedidos con montos');
-select pg_temp.expect((select count(*) from warehouse_queue) >= 2, 'bodega ve la cola sin precios');
-select pg_temp.expect(not exists (select 1 from information_schema.columns where table_name='warehouse_queue' and column_name in ('total','unit_price','subtotal')), 'la cola de bodega no tiene columnas de dinero');
+select pg_temp.expect((select count(*) from warehouse_queue()) >= 2, 'bodega ve la cola sin precios');
+select pg_temp.expect(pg_get_function_result('public.warehouse_queue()'::regprocedure) !~ '(total|price|subtotal|discount)', 'la cola de bodega no tiene columnas de dinero');
 
 -- Facturar antes de alistar no se puede
 select pg_temp.as_user(5);
