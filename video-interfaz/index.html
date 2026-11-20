@@ -1,0 +1,249 @@
+<!doctype html><html lang="es"><meta charset="utf-8"><title>Magnus – Así se ve el sistema</title>
+<style>
+:root{--r:#D91E26;--rl:#FF5A5F;--rd:#A3141A;--k:#17151A;--bg:#F4F2F3;--g:#5b575d;--line:#E6E2E4;--ok:#1E8E4E;--okb:#E3F4EA;--am:#9A6410;--amb:#FFF1D2;--rb:#FDE4E5}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1920px;height:1080px;overflow:hidden;background:var(--bg);font-family:Inter,"Helvetica Neue",Helvetica,Arial,sans-serif;color:var(--k);font-variant-numeric:tabular-nums}
+#root{position:relative;width:1920px;height:1080px;overflow:hidden}
+.sc{position:absolute;inset:0;opacity:0;visibility:hidden}
+.abs{position:absolute}
+.stripe{position:absolute;width:300px;height:2600px;background:var(--r);transform:rotate(35deg);opacity:.04}
+.cap{position:absolute;left:90px;top:230px;width:520px}
+.cap .k{color:var(--r);font-weight:800;letter-spacing:4px;font-size:22px;text-transform:uppercase}
+.cap h2{font-size:64px;font-weight:900;letter-spacing:-3px;line-height:1.02;margin-top:18px}
+.cap h2 em{font-style:normal;color:var(--r)}
+.cap ul{list-style:none;margin-top:44px}
+.cap li{font-size:28px;line-height:1.3;color:var(--g);margin-bottom:22px;padding-left:38px;position:relative}
+.cap li:before{content:"";position:absolute;left:0;top:11px;width:16px;height:16px;border-radius:50%;background:var(--r)}
+.win{position:absolute;background:#fff;border-radius:24px;box-shadow:0 30px 80px rgba(23,21,26,.16);overflow:hidden}
+.tb{height:62px;border-bottom:1px solid var(--line);display:flex;align-items:center;padding:0 26px;gap:14px;font-weight:800;font-size:22px}
+.tb .m{width:34px;height:34px;border-radius:9px;background:var(--k);display:flex;align-items:center;justify-content:center;overflow:hidden}
+.tb .m img{width:26px;mix-blend-mode:screen;filter:invert(1)}
+.pill{display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:7px 16px;font-weight:800;font-size:19px;white-space:nowrap}
+.ok{background:var(--okb);color:var(--ok)}.am{background:var(--amb);color:var(--am)}.rd{background:var(--rb);color:var(--rd)}.gr{background:#ECEAEB;color:#6c686e}
+.card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:22px 24px}
+.lbl{font-size:18px;color:var(--g);font-weight:600}
+.num{font-size:44px;font-weight:900;letter-spacing:-1.5px;margin-top:6px}
+.phone{position:absolute;width:440px;height:900px;background:#17151A;border-radius:64px;padding:16px;box-shadow:0 40px 90px rgba(23,21,26,.3)}
+.phone .scr{width:100%;height:100%;background:#fff;border-radius:50px;overflow:hidden;position:relative}
+.phone .nt{position:absolute;left:50%;top:14px;width:130px;height:34px;margin-left:-65px;background:#17151A;border-radius:20px;z-index:5}
+.ph-h{padding:64px 26px 14px;font-weight:900;font-size:30px;letter-spacing:-1px}
+.row{display:flex;align-items:center;gap:14px;padding:14px 22px;border-bottom:1px solid var(--line)}
+.row .nm{font-weight:800;font-size:23px}.row .sb{font-size:18px;color:var(--g);margin-top:3px}
+.add{margin-left:auto;width:56px;height:56px;border-radius:16px;background:var(--r);color:#fff;font-size:38px;font-weight:700;display:flex;align-items:center;justify-content:center;flex:none}
+.ph{background:repeating-linear-gradient(45deg,#ECEAEB,#ECEAEB 8px,#F4F2F3 8px,#F4F2F3 16px);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:14px;color:#8a868c;font-weight:700;text-align:center}
+table{border-collapse:collapse;width:100%}
+th{font-size:17px;color:var(--g);text-align:left;padding:12px 18px;border-bottom:2px solid var(--line);font-weight:700}
+td{font-size:21px;padding:15px 18px;border-bottom:1px solid var(--line);font-weight:600}
+.foot{position:absolute;left:0;right:0;bottom:26px;text-align:center;font-size:19px;color:#8a868c;letter-spacing:.5px}
+.big{font-weight:900;letter-spacing:-3px;line-height:1.02}
+.red{color:var(--r)}
+</style>
+<div id="root">
+<div class="stripe" style="left:-120px;top:-600px"></div><div class="stripe" style="left:1300px;top:-900px"></div>
+<div id="stage"></div>
+</div>
+<script>
+const C=(x,a=0,b=1)=>Math.min(b,Math.max(a,x));
+const oc=x=>1-Math.pow(1-C(x),3),ob=x=>{x=C(x);const c=1.70158;return 1+(c+1)*Math.pow(x-1,3)+c*Math.pow(x-1,2)};
+const cop=n=>'$'+Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g,'.');
+const $=(s,r=document)=>r.querySelector(s);
+const cap=(k,t,li)=>`<div class="cap"><div class="k" data-at=".2">${k}</div><h2 data-at=".45">${t}</h2><ul>${li.map((x,i)=>`<li data-at="${1.1+i*.6}">${x}</li>`).join('')}</ul></div>`;
+const disc='<div class="foot">Vista ilustrativa con datos de ejemplo</div>';
+const side=['Panel','Ventas','Bodega y catálogo','Reparto','Equipo','Reportes'];
+const SC=[];
+function add(id,a,b,html,upd){SC.push({id,a,b,html,upd})}
+
+/* 1 intro */
+add('intro',0,6,`
+<img class="abs" data-at=".1" src="logo.png" style="left:810px;top:150px;width:300px;mix-blend-mode:multiply">
+<div class="abs big" data-at=".7" style="left:0;width:1920px;top:520px;text-align:center;font-size:130px">Así se ve <span class="red">Magnus</span></div>
+<div class="abs" data-at="1.3" style="left:0;width:1920px;top:690px;text-align:center;font-size:46px;color:var(--g)">El sistema completo, por dentro</div>
+<div class="abs" data-at="2.2" style="left:0;width:1920px;top:820px;text-align:center;font-size:30px;font-weight:700;letter-spacing:3px;color:var(--r)">6 ÁREAS · 18 MÓDULOS · 7 ROLES</div>`);
+
+/* 2 dueño */
+add('dueno',6,22,cap('Dirección','El día del negocio,<br><em>de un vistazo</em>',['Ventas, pedidos y entregas en vivo','Stock crítico y lotes por vencer','Cartera por cobrar y reportes para decidir'])+`
+<div class="win" data-at=".3" style="left:640px;top:100px;width:1200px;height:860px;display:flex">
+ <div style="width:240px;background:#17151A;color:#fff;padding:26px 0;flex:none">
+  <div style="display:flex;align-items:center;gap:12px;padding:0 24px 28px"><div style="width:44px;height:44px;border-radius:11px;background:#fff;display:flex;align-items:center;justify-content:center"><img src="logo.png" style="width:34px;mix-blend-mode:multiply"></div><b style="font-size:26px">Magnus</b></div>
+  ${side.map((s,i)=>`<div style="padding:15px 24px;font-size:21px;font-weight:700;${i==0?'background:#D91E26;':'color:#c9c5ca;'}">${s}</div>`).join('')}
+  <div style="padding:15px 24px;font-size:21px;font-weight:700;color:#7d797f;margin-top:6px">Web y chatbot <span style="font-size:14px;border:1px solid #555;border-radius:8px;padding:2px 8px;margin-left:4px">próximamente</span></div>
+ </div>
+ <div style="flex:1;padding:30px 34px;background:#FAF8F9">
+  <div style="font-size:36px;font-weight:900;letter-spacing:-1px">Buen día, Magnus</div>
+  <div style="display:flex;gap:18px;margin-top:22px">
+   <div class="card" data-at="1.2" style="flex:1"><div class="lbl">Ventas de hoy</div><div class="num" data-count="18450000" data-fmt="cop" data-at="1.2">$0</div></div>
+   <div class="card" data-at="1.4" style="flex:1"><div class="lbl">Pedidos</div><div class="num" data-count="47" data-at="1.4">0</div></div>
+   <div class="card" data-at="1.6" style="flex:1"><div class="lbl">Entregas hechas</div><div class="num" data-count="31" data-at="1.6">0</div></div>
+   <div class="card" data-at="1.8" style="flex:1"><div class="lbl">Stock crítico</div><div class="num red" data-count="9" data-at="1.8">0</div></div>
+  </div>
+  <div style="display:flex;gap:18px;margin-top:18px">
+   <div class="card" data-at="2.2" style="flex:1.5;height:400px"><div class="lbl">Ventas de la semana</div>
+    <div style="display:flex;align-items:flex-end;gap:22px;height:290px;margin-top:20px;border-bottom:2px solid var(--line)">
+     ${[55,70,48,82,95,60,40].map((h,i)=>`<div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:100%"><div class="bar" data-h="${h*2.7}" data-at="${2.6+i*.12}" style="width:100%;background:${i==4?'#D91E26':'#17151A'};border-radius:10px 10px 0 0;height:0"></div></div>`).join('')}
+    </div>
+    <div style="display:flex;gap:22px;margin-top:8px;color:var(--g);font-size:17px;font-weight:700">${['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'].map(d=>`<div style="flex:1;text-align:center">${d}</div>`).join('')}</div>
+   </div>
+   <div class="card" data-at="2.6" style="flex:1;height:400px"><div class="lbl" style="margin-bottom:12px">Alertas</div>
+    <div data-at="3.4" style="margin-bottom:16px"><span class="pill rd">✕ Agotado</span><div style="font-size:21px;font-weight:700;margin-top:6px">Aceite de girasol 1 L</div></div>
+    <div data-at="3.9" style="margin-bottom:16px"><span class="pill am">⚠ Vence en 12 días</span><div style="font-size:21px;font-weight:700;margin-top:6px">Atún enlatado · lote 0415</div></div>
+    <div data-at="4.4" style="margin-bottom:16px"><span class="pill am">⚠ Bajo el mínimo</span><div style="font-size:21px;font-weight:700;margin-top:6px">Azúcar bulto 50 kg</div></div>
+    <div data-at="4.9"><span class="pill ok">✓ Cartera al día</span><div style="font-size:21px;font-weight:700;margin-top:6px">$42.300.000 por cobrar</div></div>
+   </div>
+  </div>
+ </div>
+</div>`+disc);
+
+/* 3 vendedor */
+const prods=[['Arroz blanco 500 g','Stock 340 · caja ×24','$2.850'],['Aceite de girasol 1 L','Stock 120 · caja ×12','$9.400'],['Harina de trigo 1 kg','Stock 85 · paca ×10','$3.600'],['Azúcar 1 kg','Stock 210 · paca ×12','$4.100'],['Detergente 1 kg','Stock 64 · caja ×6','$8.900']];
+add('vend',22,38,cap('Ventas · Vendedor','Un pedido en<br><em>pocos toques</em>',['Busca entre 800+ productos','Stock real por unidad, caja, paca o bulto','Precio de la lista de cada cliente','Repite el último pedido con un toque'])+`
+<div class="phone" data-at=".3" style="left:1100px;top:90px"><div class="scr"><div class="nt"></div>
+ <div class="ph-h">Nuevo pedido</div>
+ <div style="margin:0 22px;padding:16px 20px;border:2px solid var(--line);border-radius:16px;font-size:21px;color:#8a868c;font-weight:600">🔍 Buscar producto o código</div>
+ <div style="display:flex;gap:10px;margin:14px 22px"><span class="pill gr" style="background:#17151A;color:#fff">Tienda La Esquina</span><span class="pill" style="background:var(--rb);color:var(--rd)" id="rep">↻ Repetir último</span></div>
+ ${prods.map((p,i)=>`<div class="row" data-at="${1.3+i*.35}"><div class="ph" style="width:70px;height:70px;flex:none">Foto por definir</div><div><div class="nm">${p[0]}</div><div class="sb">${p[1]}</div><div class="sb" style="color:var(--k);font-weight:800">${p[2]}</div></div><div class="add" id="ad${i}">+</div></div>`).join('')}
+ <div id="cart" style="position:absolute;left:18px;right:18px;bottom:20px;background:#17151A;color:#fff;border-radius:22px;padding:22px 26px;display:flex;justify-content:space-between;align-items:center;font-weight:800;font-size:23px"><span id="cn">0 productos</span><span id="ct" style="color:#FF5A5F">$0</span></div>
+ <div id="toast" style="position:absolute;left:30px;right:30px;top:360px;background:#fff;border-radius:26px;box-shadow:0 20px 60px rgba(0,0,0,.3);padding:34px;text-align:center;opacity:0"><div style="font-size:66px">✓</div><div style="font-size:32px;font-weight:900;color:var(--ok)">Pedido enviado</div><div style="font-size:21px;color:var(--g);margin-top:8px">Llegó a bodega y caja</div></div>
+</div></div>`+disc,
+tl=>{const taps=[[4.4,0,2850*24],[5.4,1,9400*12],[6.4,3,4100*12]];let n=0,tot=0;
+ taps.forEach(([t0,i,v])=>{const e=$('#ad'+i),p=C((tl-t0)/.4);e.style.transform=`scale(${1-.25*Math.sin(Math.PI*p)})`;if(tl>t0+.2){n++;tot+=v;e.style.background='#1E8E4E';e.textContent='✓'}else{e.style.background='';e.textContent='+'}});
+ $('#cn').textContent=n+(n==1?' producto':' productos');$('#ct').textContent=cop(tot);
+ $('#toast').style.opacity=oc((tl-8.6)/.4)*(1-C((tl-11.8)/.3));$('#toast').style.transform=`scale(${.9+.1*ob((tl-8.6)/.5)})`});
+
+/* 4 mostrador */
+const tiles=['Arroz','Aceite','Harina','Azúcar','Atún','Lentejas','Detergente','Jabón'];
+add('mostr',38,48,cap('Ventas · Pedido en tienda','Pantalla táctil<br><em>para el mostrador</em>',['Fotos grandes y categorías','El cliente elige presentación y cantidad','Pasa a caja y bodega con número de turno'])+`
+<div class="win" data-at=".3" style="left:640px;top:130px;width:1200px;height:780px;display:flex">
+ <div style="flex:1;padding:28px 32px;background:#FAF8F9">
+  <div style="display:flex;gap:12px;margin-bottom:22px">${['Todo','Granos','Aceites','Enlatados','Aseo'].map((c,i)=>`<span class="pill ${i==0?'':'gr'}" style="${i==0?'background:#17151A;color:#fff;':''}font-size:22px;padding:12px 24px">${c}</span>`).join('')}</div>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:18px">${tiles.map((t,i)=>`<div class="card" data-at="${1+i*.2}" style="padding:14px"><div class="ph" style="height:150px;border-radius:12px">Foto por definir</div><div style="font-size:23px;font-weight:800;margin-top:12px">${t}</div><div style="font-size:18px;color:var(--ok);font-weight:700;margin-top:4px">● Disponible</div></div>`).join('')}</div>
+ </div>
+ <div style="width:340px;border-left:1px solid var(--line);padding:30px 28px">
+  <div class="lbl">Tu turno</div><div data-at="3.2" style="font-size:120px;font-weight:900;letter-spacing:-5px;color:var(--r);line-height:1">24</div>
+  <div style="margin-top:24px;font-size:22px;font-weight:700" data-at="3.8">Arroz blanco · caja ×24</div><div data-at="4.2" style="font-size:22px;font-weight:700;margin-top:10px">Aceite 1 L · caja ×12</div>
+  <div data-at="5" style="margin-top:36px;background:var(--r);color:#fff;text-align:center;padding:24px;border-radius:18px;font-size:26px;font-weight:900">Enviar a caja</div>
+ </div></div>`+disc);
+
+/* 5 bodega */
+const lotes=[['Atún enlatado 170 g','0415','12/12/2026','120','Sale primero','am','⚠'],['Atún enlatado 170 g','0502','03/02/2027','300','Siguiente','gr','●'],['Atún enlatado 170 g','0618','18/05/2027','240','En orden','ok','✓']];
+add('bodega',48,64,cap('Bodega y catálogo','Primero vence,<br><em>primero sale</em>',['Cada entrada con lote y fecha de vencimiento','El sistema indica qué lote despachar','Trazabilidad de qué lote salió en cada venta'])+`
+<div class="win" data-at=".3" style="left:640px;top:100px;width:1200px;height:860px">
+ <div class="tb"><div class="m"><img src="logo.png"></div>Bodega · Inventario por lotes</div>
+ <div style="display:flex;gap:18px;padding:26px 30px">
+  <div class="card" data-at="1" style="flex:1"><span class="pill am">⚠ Por vencer</span><div class="num" data-count="3" data-at="1">0</div></div>
+  <div class="card" data-at="1.2" style="flex:1"><span class="pill rd">✕ Agotado</span><div class="num" data-count="2" data-at="1.2">0</div></div>
+  <div class="card" data-at="1.4" style="flex:1"><span class="pill am">⚠ Bajo mínimo</span><div class="num" data-count="5" data-at="1.4">0</div></div>
+  <div class="card" data-at="1.6" style="flex:1"><span class="pill ok">✓ Productos activos</span><div class="num" data-count="812" data-at="1.6">0</div></div>
+ </div>
+ <div style="padding:0 30px"><table><tr><th>Producto</th><th>Lote</th><th>Vence</th><th>Cantidad</th><th>Despacho</th></tr>
+ ${lotes.map((l,i)=>`<tr data-at="${2.4+i*.5}" id="lt${i}"><td>${l[0]}</td><td>${l[1]}</td><td>${l[2]}</td><td>${l[3]} un</td><td><span class="pill ${l[5]}">${l[6]} ${l[4]}</span></td></tr>`).join('')}</table></div>
+ <div id="trz" class="card" style="margin:34px 30px 0;background:#17151A;color:#fff;border:none;opacity:0">
+  <div style="font-size:19px;color:#FF5A5F;font-weight:800;letter-spacing:2px">DESPACHO DE 150 UNIDADES</div>
+  <div style="font-size:30px;font-weight:800;margin-top:10px">120 del lote 0415 + 30 del lote 0502</div>
+  <div style="font-size:21px;color:#c9c5ca;margin-top:8px">Queda registrado en la venta: qué lote salió y quién lo despachó.</div></div>
+</div>`+disc,tl=>{const p=C((tl-6.5)/.5);$('#trz').style.opacity=oc(p);$('#trz').style.transform=`translateY(${(1-oc(p))*40}px)`;
+ const h=Math.sin(tl*6)*.5+.5;$('#lt0').style.background=tl>4?`rgba(255,241,210,${.5+.5*h})`:'' });
+
+/* 6 factura */
+add('fact',64,78,cap('Ventas · Facturación y cobros','Del pedido a la<br><em>factura y cartera</em>',['Cotización, remisión y factura desde el mismo pedido','Abonos y fechas de vencimiento','Estado de la factura electrónica a la vista'])+`
+<div class="win" data-at=".3" style="left:640px;top:140px;width:1200px;height:780px;display:flex;gap:0">
+ <div style="width:560px;padding:34px 36px;border-right:1px solid var(--line)">
+  <div class="lbl">Pedido 1048 · Tienda La Esquina</div>
+  <div data-at="1" style="display:flex;justify-content:space-between;font-size:24px;font-weight:700;margin-top:26px"><span>Arroz blanco ×24 cajas</span><span>$1.641.600</span></div>
+  <div data-at="1.4" style="display:flex;justify-content:space-between;font-size:24px;font-weight:700;margin-top:16px"><span>Aceite 1 L ×12 cajas</span><span>$1.353.600</span></div>
+  <div data-at="1.8" style="display:flex;justify-content:space-between;font-size:24px;font-weight:700;margin-top:16px;color:var(--ok)"><span>Descuento por volumen</span><span>−$149.760</span></div>
+  <div data-at="2.2" style="display:flex;justify-content:space-between;font-size:34px;font-weight:900;margin-top:30px;padding-top:24px;border-top:3px solid var(--k)"><span>Total</span><span data-count="2845440" data-fmt="cop" data-at="2.2">$0</span></div>
+  <div data-at="3.4" style="margin-top:34px;display:flex;gap:12px"><span class="pill gr">Cotización</span><span class="pill gr">Remisión</span><span class="pill ok">✓ Factura FE-1048</span></div>
+  <div data-at="4.6" style="margin-top:22px"><span class="pill ok">✓ DIAN: aceptada</span></div>
+ </div>
+ <div style="flex:1;padding:34px 36px;background:#FAF8F9">
+  <div style="font-size:30px;font-weight:900;letter-spacing:-1px">Cartera por cobrar</div>
+  <div data-at="1.4" class="num red" style="font-size:56px" data-count="42300000" data-fmt="cop" data-at="1.4">$0</div>
+  ${[['Al día',58,'#1E8E4E'],['1–30 días',28,'#9A6410'],['31–60 días',10,'#D91E26'],['+60 días',4,'#A3141A']].map((r,i)=>`<div data-at="${2.4+i*.4}" style="margin-top:26px"><div style="display:flex;justify-content:space-between;font-size:21px;font-weight:700"><span>${r[0]}</span><span>${r[1]}%</span></div><div style="height:22px;background:#E6E2E4;border-radius:11px;margin-top:8px;overflow:hidden"><div class="bar2" data-w="${r[1]}" data-at="${2.6+i*.4}" style="height:100%;width:0;background:${r[2]};border-radius:11px"></div></div></div>`).join('')}
+ </div></div>`+disc);
+
+/* 7 reparto */
+add('rep',78,94,cap('Reparto','Cada entrega,<br><em>bajo control</em>',['Asigna conductor y ordena la ruta','El conductor marca entregado con foto','GPS solo durante su turno, con aviso visible'])+`
+<div class="win" data-at=".3" style="left:620px;top:100px;width:820px;height:860px">
+ <div class="tb"><div class="m"><img src="logo.png"></div>Reparto · Mapa en vivo</div>
+ <svg viewBox="0 0 820 798" width="820" height="798" style="display:block;background:#EFEDEE">
+  ${[[40,40,200,150],[280,40,220,150],[540,40,240,150],[40,240,200,170],[540,240,240,170],[40,460,220,140],[300,460,200,140],[540,460,240,140],[40,650,260,110],[340,650,440,110]].map(b=>`<rect x="${b[0]}" y="${b[1]}" width="${b[2]}" height="${b[3]}" rx="14" fill="#E2DFE1"/>`).join('')}
+  <path id="route" d="M70 700 L70 215 L260 215 L260 440 L520 440 L520 215 L760 215 L760 620 L520 620" fill="none" stroke="#D1CDD0" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+  <path id="routef" d="M70 700 L70 215 L260 215 L260 440 L520 440 L520 215 L760 215 L760 620 L520 620" fill="none" stroke="#D91E26" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+  ${[[70,215],[260,440],[520,215],[760,620]].map((p,i)=>`<g class="stop" data-at="${1.4+i*.4}"><circle cx="${p[0]}" cy="${p[1]}" r="22" fill="#fff" stroke="#17151A" stroke-width="5"/><text x="${p[0]}" y="${p[1]+8}" text-anchor="middle" font-size="22" font-weight="900" fill="#17151A">${i+1}</text></g>`).join('')}
+  <g id="drv"><circle r="30" fill="rgba(217,30,38,.25)"/><circle r="17" fill="#D91E26" stroke="#fff" stroke-width="5"/></g>
+ </svg>
+</div>
+<div class="card" data-at="2" style="position:absolute;left:1470px;top:100px;width:360px">
+ <div class="lbl" style="margin-bottom:10px">Entregas de hoy</div>
+ <div style="margin-bottom:14px"><div style="font-weight:800;font-size:21px">1 · Tienda La Esquina</div><span class="pill ok" id="e1" style="margin-top:6px">✓ Entregado</span></div>
+ <div style="margin-bottom:14px"><div style="font-weight:800;font-size:21px">2 · Restaurante El Fogón</div><span class="pill am" id="e2" style="margin-top:6px">En ruta</span></div>
+ <div style="margin-bottom:14px"><div style="font-weight:800;font-size:21px">3 · Minimercado Sur</div><span class="pill gr" style="margin-top:6px">Cargado</span></div>
+ <div><div style="font-weight:800;font-size:21px">4 · Distribuciones Paz</div><span class="pill gr" style="margin-top:6px">Por alistar</span></div>
+</div>
+<div class="card" data-at="3" style="position:absolute;left:1470px;top:560px;width:360px;background:#17151A;color:#fff;border:none">
+ <div style="font-size:18px;font-weight:800;color:#FF5A5F;letter-spacing:2px">APP DEL CONDUCTOR</div>
+ <div style="font-size:26px;font-weight:800;margin:14px 0">Entrega 2 · Calle 45 #12-30</div>
+ <div style="display:flex;gap:10px"><div class="ph" style="width:90px;height:72px;flex:none">📷 Foto</div><div id="btn" style="flex:1;background:var(--r);border-radius:16px;text-align:center;font-weight:900;font-size:26px;display:flex;align-items:center;justify-content:center">Entregado</div></div>
+ <div style="font-size:16px;color:#c9c5ca;margin-top:14px">📍 Ubicación activa durante tu turno</div>
+</div>`+disc,tl=>{const L=$('#routef'),len=L.getTotalLength();const p=C((tl-2)/11);const d=len*(.08+.82*p);
+ L.style.strokeDasharray=len;L.style.strokeDashoffset=len-d;const pt=L.getPointAtLength(d);$('#drv').setAttribute('transform',`translate(${pt.x},${pt.y})`);
+ const done=tl>13;$('#e2').className='pill '+(done?'ok':'am');$('#e2').textContent=done?'✓ Entregado':'En ruta';$('#btn').style.transform=`scale(${1-.12*Math.sin(Math.PI*C((tl-12.6)/.5))})`});
+
+/* 8 equipo */
+add('equipo',94,108,cap('Equipo','Asistencia, turnos<br>y <em>nómina conectados</em>',['Entrada y salida con foto','Retardos, horas extra y recargos calculados','La nómina sale de la asistencia y no se altera una vez pagada'])+`
+<div class="card" data-at=".5" style="position:absolute;left:640px;top:150px;width:360px;height:700px;box-shadow:0 20px 60px rgba(23,21,26,.12)">
+ <div class="lbl">1 · Asistencia</div>
+ <div style="margin:22px auto;width:200px;height:200px;border-radius:50%;background:#ECEAEB;display:flex;align-items:center;justify-content:center;font-size:70px">📷</div>
+ <div style="text-align:center;font-size:26px;font-weight:900">Carlos M.</div>
+ <div data-at="1.8" style="text-align:center;margin-top:14px"><span class="pill ok">✓ Entrada 6:58 a. m.</span></div>
+ <div data-at="2.6" style="text-align:center;margin-top:12px"><span class="pill ok">✓ Salida 5:04 p. m.</span></div>
+ <div data-at="3.4" style="text-align:center;margin-top:12px;font-size:20px;color:var(--g);font-weight:700">Foto guardada como evidencia</div>
+</div>
+<div class="card" data-at="1.5" style="position:absolute;left:1040px;top:150px;width:360px;height:700px;box-shadow:0 20px 60px rgba(23,21,26,.12)">
+ <div class="lbl">2 · Turnos</div>
+ ${['Bodega','Ventas','Reparto','Caja'].map((a,i)=>`<div data-at="${2.4+i*.35}" style="margin-top:22px"><div style="font-weight:800;font-size:21px;margin-bottom:8px">${a}</div><div style="display:flex;gap:6px">${[1,1,1,1,1,0,i==2?1:0].map((v,j)=>`<div style="flex:1;height:44px;border-radius:9px;background:${v?(i==3&&j==4?'#FFF1D2':'#17151A'):'#ECEAEB'}"></div>`).join('')}</div></div>`).join('')}
+ <div data-at="4.2" style="margin-top:28px"><span class="pill am">⚠ Caja viernes: turno sin cubrir</span></div>
+</div>
+<div class="card" data-at="2.5" style="position:absolute;left:1440px;top:150px;width:400px;height:700px;box-shadow:0 20px 60px rgba(23,21,26,.12)">
+ <div class="lbl">3 · Nómina</div>
+ <div data-at="4" style="margin-top:20px;font-size:20px;font-weight:700;display:flex;justify-content:space-between"><span>Horas ordinarias</span><span>$1.640.000</span></div>
+ <div data-at="4.4" style="margin-top:14px;font-size:20px;font-weight:700;display:flex;justify-content:space-between"><span>Recargo nocturno</span><span>$128.000</span></div>
+ <div data-at="4.8" style="margin-top:14px;font-size:20px;font-weight:700;display:flex;justify-content:space-between"><span>Recargo dominical</span><span>$96.000</span></div>
+ <div data-at="5.2" style="margin-top:14px;font-size:20px;font-weight:700;display:flex;justify-content:space-between"><span>Auxilio de transporte</span><span>$200.000</span></div>
+ <div data-at="5.6" style="margin-top:14px;font-size:20px;font-weight:700;display:flex;justify-content:space-between;color:var(--rd)"><span>Deducciones</span><span>−$185.000</span></div>
+ <div data-at="6.2" style="margin-top:26px;padding-top:20px;border-top:3px solid var(--k);font-size:36px;font-weight:900;display:flex;justify-content:space-between"><span>Neto</span><span>$1.879.000</span></div>
+ <div data-at="7" style="margin-top:30px"><span class="pill gr">🔒 Pagada · no se puede alterar</span></div>
+</div>`+disc);
+
+/* 9 roles */
+const roles=[['Dueño / administración','Panel · Reportes · Usuarios','D'],['Vendedor','Pedidos · Clientes · Comisiones','V'],['Mostrador','Pedido en tienda','M'],['Caja','Cobros · Facturas','C'],['Bodega','Alistar · Recibir · Conteos','B'],['Conductor','Entregas · Ruta','R'],['Empleado','Turnos · Horas · Comprobantes','E']];
+add('roles',108,116,`<div class="abs big" data-at=".2" style="left:100px;top:90px;font-size:84px">Cada rol ve <span class="red">solo lo suyo</span></div>
+<div style="position:absolute;left:100px;top:290px;width:1720px;display:grid;grid-template-columns:repeat(4,1fr);gap:26px">${roles.map((r,i)=>`<div class="card" data-at="${.8+i*.3}" style="height:240px;padding:28px"><div style="width:62px;height:62px;border-radius:16px;background:${i==0?'#D91E26':'#17151A'};color:#fff;font-weight:900;font-size:30px;display:flex;align-items:center;justify-content:center">${r[2]}</div><div style="font-size:28px;font-weight:900;margin-top:18px;letter-spacing:-.5px">${r[0]}</div><div style="font-size:20px;color:var(--g);margin-top:8px;line-height:1.3">${r[1]}</div></div>`).join('')}
+<div class="card" data-at="3.2" style="height:240px;padding:28px;background:#17151A;color:#fff;border:none"><div style="font-size:48px">🔒</div><div style="font-size:25px;font-weight:800;margin-top:12px;line-height:1.25">Costos y márgenes: solo administración</div></div></div>
+<div class="abs" data-at="4" style="left:100px;top:880px;font-size:30px;color:var(--g);font-weight:600">Acciones sensibles piden confirmación y quedan en el historial de <b style="color:var(--k)">quién hizo qué</b>.</div>`);
+
+/* 10 cierre */
+add('fin',116,120.01,`<img class="abs" data-at=".1" src="logo.png" style="left:810px;top:150px;width:300px;mix-blend-mode:multiply">
+<div class="abs big" data-at=".6" style="left:0;width:1920px;top:520px;text-align:center;font-size:104px">Un solo sistema para<br><span class="red">toda la operación</span></div>
+<div class="abs" data-at="1.4" style="left:0;width:1920px;top:850px;text-align:center;font-size:44px;color:var(--g)">Esto es solo el comienzo</div>
+<div class="abs" data-at="2" style="left:0;width:1920px;top:980px;text-align:center;font-size:26px;color:#8a868c;letter-spacing:1px">Desarrollado por SYSMOOO</div>`);
+
+const stage=$('#stage');
+SC.forEach(s=>{const d=document.createElement('div');d.className='sc';d.id='sc_'+s.id;d.innerHTML=s.html;stage.appendChild(d);s.el=d});
+const FADE=.3;
+window.render=function(t){
+ SC.forEach(s=>{const el=s.el;const on=t>=s.a&&t<s.b;
+  el.style.visibility=on?'visible':'hidden';if(!on){el.style.opacity=0;return}
+  const tl=t-s.a;el.style.opacity=C(tl/FADE)*(s.b-s.a>100?1:C((s.b-t)/FADE));
+  el.querySelectorAll('[data-at]').forEach(e=>{const at=parseFloat(e.dataset.at),p=C((tl-at)/.6);
+   e.style.opacity=oc(p);const base=e.dataset.keep||'';e.style.transform=`translateY(${(1-ob(p))*40}px)`;
+   if(e.dataset.count){const v=parseFloat(e.dataset.count)*oc((tl-at)/1.2);e.textContent=e.dataset.fmt=='cop'?cop(v):Math.round(v)}
+   if(e.dataset.h)e.style.height=(parseFloat(e.dataset.h)*oc((tl-at)/.8))+'px';
+   if(e.dataset.w)e.style.width=(parseFloat(e.dataset.w)*oc((tl-at)/.8))+'%';
+   if(e.tagName=='g')e.style.transform='none';
+  });
+  if(s.upd)s.upd(tl);
+ });
+};
+render(0);
+</script></html>
