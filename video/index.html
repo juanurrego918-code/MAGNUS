@@ -1,0 +1,104 @@
+<!doctype html><html lang="es"><meta charset="utf-8"><title>Magnus – Cómo funciona el sistema</title>
+<style>
+:root{--r:#D91E26;--rl:#FF5A5F;--rd:#A3141A;--k:#17151A;--bg:#FAF8F8}
+*{box-sizing:border-box;margin:0}
+html,body{width:1080px;height:1920px;overflow:hidden;background:var(--bg);font-family:"Helvetica Neue",Helvetica,Arial,"DejaVu Sans",sans-serif;color:var(--k)}
+#root{position:relative;width:1080px;height:1920px;overflow:hidden}
+.sc{position:absolute;inset:0;opacity:0}
+.abs{position:absolute}
+.stripe{position:absolute;width:260px;height:2600px;background:var(--r);transform:rotate(35deg);opacity:.04}
+.big{font-weight:900;letter-spacing:-3px;line-height:1.02}
+.red{color:var(--r)}
+.node{position:absolute;left:120px;width:840px;height:200px;background:#fff;border-radius:28px;box-shadow:0 14px 40px rgba(23,21,26,.10);display:flex;align-items:center;padding:0 36px;gap:34px;border-left:12px solid var(--r)}
+.node .n{flex:none;width:96px;height:96px;border-radius:50%;background:var(--k);color:#fff;font-weight:900;font-size:48px;display:flex;align-items:center;justify-content:center}
+.node h3{font-size:46px;font-weight:800;letter-spacing:-1px}
+.node p{font-size:31px;color:#5b575d;margin-top:8px;line-height:1.2}
+.card{position:absolute;width:440px;height:420px;background:#fff;border-radius:32px;box-shadow:0 14px 40px rgba(23,21,26,.10);padding:44px 40px}
+.card .ic{width:92px;height:92px;border-radius:24px;background:var(--r);color:#fff;font-size:50px;font-weight:900;display:flex;align-items:center;justify-content:center;margin-bottom:30px}
+.card h4{font-size:40px;font-weight:800;line-height:1.1;letter-spacing:-1px}
+.card p{font-size:29px;color:#5b575d;margin-top:14px;line-height:1.25}
+.foot{position:absolute;bottom:70px;width:100%;text-align:center;font-size:28px;color:#8a868c;letter-spacing:1px}
+</style>
+<div id="root">
+ <!-- fondo -->
+ <div class="stripe" style="left:-100px;top:-300px"></div><div class="stripe" style="left:700px;top:-500px"></div>
+
+ <div class="sc" id="s1">
+  <img id="logo" class="abs" src="logo.png" style="left:340px;top:380px;width:400px;mix-blend-mode:multiply">
+  <div class="abs big" id="t1a" style="left:0;width:100%;top:900px;text-align:center;font-size:104px">Un sistema.</div>
+  <div class="abs big red" id="t1b" style="left:0;width:100%;top:1030px;text-align:center;font-size:104px">Toda la operación.</div>
+  <div class="abs" id="t1c" style="left:0;width:100%;top:1260px;text-align:center;font-size:44px;color:#5b575d">Magnus Company Colombia</div>
+ </div>
+
+ <div class="sc" id="s2">
+  <div class="abs big" id="t2h" style="left:90px;top:230px;font-size:84px;width:900px">Todo lo que<br>maneja Magnus,<br><span class="red">en un solo lugar</span></div>
+  <div class="abs" id="c0" style="left:90px;top:760px"><div class="big red cn" style="font-size:230px">0</div><div style="font-size:52px;font-weight:700;margin-top:-10px">productos en el catálogo</div></div>
+  <div class="abs" id="c1" style="left:90px;top:1130px"><div class="big cn" style="font-size:230px">0</div><div style="font-size:52px;font-weight:700;margin-top:-10px">áreas conectadas</div></div>
+  <div class="abs" id="c2" style="left:90px;top:1500px"><div class="big red cn" style="font-size:230px">0</div><div style="font-size:52px;font-weight:700;margin-top:-10px">módulos a tu medida</div></div>
+ </div>
+
+ <div class="sc" id="s3">
+  <div class="abs big" id="t3h" style="left:90px;top:130px;font-size:88px;width:900px">Así fluye<br><span class="red">un pedido</span></div>
+  <div class="abs" id="line" style="left:216px;top:480px;width:8px;height:1230px;background:#e4dfe0;border-radius:4px"></div>
+  <div class="abs" id="linef" style="left:216px;top:480px;width:8px;height:0;background:var(--r);border-radius:4px"></div>
+  <div class="abs" id="dot" style="left:204px;top:480px;width:32px;height:32px;border-radius:50%;background:var(--r);box-shadow:0 0 0 12px rgba(217,30,38,.2)"></div>
+ </div>
+
+ <div class="sc" id="s4">
+  <div class="abs big" id="t4h" style="left:90px;top:180px;font-size:88px;width:900px">Control y<br><span class="red">confianza</span></div>
+ </div>
+
+ <div class="sc" id="s5">
+  <img id="logo5" class="abs" src="logo.png" style="left:340px;top:520px;width:400px;mix-blend-mode:multiply">
+  <div class="abs big" id="t5a" style="left:0;width:100%;top:1000px;text-align:center;font-size:100px">Esto es solo<br><span class="red">el comienzo</span></div>
+  <div class="abs" id="t5b" style="left:0;width:100%;top:1330px;text-align:center;font-size:36px;color:#5b575d">Se construye por fases, según lo que más lo necesite</div>
+  <div class="foot" id="t5c">Desarrollado por SYSMOOO</div>
+ </div>
+</div>
+<script>
+const C=(x,a=0,b=1)=>Math.min(b,Math.max(a,x));
+const oc=x=>1-Math.pow(1-C(x),3), ob=x=>{x=C(x);const c=1.70158;return 1+(c+1)*Math.pow(x-1,3)+c*Math.pow(x-1,2)};
+const $=id=>document.getElementById(id);
+// escenas [inicio, fin]
+const S={s1:[0,4],s2:[4,9],s3:[9,21],s4:[21,27],s5:[27,32]};
+function pop(el,t,t0,dy=60,dur=.7){const p=C((t-t0)/dur);el.style.opacity=oc(p);el.style.transform=`translateY(${(1-ob(p))*dy}px)`}
+const flow=[["1","Vendedor toma el pedido","Precio según la lista de cada cliente"],
+["2","Bodega despacha por lote","Primero vence, primero sale"],
+["3","Factura y cobro","Factura electrónica con proveedor autorizado"],
+["4","Conductor entrega","GPS solo durante su turno, con aviso"],
+["5","El dueño lo ve todo","Reportes para decidir con datos"]];
+const flowEls=flow.map((f,i)=>{const d=document.createElement('div');d.className='node';d.style.top=(440+i*250)+'px';d.style.left='290px';d.style.width='700px';
+ d.innerHTML=`<div class="n">${f[0]}</div><div><h3>${f[1]}</h3><p>${f[2]}</p></div>`;$('s3').appendChild(d);return d});
+flowEls.forEach(d=>{d.style.height='210px';d.style.padding='0 28px';d.style.gap='26px';d.querySelector('h3').style.fontSize='40px';d.querySelector('p').style.fontSize='28px'});
+const cards=[["◉","Cada rol, su menú","Dueño, vendedor, caja, bodega, conductor y empleado ven solo lo suyo",90,560],
+["$","Costos protegidos","Márgenes y costos solo para administración",550,560],
+["✓","Asistencia con foto","Entrada, salida, turnos y recargos según la ley colombiana",90,1010],
+["≡","Quién hizo qué","Anular, ajustar o pagar nómina deja historial y pide confirmación",550,1010]];
+const cardEls=cards.map(c=>{const d=document.createElement('div');d.className='card';d.style.left=c[3]+'px';d.style.top=c[4]+'px';
+ d.innerHTML=`<div class="ic">${c[0]}</div><h4>${c[1]}</h4><p>${c[2]}</p>`;$('s4').appendChild(d);return d});
+const note=document.createElement('div');note.className='abs';note.style.cssText='left:90px;top:1500px;width:900px;font-size:44px;font-weight:700;color:#5b575d;opacity:0';
+note.innerHTML='Lo que maneja dinero y datos de personas <span class="red">se valida en el servidor</span>';$('s4').appendChild(note);
+window.render=function(t){
+ for(const k in S){const [a,b]=S[k],el=$(k);let o=0;
+  if(t>=a&&t<b)o=C((t-a)/.35)*C((b-t)/.35);el.style.opacity=o;el.style.visibility=o>0?'visible':'hidden'}
+ // S1
+ let l=t, p=C(l/.9);$('logo').style.transform=`scale(${.6+.4*ob(p)}) rotate(${(1-oc(p))*-12}deg)`;$('logo').style.opacity=oc(p*1.5);
+ pop($('t1a'),t,.9);pop($('t1b'),t,1.35);pop($('t1c'),t,2.0,30);
+ // S2
+ pop($('t2h'),t,4.2);
+ [[800,'+',4.9],[6,'',5.6],[18,'',6.3]].forEach((c,i)=>{const e=$('c'+i);pop(e,t,c[2],70);
+  const v=Math.round(c[0]*oc((t-c[2])/1.1));e.querySelector('.cn').textContent=v+(c[1]&&t>c[2]+1?c[1]:'')});
+ // S3
+ pop($('t3h'),t,9.3);
+ const t3=t-9.9;flowEls.forEach((d,i)=>pop(d,t,9.9+i*1.9,50,.6));
+ const prog=C(t3/(4*1.9+.6));const H=1230*prog;
+ $('linef').style.height=H+'px';$('dot').style.top=(480+H-16)+'px';$('dot').style.opacity=C(t3/.3);
+ // S4
+ pop($('t4h'),t,21.3);
+ cardEls.forEach((d,i)=>pop(d,t,22+i*.7,60,.6));pop(note,t,25,30);
+ // S5
+ const p5=C((t-27.3)/.9);$('logo5').style.transform=`scale(${.6+.4*ob(p5)})`;$('logo5').style.opacity=oc(p5*1.5);
+ pop($('t5a'),t,28.0);pop($('t5b'),t,28.9,30);pop($('t5c'),t,29.6,20);
+};
+render(0);
+</script></html>
